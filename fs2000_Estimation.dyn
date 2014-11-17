@@ -1,0 +1,12 @@
+
+// Estimation procedure
+
+// load MH file
+estimation(datafile=fsdat_simul, first_obs=1, presample=1, mode_file = fs2000_mode,
+nobs=41, loglinear, mode_compute=0, mh_replic=10, load_mh_file, nodisplay, nograph, forecast=12, //mh_drop=0.5, tex, 
+filtered_vars, smoother,filter_step_ahead=[1 4])@{listEndoVars}; 
+oo_mode=oo_;
+
+/*
+  estimation(order=1,datafile=fsdat_simul,nobs=192,loglinear,mh_replic=2000,mh_nblocks=2,mh_jscale=0.8);
+*/

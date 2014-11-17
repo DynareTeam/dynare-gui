@@ -1,0 +1,12 @@
+*~
+*.log
+*.mat
+*.fig
+*.jpg
+
+# fs2000
+fs2000.m
+fs2000_dynamic.m
+fs2000_set_auxiliary_variables.m
+fs2000_static.m
+fs2000_steadystate2.m

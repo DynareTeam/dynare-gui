@@ -1,4 +1,0 @@
-// All variables (empirical and non-empirical) are declaired for estimation
-
-@#define listEndoVars = "m P c e W R k d n l gy_obs gp_obs y dA"
-

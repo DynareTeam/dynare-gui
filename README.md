@@ -7,6 +7,10 @@ Main functionalities:
 - New, open, save, close Dynare_GUI project files (.dproj)
 - Load .mod file: an interface to load a mod file
 - Model settings: an interface for defining various model and GUI options
+- Dynare_GUI log file
+- Select observed variables
+- Specification of estimated parameters & shocks
+- Estimation command (basic functionalities)
 - Stochastic simulation (basic functionalities).
 
 How to run it:
@@ -21,7 +25,11 @@ How to run it:
 - Temporarly add folder containing the fonction Dynare_GUI to the matlab's path
 
 ```matlab
-   >> addpath c:\dynare\dynare-gui
+   >> addpath c:\dynare\dynare-gui\src
+   >> addpath c:\dynare\dynare-gui\src\resources
+   >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14
+   >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14\Patch
+
 ```
 
 - Launch the GUI
@@ -29,3 +37,7 @@ How to run it:
 ```matlab
   >> Dynare_GUI
 ```
+
+- Important note: Following folders are not on GitHub, but there are necessary for running the application:
+    \src\resources
+    \src\GUILayout-v1p14\+uiextras\Resources

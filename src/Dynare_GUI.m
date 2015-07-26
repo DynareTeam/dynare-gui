@@ -24,19 +24,14 @@ function varargout = Dynare_GUI(varargin)
 
 % Last Modified by GUIDE v2.5 07-Jul-2015 18:58:54
 
-% Modify Matlab's path here if required using the addpath command.
-    addpath ./GUILayout-v1p14
-    addpath ./GUILayout-v1p14/Patch
-    addpath ./resources
-
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @Dynare_GUI_OpeningFcn, ...
-                   'gui_OutputFcn',  @Dynare_GUI_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @Dynare_GUI_OpeningFcn, ...
+    'gui_OutputFcn',  @Dynare_GUI_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -47,8 +42,8 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
-addpath ./resources
-addpath ./
+
+end
 
 % --- Executes just before Dynare_GUI is made visible.
 function Dynare_GUI_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -60,42 +55,46 @@ function Dynare_GUI_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for Dynare_GUI
 handles.output = hObject;
-movegui(hObject,'center'); 
+movegui(hObject,'center');
 axes(handles.axes_logo);
 I = imread('dynare.jpg');
 image(I);
 
 axis off; % Remove axis ticks and numbers
-axis image; % Set aspect ratio to obtain square pixels  
+axis image; % Set aspect ratio to obtain square pixels
 
 setappdata(0, 'bg_color', 'default');
 setappdata(0, 'special_color', 'white');
 setappdata(0, 'main_figure', hObject);
 
-fileName = 'dynare_gui.mat';
-
-if ~exist(fileName, 'file')
-    error = errordlg(sprintf('File %s is missing. The application will be terminated!',fileName) ,'DynareGUI Error','modal');
-    waitfor(error);
-    %main_figure = getappdata(0, 'main_figure');
-    close(hObject);
-    return;
-end
-
 global dynare_gui_;
 global project_info;
+global model_settings;
 
-load(fileName);
+% fileName = 'dynare_gui.mat';
+% 
+% if ~exist(fileName, 'file')
+%     error = errordlg(sprintf('File %s is missing. The application will be terminated!',fileName) ,'DynareGUI Error','modal');
+%     waitfor(error);
+%     %main_figure = getappdata(0, 'main_figure');
+%     close(hObject);
+%     return;
+% end
+%load(fileName);
+
+%gui_auxiliary.create_dynare_gui_structure;
+
+
 
 % Update handles structure
 guidata(hObject, handles);
 
 % UIWAIT makes Dynare_GUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
+end
 
 % --- Outputs from this function are returned to the command line.
-function varargout = Dynare_GUI_OutputFcn(hObject, eventdata, handles) 
+function varargout = Dynare_GUI_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -103,14 +102,14 @@ function varargout = Dynare_GUI_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
+end
 
 % --------------------------------------------------------------------
 function project_Callback(hObject, eventdata, handles)
 % hObject    handle to project (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+end
 
 % --------------------------------------------------------------------
 function project_new_Callback(hObject, eventdata, handles)
@@ -119,6 +118,7 @@ function project_new_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'New project');
 gui_new_project(tabId);
+end
 
 % --------------------------------------------------------------------
 function project_open_Callback(hObject, eventdata, handles)
@@ -126,13 +126,15 @@ function project_open_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_open_project(hObject);
+end
 
 % --------------------------------------------------------------------
 function project_close_Callback(hObject, eventdata, handles)
 % hObject    handle to project_close (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-gui_close_project(hObject);
+gui_close_project();
+end
 
 % --------------------------------------------------------------------
 function project_save_Callback(hObject, eventdata, handles)
@@ -140,6 +142,7 @@ function project_save_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_save_project(hObject, 'Save');
+end
 
 % --------------------------------------------------------------------
 function project_save_as_Callback(hObject, eventdata, handles)
@@ -147,6 +150,7 @@ function project_save_as_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_save_project(hObject, 'Save As');
+end
 
 % --------------------------------------------------------------------
 function project_exit_Callback(hObject, eventdata, handles)
@@ -156,7 +160,14 @@ function project_exit_Callback(hObject, eventdata, handles)
 % TODO: Before quitting check if current project have been modified and ask 'Save changes to current project?'
 answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No')
 if(strcmp(answer,'Yes'))
+    appdata = getappdata(0);
+    fns = fieldnames(appdata);
+    for ii = 1:numel(fns)
+        rmappdata(0,fns{ii});
+    end
+    
     close;
+end
 end
 
 
@@ -167,6 +178,7 @@ function model_Callback(hObject, eventdata, handles)
 % hObject    handle to model (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 % --------------------------------------------------------------------
 function model_load_Callback(hObject, eventdata, handles)
@@ -174,6 +186,7 @@ function model_load_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_load_mod_file(hObject);
+end
 
 % --------------------------------------------------------------------
 function model_settings_Callback(hObject, eventdata, handles)
@@ -182,6 +195,7 @@ function model_settings_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Model settings');
 gui_define_model_settings(tabId);
+end
 
 
 
@@ -190,6 +204,7 @@ function model_save_snapshot_Callback(hObject, eventdata, handles)
 % hObject    handle to model_save_snapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -197,6 +212,7 @@ function model_load_snapshot_Callback(hObject, eventdata, handles)
 % hObject    handle to model_load_snapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -204,6 +220,7 @@ function model_export_Callback(hObject, eventdata, handles)
 % hObject    handle to model_export (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -211,8 +228,8 @@ function model_logfile_Callback(hObject, eventdata, handles)
 % hObject    handle to model_logfile (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
+gui_log_file(hObject);
+end
 
 
 
@@ -230,6 +247,7 @@ function estimation_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -237,7 +255,9 @@ function estimation_observed_variables_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_observed_variables (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tabId = addTab(hObject, 'Observed vars. ', handles);
+tabId = addTab(hObject, 'Observed vars. ');
+gui_observed_vars(tabId);
+end
 
 
 % --------------------------------------------------------------------
@@ -245,7 +265,9 @@ function estimation_parameters_shocks_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_parameters_shocks (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tabId = addTab(hObject, 'Est. params & shocks ', handles);
+tabId = addTab(hObject, 'Est. params & shocks ');
+gui_estim_params(tabId);
+end
 
 
 
@@ -257,13 +279,15 @@ function estimation_run_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Estimation ', handles);
-
+gui_estimation(tabId);
+end
 
 % --------------------------------------------------------------------
 function estimation_run_calibrated_smoother_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_run_calibrated_smoother (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 % Simulation!
 % --------------------------------------------------------------------
@@ -271,6 +295,7 @@ function simulation_Callback(hObject, eventdata, handles)
 % hObject    handle to simulation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -280,6 +305,7 @@ function simulation_stochastic_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Stoch simul. ', handles);
 gui_stoch_simulation(tabId);
+end
 
 % --------------------------------------------------------------------
 function simulation_deterministic_Callback(hObject, eventdata, handles)
@@ -288,6 +314,7 @@ function simulation_deterministic_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Shocks ', handles);
 
+end
 
 
 
@@ -296,6 +323,7 @@ function output_Callback(hObject, eventdata, handles)
 % hObject    handle to output (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -304,6 +332,7 @@ function output_shocks_decomposition_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Shocks decomp. ', handles);
+end
 
 
 % --------------------------------------------------------------------
@@ -312,6 +341,7 @@ function output_conditional_forecast_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 addTab(hObject, 'Cond. forecast ', handles);
+end
 
 
 
@@ -320,6 +350,7 @@ function help_Callback(hObject, eventdata, handles)
 % hObject    handle to help (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+end
 
 
 % --------------------------------------------------------------------
@@ -329,6 +360,7 @@ function help_product_help_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %addTab(hObject, 'Product help ', handles);
+end
 
 % --------------------------------------------------------------------
 function help_dynare_manual_Callback(hObject, eventdata, handles)
@@ -336,6 +368,7 @@ function help_dynare_manual_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 open('dynare.pdf');
+end
 
 % --------------------------------------------------------------------
 function help_terms_of_use_Callback(hObject, eventdata, handles)
@@ -344,6 +377,7 @@ function help_terms_of_use_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId =addTab(hObject, 'Terms of use ', handles);
 gui_term_of_use(tabId);
+end
 
 % --------------------------------------------------------------------
 function help_about_Callback(hObject, eventdata, handles)
@@ -352,7 +386,12 @@ function help_about_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'About DynareGUI ', handles);
 gui_about(tabId);
+end
 
 
 function newTab = addTab(hObject, title, handles)
 [newTab,created] = gui_tabs.add_tab(hObject, title);
+
+
+end
+

@@ -20,7 +20,7 @@ else
     tabs = get(tabGroup,'Children');
     hTab = tabs(1);
     set(hTab, 'Visible', 'on');
-    set(handles.tabGroup, 'SelectedIndex' , 1);
+    %set(handles.tabGroup, 'SelectedIndex' , 1);
     %drawnow;
 end
 end

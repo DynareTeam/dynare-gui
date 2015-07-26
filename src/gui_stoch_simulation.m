@@ -1,8 +1,11 @@
 function gui_stoch_simulation(tabId)
 
 global project_info;
+global model_settings;
+global options_;
+global dynare_gui_;
+global oo_;
 
-model_settings = getappdata(0,'model_settings');
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
@@ -73,14 +76,17 @@ top = 35;
 			'String', 'Display simulation results grouped by: ', ...
 			'HorizontalAlignment', 'left');
         
-        comm_str = getappdata(0,'stock_simul');
-        if(isempty(comm_str))
+        
+        if(isfield(model_settings,'stoch_simul'))
+            comm = getfield(model_settings,'stoch_simul');
+            comm_str = gui_tools.command_string('stoch_simul', comm);
+        else
             comm_str = '';
         end
         
-        handles.stock_simul = uicontrol( ...
+        handles.stoch_simul = uicontrol( ...
 			'Parent', handles.uipanelComm, ...
-			'Tag', 'stock_simul', ...
+			'Tag', 'stoch_simul', ...
 			'Style', 'text', ...
 			'Units', 'characters', 'BackgroundColor', bg_color,...
 			'Position', [0 0 83 2], ...
@@ -158,7 +164,7 @@ top = 35;
         
         currentShock = 0;
         tubNum = 0;
-        numVarsOnTab = 12;
+        maxDisplayed = 12;
         
         %%handles.shocksTabGroup = uitabgroup(handles.uipanelShocks,'BackgroundColor', special_color,...
            %'Position',[0 0 1 1]);
@@ -193,6 +199,7 @@ top = 35;
                 currentPanel = shocksPanel(tubNum);
                 
                 position(tubNum) = 1;
+                currenGroupedShock(tubNum) = 1;
                 tabIndex = tubNum;
                 
             else
@@ -201,6 +208,23 @@ top = 35;
                 currentPanel = shocksPanel(tabIndex);
             end
             
+            if( position(tabIndex) > maxDisplayed) % Create slider
+                
+                are_shown = find(cell2mat(gui_shocks(:,6)));
+                shocks_in_group = strfind(gui_shocks(are_shown,1),tabTitle);
+                num_shocks_in_group = size(cell2mat(shocks_in_group),1);
+                
+                sld = uicontrol('Style', 'slider',...
+                    'Parent', currentPanel, ...
+                    'Min',0,'Max',num_shocks_in_group - maxDisplayed,'Value',num_shocks_in_group - maxDisplayed ,...
+                    'Units', 'characters','Position', [80 -0.2 3 26],...
+                    'Callback', {@scrollPanel_Callback,tabIndex,num_shocks_in_group} );
+            end
+            
+            visible = 'on';
+            if(position(tabIndex)> maxDisplayed)
+                visible = 'off';
+            end
             
             handles.shocks(currentShock) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
                 'clipping','on',...
@@ -208,7 +232,11 @@ top = 35;
                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
                 'TooltipString', char(gui_shocks(ii,2)),...
                 'string',char(gui_shocks(ii,4)),...
-                'BackgroundColor', special_color);
+                'BackgroundColor', special_color,...
+                 'Visible', visible);
+             handles.grouped_shocks(tabIndex, currenGroupedShock(tabIndex))= handles.shocks(currentShock);
+             currenGroupedShock(tabIndex) = currenGroupedShock(tabIndex) + 1;
+           
             
             position(tabIndex) = position(tabIndex) + 1;
             ii = ii+1;
@@ -218,6 +246,29 @@ top = 35;
         
         % Show the first tab
         handles.shocksTabGroup.SelectedChild = 1;
+        
+         function scrollPanel_Callback(hObject,callbackdata,tab_index, num_shocks)
+            
+            value = get(hObject, 'Value');
+            
+            value = floor(value);
+            
+            move = num_shocks - maxDisplayed - value;
+            
+            for ii=1: num_shocks
+                if(ii <= move || ii> move+maxDisplayed)
+                    visible = 'off';
+                    set(handles.grouped_shocks(tab_index, ii), 'Visible', visible);
+                else
+                    visible = 'on';
+                    set(handles.grouped_shocks(tab_index, ii), 'Visible', visible);
+                    set(handles.grouped_shocks(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
+                    
+                end
+                
+                
+            end
+        end
     end
 
     function uipanelVars_CreateFcn()
@@ -226,8 +277,8 @@ top = 35;
         currentVar = 0;
        
         tubNum = 0;
-        numVarsOnTab = 12;
-        
+        maxDisplayed = 12;
+         
         %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
           %  'Position',[0 0 1 1]);
          
@@ -262,6 +313,7 @@ top = 35;
                 currentPanel = varsPanel(tubNum);
                 
                 position(tubNum) = 1;
+                currenGroupedVar(tubNum) =1;
                 tabIndex = tubNum;
                 
             else
@@ -270,6 +322,23 @@ top = 35;
                 currentPanel = varsPanel(tabIndex);
             end
             
+            if( position(tabIndex) > maxDisplayed) % Create slider
+                
+                are_shown = find(cell2mat(gui_vars(:,5)));
+                vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
+                num_vars_in_group = size(cell2mat(vars_in_group),1);
+                
+                sld = uicontrol('Style', 'slider',...
+                    'Parent', currentPanel, ...
+                    'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
+                    'Units', 'characters','Position', [80 -0.2 3 26],...
+                    'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
+            end
+            
+            visible = 'on';
+            if(position(tabIndex)> maxDisplayed)
+                visible = 'off';
+            end
             
             handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
                 'clipping','on',...
@@ -277,7 +346,10 @@ top = 35;
                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
                 'TooltipString', char(gui_vars(ii,2)),...
                 'string',char(gui_vars(ii,4)),...
-                'BackgroundColor', special_color);
+                'BackgroundColor', special_color,...
+                 'Visible', visible);
+             handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
+             currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
             position(tabIndex) = position(tabIndex) + 1;
             ii = ii+1;
         end
@@ -286,8 +358,34 @@ top = 35;
          % Show the first tab
         handles.varsTabGroup.SelectedChild = 1;
         
-
+        
+        
+        
+        function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
+            
+            value = get(hObject, 'Value');
+            
+            value = floor(value);
+            
+            move = num_variables - maxDisplayed - value;
+            
+            for ii=1: num_variables
+                if(ii <= move || ii> move+maxDisplayed)
+                    visible = 'off';
+                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+                else
+                    visible = 'on';
+                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+                    set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
+                    
+                end
+                
+                
+            end
+        end
+        
     end
+
 
     function index = checkIfExistsTab(tabGroup,tabTitle)
         index = 0;
@@ -305,18 +403,22 @@ top = 35;
     end
 
     function pussbuttonSimulation_Callback(hObject,evendata)
+        
+        
         displayByShock = true;
         selection =  get(handles.GroupDisplayBy, 'SelectedObject');
         if(selection == handles.radiobuttonVariable)
             displayByShock = false;
         end
         setappdata(0,'ShockSimulationDisplayByShock',displayByShock);
+        
+        % TODO remove IRF_Decomposition or add it to screen
         setappdata(0,'IRF_Decomposition',0);
-        %
-        %         cumulativeIRF = get(handles.checkboxCumulativeIRF,'Value');
+        
+        % TODO remove cumulative IRF or add it to screen
         setappdata(0,'CumulativeIRF',0);
         
-        comm_str = get(handles.stock_simul, 'String');
+        comm_str = get(handles.stoch_simul, 'String');
         if(isempty(comm_str))
             errordlg('Please define stoch_simul command first!' ,'Dynare GUI error','modal');
             uicontrol(hObject);
@@ -324,99 +426,76 @@ top = 35;
         end
         
         if(shockSelected && variablesSelected)
+            old_options = options_;
+            % TODO check this - if we don't save oo_ consecutive calls to stoch_simul are not working
+            old_oo = oo_;
+            
+            gui_tools.project_log_entry('Doing stochastic simulation','...');
             model_name = project_info.model_name;
             
-            h = waitbar(0,'I am doing shock simulation ... Please wait ...', 'Name',model_name);
-            steps = 1500;
-            for step = 1:steps
-                if step == 800
-                    
-                    file_core = fopen(sprintf('%s.mod',model_name), 'rt');
-                    A= fread(file_core);
-                    fclose(file_core);
-                    
-                    file_backup = fopen(sprintf('%s.mod_backup',model_name), 'wt');
-                    fwrite(file_backup,A);
-                    fclose(file_backup);
-                    
-                    file_new = fopen(sprintf('%s.mod',model_name), 'wt');
-                    fwrite(file_new,A);
-                    %fprintf(file_new, '@#include "list_variables.dyn"\n');
-                    
-                    
-%                     index = strfind(comm_str, ')');
-%                     new_comm_str = substring (comm_str, 0, index(end)-2);
-%                     new_comm_str = strcat(new_comm_str, ', irf_shocks =(');
-                    
-                    index = strfind(comm_str, '(');
-                    new_comm_str = comm_str(1:index(1));
-                    new_comm_str_end = comm_str(index(1)+1: end);
-                    
-                    new_comm_str = strcat(new_comm_str, ' irf_shocks =(');
-                   
-                    
-                    %fprintf(file_new, 'stoch_simul(irf=20,order=1, irf_shocks =( ');
-                    
-                   first_shock = 1;
-                    
-                    for ii = 1:handles.numShocks
-                        if get(handles.shocks(ii),'Value')
-                            shockName = get(handles.shocks(ii),'TooltipString');
-                            if(first_shock==1)
-                                first_shock = 0;
-                                %fprintf(file_new, '%s ', shockName);
-                                 new_comm_str = strcat(new_comm_str, sprintf(' %s ', shockName));
-                            else
-                                
-                                %fprintf(file_new, ', %s ', shockName);
-                                new_comm_str = strcat(new_comm_str, sprintf(', %s ', shockName));
-                            end
-                        end
-                    end
-                   
-                    
-                    %fprintf(file_new, ')  )');
-                    if(strcmp(strtrim(new_comm_str_end),')'))
-                         new_comm_str = strcat(new_comm_str, ' ) ');
+            
+            options_.irf_shocks=[];
+            first_shock = 1;
+            for ii = 1:handles.numShocks
+                if get(handles.shocks(ii),'Value')
+                    shockName = get(handles.shocks(ii),'TooltipString');
+                    if(first_shock==1)
+                        first_shock = 0;
+                        options_.irf_shocks = shockName;
                     else
-                        new_comm_str = strcat(new_comm_str, ' ), ');
+                        options_.irf_shocks = char(options_.irf_shocks, shockName);
                     end
-                     
-                   new_comm_str = strcat(new_comm_str, new_comm_str_end);
-                    
-                    
-                    for ii = 1:handles.numVars
-                        if get(handles.vars(ii),'Value')
-                            varName = get(handles.vars(ii),'TooltipString');
-                             new_comm_str = strcat(new_comm_str,sprintf(' %s', varName));
-                            
-                            %fprintf(file_new, ' %s', varName);
-                            
-                        end
-                    end
-                    
-                    fprintf(file_new, new_comm_str);
-                    fprintf(file_new, ';\n');
-                    
-                    
-                    fclose(file_new);
-                    eval(sprintf('dynare %s noclearall',model_name));
-                elseif step == 1200
-                    
-                    file_backup = fopen(sprintf('%s.mod_backup',model_name), 'rt');
-                    A= fread(file_backup);
-                    fclose(file_backup);
-                    
-                    file_core = fopen(sprintf('%s.mod',model_name), 'wt');
-                    fwrite(file_core,A);
-                    fclose(file_core);
-                    
-                    delete(sprintf('%s.mod_backup',model_name));
                 end
-                % computations take place here
-                waitbar(step / steps)
             end
-            delete(h);
+            
+            var_list_=[];
+            first_var = 1;
+            for ii = 1:handles.numVars
+                if get(handles.vars(ii),'Value')
+                    varName = get(handles.vars(ii),'TooltipString');
+                    if(first_var==1)
+                        first_var = 0;
+                        var_list_ = varName;
+                    else
+                        var_list_ = char(var_list_, varName);
+                    end
+                    
+                end
+            end
+            
+            
+            user_options = model_settings.stoch_simul;
+            
+            names = fieldnames(user_options);
+            for ii=1: size(names,1)
+                value = getfield(user_options, names{ii});
+                if(isempty(value))
+                    options_ = setfield(options_, names{ii}, 1); %flags
+                else
+                    options_ = setfield(options_, names{ii}, value);
+                end
+            end
+            
+            status = 1;
+            try
+                info = stoch_simul(var_list_);
+            catch
+                status = 0;
+            end
+            options_ = old_options;
+            %M_ = old_M;
+            oo_ = old_oo;
+            
+            if(status)
+                uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
+            else
+                errorText = '';
+                errordlg(sprintf('Error in execution of simulation command. Please correct it!\n\n%s', errorText) ,'DynareGUI Error','modal');
+                uicontrol(hObject);
+            end
+            
+            
+            
         elseif(~shockSelected)
             errordlg('Please select shocks!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
@@ -441,33 +520,20 @@ top = 35;
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)
         
-        h = gui_define_comm_stoch_simul();
+        h = gui_define_comm_options(dynare_gui_.stoch_simul,'stoch_simul');
         uiwait(h);
-         
         try
-            set(handles.stock_simul, 'String', getappdata(0,'stock_simul'));
+            new_comm = getappdata(0,'stoch_simul');
+            model_settings.stoch_simul = new_comm;
+            comm_str = gui_tools.command_string('stoch_simul', new_comm);
+            
+            set(handles.stoch_simul, 'String', comm_str);
+            gui_tools.project_log_entry('Defined command stoch_simul',comm_str);
+            
+            %set(handles.estimation, 'String', getappdata(0,'estimation'));
         catch
             
         end
-
-
-%         [newTab,created] = gui_tabs.add_tab(hObject, 'shoch_simul options');
-%         if(created)
-%             define_comm_shoch_simul(newTab);
-%         end
-%         waitfor(newTab, 'UserData');        
-%         
-%         try
-%             set(handles.stock_simul, 'String', get(newTab, 'UserData'));
-%         catch
-%             try
-%                 set(handles.stock_simul, 'String', getappdata(0,'stock_simul'));
-%             catch
-%                 % we need this to avoid error on application exitbecause of waitfor command 
-%             end
-%         end
-%         
-        
     end
 
     function value = shockSelected

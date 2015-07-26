@@ -35,35 +35,40 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     function save_settings(hObject,event)
         try
             project_info.project_name = get(handles.project_name,'String');
+            old_project_folder =  project_info.project_folder;
             project_info.project_folder = get(handles.project_folder,'String');
             project_info.project_description = get(handles.project_description,'String');
             project_info.model_type = str2double(get(handles.model_type, 'Tag'));
             project_info.latex = str2double(get(handles.bg, 'Tag'));
-            project_info.maximum_forecast_periods = str2double(get(handles.maximum_forecast_periods, 'String'));
+            project_info.default_forecast_periods = str2double(get(handles.default_forecast_periods, 'String'));
             
             if(isempty(project_info.project_name))
                 errordlg('Error while saving the project: project name is not specified!' ,'DynareGUI Error','modal');
             elseif(isempty(project_info.project_folder))
                 errordlg('Error while saving the project: project folder is not specified!' ,'DynareGUI Error','modal');
             else
-                fullFileName = [ project_info.project_folder, '\', project_info.project_name,'.dproj'];
+                fullFileName = [ project_info.project_folder, filesep, project_info.project_name,'.dproj'];
                 if(strcmp(oid,'New') || strcmp(oid,'Save As'))
                     
                     if exist(fullFileName, 'file')
                         % File exists
-                        answer = questdlg('Project with the same name already exists. Are you sure you want to override existing project?','DynareGUI','Yes','No','No')
+                        answer = questdlg('Project with the same name already exists. Are you sure you want to override existing project?','DynareGUI','Yes','No','No');
                         if(strcmp(answer,'Yes'))
-                            
+                            gui_tools.project_log_entry('Warning', sprintf('Existing project is overwritten (%s)',project_info.project_name ));
                             gui_tools.save_project();
+                            
                         else
                             return;
                         end
                     else
+                        if(strcmp(oid,'New'))
+                            gui_tools.project_log_entry('Creating new project', sprintf('project_name:%s',project_info.project_name));
+                        end
                         gui_tools.save_project();
                         
                         set(handles.project_name, 'Enable', 'Off');
-                        set(handles.project_folder, 'Enable', 'Off');
-                        set(handles.project_folder_button, 'Enable', 'Off');
+                        %set(handles.project_folder, 'Enable', 'Off');
+                        %set(handles.project_folder_button, 'Enable', 'Off');
                         
                         %setappdata(0,'project_name',project_info.project_name);
                         %setappdata(0,'project_folder',project_info.project_folder);
@@ -77,14 +82,35 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     end
                     
                 elseif(strcmp(oid,'Save') || strcmp(oid,'Open'))
-                    % TODO check if some changes were made to current
-                     % project
-                     answer = questdlg('Are you sure you want to override existing project?','DynareGUI','Yes','No','No') 
-                     if(strcmp(answer,'Yes'))
-                          gui_tools.save_project();
-                     else
-                         return;
-                     end
+                    
+                    if(~strcmp(project_info.project_folder, old_project_folder) && ~isempty(old_project_folder))
+                        answer = questdlg(sprintf('Project folder has been changes.\n Do you want to proceed? If yes, project'' mode file and data file will be copied to the new project folder.'),'DynareGUI Warning','modal');
+                        if(strcmp(answer,'Yes'))
+                            project_info.old_project_folder = old_project_folder;
+                            gui_tools.save_project();
+                            gui_tools.project_log_entry('Warning', sprintf('Project folder has been changed:%s',project_info.project_folder ));
+                            
+                        else
+                            return;
+                        end
+                        
+                        
+                    elseif(~getappdata(0,'new_project_location'))
+                        
+                        % TODO check if some changes were made to current
+                        % project
+                        
+                        answer = questdlg('Are you sure you want to override existing project?','DynareGUI','Yes','No','No');
+                        if(strcmp(answer,'Yes'))
+                            gui_tools.project_log_entry('Warning', sprintf('Existing project is overwritten (%s)',project_info.project_name ));
+                            gui_tools.save_project();
+                        else
+                            return;
+                        end
+                    else
+                         gui_tools.save_project();
+                         setappdata(0,'new_project_location',false);
+                    end
                 end
                 
                 if(strcmp(oid,'New') || strcmp(oid,'Open'))
@@ -92,16 +118,17 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     gui_tools.menu_options('project','On');
                 end
                 
-                 if(strcmp(oid,'New') || strcmp(oid,'Open') || strcmp(oid,'Save As')  )
-                   % change current folder to project folder
+                if(strcmp(oid,'New') || strcmp(oid,'Open') || strcmp(oid,'Save As') || ~strcmp(project_info.project_folder, old_project_folder) )
+                    % change current folder to project folder
                     eval(sprintf('cd ''%s'' ',project_info.project_folder));
-                
+                    
                 end
-                
                 msgbox('Project saved successfully', 'DynareGUI');
             end
         catch ME
-            errordlg(['Error while saving the project: ',ME.message] ,'DynareGUI Error','modal');
+            errosrStr = ['Error while saving the project: ',ME.message];
+            errordlg(errosrStr,'DynareGUI Error','modal');
+            gui_tools.project_log_entry('Error', errosrStr);
         end
     end
 
@@ -114,7 +141,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         set(handles.project_description,'String', project_info.project_description);
         set(handles.model_type, 'Tag', num2str(project_info.model_type));
         set(handles.bg, 'Tag', num2str(project_info.latex));
-        set(handles.maximum_forecast_periods, 'String', num2str(project_info.maximum_forecast_periods));
+        set(handles.default_forecast_periods, 'String', num2str(project_info.default_forecast_periods));
         
     end
 
@@ -153,23 +180,28 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             'HorizontalAlignment', 'left','BackgroundColor', special_color,...
             'Units','characters','Position',[1 top-v_space width v_size] );
         
+%         handles.project_folder = uicontrol(panel_id,'Style','edit',...
+%             'String', project_info.project_folder, 'Enable', modifiable,...
+%             'HorizontalAlignment', 'left',...
+%             'Units','characters','Position',[width+h_space top-v_space width*2 v_size] );
+         
         handles.project_folder = uicontrol(panel_id,'Style','edit',...
-            'String', project_info.project_folder, 'Enable', modifiable,...
+            'String', project_info.project_folder, ...
             'HorizontalAlignment', 'left',...
             'Units','characters','Position',[width+h_space top-v_space width*2 v_size] );
-         
+        
         uicontrol(panel_id,'Style','text',...
             'String','*',...
             'HorizontalAlignment', 'left','BackgroundColor', special_color,...
             'Units','characters','Position',[1+width+h_space+width*2 top-v_space 1 v_size] );
         
         
-        if(strcmp(modifiable,'On'))
+        %if(strcmp(modifiable,'On'))
             handles.project_folder_button = uicontrol(panel_id,'Style','pushbutton',...
                 'String', 'Select...',...
                 'Units','characters','Position',[1+ width+h_space+width*2+v_space top-v_space width/2 v_size] ,...
                 'Callback',{@select_folder});
-        end
+        %end
         
         uicontrol(panel_id,'Style','text',...
             'String','Project description:',...
@@ -262,12 +294,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         set(handles.bg,'Visible','on');
         
         uicontrol(panel_id,'Style','text',...
-            'String','Maximum forecast periods:',...
+            'String','Default forecast periods:',...
             'HorizontalAlignment', 'left','BackgroundColor', special_color,...
             'Units','characters','Position',[1 top-v_space*9 width v_size] );
         
-        handles.maximum_forecast_periods = uicontrol(panel_id,'Style','edit',...
-            'String', project_info.maximum_forecast_periods,...
+        handles.default_forecast_periods = uicontrol(panel_id,'Style','edit',...
+            'String', project_info.default_forecast_periods,...
             'HorizontalAlignment', 'left',...
             'Units','characters','Position',[width+h_space top-v_space*9 width v_size] );
         

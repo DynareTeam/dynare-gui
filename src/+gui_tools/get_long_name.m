@@ -1,7 +1,7 @@
 function lname= get_long_name(code, oid)
+global model_settings;
 lname = code;
 
-model_settings= getappdata(0,'model_settings');
 if(strcmp(oid,'var'))
     data = model_settings.variables; 
 elseif(strcmp(oid,'shock'))

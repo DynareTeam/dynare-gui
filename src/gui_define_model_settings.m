@@ -1,7 +1,6 @@
 function gui_define_model_settings(tabId)
 global project_info;
-
-
+global model_settings;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -16,22 +15,23 @@ uicontrol(tabId,'Style','text',...
     'Units','characters','Position',[1 top 50 2] );
 
 model_name = project_info.model_name;
-% fileName = [model_name, '_model_settings.mat'];
-% 
-% if ~exist(fileName)
-%     msgbox(sprintf('File %s does not exist. I will create initial model settings.',fileName), 'DynareGUI');
-%     gui_create_model_settings(model_name);
-% end
 
-if ~(isappdata(0,'model_settings'))
-    msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI');
+if (isempty(fieldnames(model_settings)))
+    uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
     gui_create_model_settings(model_name);
+    gui_tools.menu_options('estimation','On');
+    if(project_info.model_type==1)
+        gui_tools.menu_options('stohastic','On');
+    else
+        gui_tools.menu_options('deterministic','On');
+    end
     
 end
 
-model_settings = getappdata(0, 'model_settings');
-%load(fileName);
-%setappdata(0,'model_settings',model_settings);
+current_settings.shocks =  model_settings.shocks;
+current_settings.variables = model_settings.variables;
+current_settings.params = model_settings.params;
+current_settings.shocks_corr = model_settings.shocks_corr;
 
 tab_created_id = [0,0,0];
 
@@ -60,7 +60,7 @@ tabsPanel(3) = uipanel('Parent', shocks_tab,'BackgroundColor', 'white', 'BorderT
 
 % Show the first tab
 optionsTabGroup.SelectedChild = 1;
-gui_variables(tabsPanel(1), model_settings.variables);
+gui_variables(tabsPanel(1), current_settings.variables);
 
 uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','characters','Position',[2 1 30 2], 'Callback',{@save_settings} );
 uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
@@ -69,26 +69,27 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         tabNum = event.SelectedChild;
         if(tab_created_id(tabNum) == 0)
             if(tabNum == 2)
-                gui_params(tabsPanel(2), model_settings.params);
+                gui_params(tabsPanel(2), current_settings.params);
             elseif(tabNum == 3)
-                gui_shocks(tabsPanel(3), model_settings.shocks, model_settings.shocks_corr);
+                gui_shocks(tabsPanel(3), current_settings.shocks, current_settings.shocks_corr);
             end
         end
     end
 
     function save_settings(hObject,event)
         try
-            %save(fileName,'model_settings');
-            setappdata(0,'model_settings',model_settings);
-            gui_tools.menu_options('estimation','On');
-            if(project_info.model_type==1)
-                gui_tools.menu_options('stohastic','On');
-            else
-                gui_tools.menu_options('deterministic','On');
-            end
+            model_settings.shocks = current_settings.shocks;
+            model_settings.variables = current_settings.variables;
+            model_settings.params = current_settings.params;
+            model_settings.shocks_corr = current_settings.shocks_corr;
+            
+            
             msgbox('Model settings are saved successfully', 'DynareGUI');
+            gui_tools.project_log_entry('Saving model settings','...');
         catch
-            errordlg('Error while saving model settings!' ,'DynareGUI Error','modal');
+            errorStr = 'Error while saving model settings!';
+            errordlg( errorStr,'DynareGUI Error','modal');
+            gui_tools.project_log_entry('Error',errorStr);
         end
     end
 
@@ -152,7 +153,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-            model_settings.shocks{r,c} = val;
+            current_settings.shocks{r,c} = val;
             c_show_hide_group = 7;
             
             if(c == c_show_hide_group) %show/hide group
@@ -161,8 +162,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     if(strcmp(t_data{i,1},t_data{r,1}))
                         t_data{i,c}= val;
                         t_data{i,c-1}= val;
-                        model_settings.shocks{i,c} = val;
-                        model_settings.shocks{i,c-1} = val;
+                        current_settings.shocks{i,c} = val;
+                        current_settings.shocks{i,c-1} = val;
                     end
                 end
                 set(uit,'data',t_data);
@@ -174,7 +175,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
             %gui_options.shocks_corr{r,c} = str2num(val);
-            model_settings.shocks_corr(r,c) = str2num(val);
+            current_settings.shocks_corr(r,c) = str2num(val);
             
         end
     end
@@ -198,7 +199,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-            model_settings.variables{r,c} = val;
+            current_settings.variables{r,c} = val;
             c_show_hide_group = 6;
             
             
@@ -208,8 +209,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     if(strcmp(t_data{i,1},t_data{r,1}))
                         t_data{i,c}= val;
                         t_data{i,c-1}= val;
-                        model_settings.variables{i,c} = val;
-                        model_settings.variables{i,c-1} = val;
+                        current_settings.variables{i,c} = val;
+                        current_settings.variables{i,c-1} = val;
                     end
                 end
                 set(uit,'data',t_data);
@@ -222,10 +223,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     function gui_params(tabId, data)
         
         % TODO add estimated values after estimation command
-        %      for i = 1:size(data,1)
-        %          data(:,6)= eval(data{i,2});
-        %          gui_options.variables{i,6} = data{i,6};
-        %      end
+        for i = 1:size(data,1)
+            try
+                estim_value = evalin('base',data{i,2});
+                data{i,6} = estim_value;
+            catch
+                % TODO error ???
+            end
+        end
         
         
         column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Calibrated value ', 'Estimated value ' , 'Show/Hide ','Show/Hide group '};
@@ -245,7 +250,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-            model_settings.params{r,c} = val;
+            current_settings.params{r,c} = val;
             
             c_show_hide_group = 8;
             
@@ -255,8 +260,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     if(strcmp(t_data{i,1},t_data{r,1}))
                         t_data{i,c}= val;
                         t_data{i,c-1}= val;
-                        model_settings.params{i,c} = val;
-                        model_settings.params{i,c-1} = val;
+                        current_settings.params{i,c} = val;
+                        current_settings.params{i,c-1} = val;
                     end
                 end
                 set(uit,'data',t_data);

@@ -16,7 +16,7 @@ uicontrol(tabId,'Style','text',...
 
 model_name = project_info.model_name;
 
-if (isempty(fieldnames(model_settings)))
+if (isempty(model_settings) || isempty(fieldnames(model_settings)))
     uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
     gui_create_model_settings(model_name);
     gui_tools.menu_options('estimation','On');

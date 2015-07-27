@@ -2,6 +2,7 @@ function gui_open_project(hObject)
 
 global project_info;
 global model_settings;
+global dynare_gui_;
 
 
 % TODO close existing project
@@ -42,7 +43,7 @@ try
         gui_project(tabId, 'Open');
         
         % change current folder to project folder
-        % eval(sprintf('cd ''%s'' ',project_info.project_folder));
+        eval(sprintf('cd ''%s'' ',project_info.project_folder));
         
         %enable menu options
         gui_tools.menu_options('project','On');

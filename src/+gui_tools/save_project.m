@@ -35,7 +35,7 @@ function save_project()
 % TODO save all relevant project information (other .mat files): oo_ , M_,
 % options_
 
-if(~isempty(fieldnames(model_settings)))
+if(~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
     save(fullFileName,'model_settings', '-append');
     project_structures = 'project_structures= model_settings';
 end

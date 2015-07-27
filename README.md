@@ -29,7 +29,6 @@ How to run it:
    >> addpath c:\dynare\dynare-gui\src\resources
    >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14
    >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14\Patch
-
 ```
 
 - Launch the GUI
@@ -38,6 +37,9 @@ How to run it:
   >> Dynare_GUI
 ```
 
-- Important note: Following folders are not on GitHub, but there are necessary for running the application:
-    \src\resources
+- Important note: 
+
+```Following folders are not on GitHub, but there are necessary for running the application:
+    \src\resources and
     \src\GUILayout-v1p14\+uiextras\Resources
+```

@@ -39,7 +39,6 @@ How to run it:
 
 - Important note: 
 
-```Following folders are not on GitHub, but there are necessary for running the application:
-    \src\resources and
-    \src\GUILayout-v1p14\+uiextras\Resources
-```
+Following folders are not on GitHub, but there are necessary for running the application:
+- \src\resources
+- \src\GUILayout-v1p14\+uiextras\Resources

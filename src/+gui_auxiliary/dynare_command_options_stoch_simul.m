@@ -26,14 +26,6 @@ dynare_gui_.stoch_simul.simulation{num,2} = '100';
 dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.simulation{num,4} = 'Number of points (burnin) dropped at the beginning of simulation before computing the summary statistics. Note that this option does not affect the simulated series stored in oo .endo simul and the workspace. Here, no periods are dropped. Default: 100.';      
 
-
-num = num+1;
-dynare_gui_.stoch_simul.simulation{num,1} = 'order';    
-dynare_gui_.stoch_simul.simulation{num,2} = '2';    
-dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER';   
-dynare_gui_.stoch_simul.simulation{num,4} = 'Order of Taylor approximation. Acceptable values are 1, 2 and 3. Note that for third order, k_order_solver option is implied and only empirical moments are available (you must provide a value for periods option). Default: 2 (except after an estimation command, in which case the default is the value used for the estimation).';  
-
-
 num = num+1;
 dynare_gui_.stoch_simul.simulation{num,1} = 'periods';    
 dynare_gui_.stoch_simul.simulation{num,2} = '0';    
@@ -46,33 +38,6 @@ dynare_gui_.stoch_simul.simulation{num,2} = '1';
 dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.simulation{num,4} = 'Number of series to simulate when empirical moments are requested (i.e. periods > 0). Note that if this option is greater than 1, the additional series will not be used for computing the empirical moments but will simply be saved in binary form to the file FILENAME_simul. Default: 1.';
 
-num = num+1;
-dynare_gui_.stoch_simul.simulation{num,1} = 'conditional_variance_decomposition';    
-dynare_gui_.stoch_simul.simulation{num,2} = '';    
-dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER'; %'special'   
-dynare_gui_.stoch_simul.simulation{num,4} = 'Computes a conditional variance decomposition for the specified period(s). The periods must be strictly positive. Conditional variances are given by var(yt+kjt).For period 1, the conditional variance decomposition provides the decomposition of the effects of shocks upon impact. The results are stored in oo_.conditional_variance_decomposition. The variance decomposition is only conducted, if theoretical moments are requested, i.e. using the periods=0-option. In case of order=2, Dynare provides a second-order accurate approximation to the true second moments based on the linear terms of the second-order solution (see Kim, Kim, Schaumburg and Sims (2008)). Note that the unconditional variance decomposition (i.e. at horizon infinity) is automatically conducted if theoretical moments are requested.';
-
-num = num+1;
-dynare_gui_.stoch_simul.simulation{num,1} = 'pruning';    
-dynare_gui_.stoch_simul.simulation{num,2} = '';    
-dynare_gui_.stoch_simul.simulation{num,3} = 'check_option';   
-dynare_gui_.stoch_simul.simulation{num,4} = 'Discard higher order terms when iteratively computing simulations of the solution. At second order, Dynare uses the algorithm of Kim, Kim, Schaumburg and Sims (2008), while at third order its generalization by Andreasen, Fern´andez-Villaverde and Rubio-Ram´?rez (2013) is used.';
-
-num = num+1;
-dynare_gui_.stoch_simul.simulation{num,1} = 'partial_information';    
-dynare_gui_.stoch_simul.simulation{num,2} = '';    
-dynare_gui_.stoch_simul.simulation{num,3} = 'check_option';  
-dynare_gui_.stoch_simul.simulation{num,4} = 'Computes the solution of the model under partial information, along the lines of Pearlman, Currie and Levine (1986). Agents are supposed to observe only some variables of the economy. The set of observed variables is declared using the varobs command. Note that if varobs is not present or contains all endogenous variables, then this is the full information case and this option has no effect.';
-
-
-num = num+1;
-dynare_gui_.stoch_simul.simulation{num,1} = 'loglinear';    
-dynare_gui_.stoch_simul.simulation{num,2} = '';    
-dynare_gui_.stoch_simul.simulation{num,3} = 'check_option';  
-dynare_gui_.stoch_simul.simulation{num,4} = 'Note that ALL variables are log-transformed by using the Jacobian transformation, not only selected ones. Thus, you have to make sure that your variables have strictly positive steady states. stoch_simul will display the moments, decision rules, and impulse responses for the log-linearized variables. The decision rules saved in oo_.dr and the simulated variables will also be the ones for the log-linear variables.';
-
-
-
 
 %% Group 2: IRF
 num = 1;
@@ -81,18 +46,6 @@ dynare_gui_.stoch_simul.irf{num,2} = '40';
 dynare_gui_.stoch_simul.irf{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.irf{num,4} = 'Number of periods on which to compute the IRFs. Setting irf=0, suppresses the plotting of IRFs. Default: 40.';      
 
-% num = num+1;
-% dynare_gui_.stoch_simul.irf{num,1} = 'irf_shocks';    
-% dynare_gui_.stoch_simul.irf{num,2} = '';    
-% dynare_gui_.stoch_simul.irf{num,3} = 'list';   
-% dynare_gui_.stoch_simul.irf{num,4} = 'The exogenous variables for which to compute IRFs. Default: all.'; 
-
-num = num+1;
-dynare_gui_.stoch_simul.irf{num,1} = 'relative_irf';    
-dynare_gui_.stoch_simul.irf{num,2} = '';    
-dynare_gui_.stoch_simul.irf{num,3} = 'check_option';   
-dynare_gui_.stoch_simul.irf{num,4} = 'Requests the computation of normalized IRFs in percentage of the standard error of each shock.';    
-
 num = num+1;
 dynare_gui_.stoch_simul.irf{num,1} = 'replic';    
 dynare_gui_.stoch_simul.irf{num,2} = '1 or 50';    
@@ -100,15 +53,18 @@ dynare_gui_.stoch_simul.irf{num,3} = 'INTEGER'; %'special'
 dynare_gui_.stoch_simul.irf{num,4} = 'Number of simulated series used to compute the IRFs. Default: 1 if order=1, and 50 otherwise.';
 
 
-
-
 %% Group 3: Solver
 num = 1;
+dynare_gui_.stoch_simul.solver{num,1} = 'order';    
+dynare_gui_.stoch_simul.solver{num,2} = '2';    
+dynare_gui_.stoch_simul.solver{num,3} = 'INTEGER';   
+dynare_gui_.stoch_simul.solver{num,4} = 'Order of Taylor approximation. Acceptable values are 1, 2 and 3. Note that for third order, k_order_solver option is implied and only empirical moments are available (you must provide a value for periods option). Default: 2 (except after an estimation command, in which case the default is the value used for the estimation).';  
+
+num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'k_order_solver';    
 dynare_gui_.stoch_simul.solver{num,2} = '';    
 dynare_gui_.stoch_simul.solver{num,3} = 'check_option';   %'special'
 dynare_gui_.stoch_simul.solver{num,4} = 'Use a k-order solver (implemented in C++) instead of the default Dynare solver.This option is not yet compatible with the bytecode option. Default: disabled for order 1 and 2, enabled otherwise';
-
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'qz_criterium';    
@@ -129,10 +85,28 @@ dynare_gui_.stoch_simul.solver{num,3} = 'INTEGER';
 dynare_gui_.stoch_simul.solver{num,4} = 'Determines the non-linear solver to use. Possible values for the option are: 0, 1, 2, 3, 4, 5, 6, 7 and 8. Default value is 2.';
 
 num = num+1;
+dynare_gui_.stoch_simul.solver{num,1} = 'loglinear';    
+dynare_gui_.stoch_simul.solver{num,2} = '';    
+dynare_gui_.stoch_simul.solver{num,3} = 'check_option';  
+dynare_gui_.stoch_simul.solver{num,4} = 'Note that ALL variables are log-transformed by using the Jacobian transformation, not only selected ones. Thus, you have to make sure that your variables have strictly positive steady states. stoch_simul will display the moments, decision rules, and impulse responses for the log-linearized variables. The decision rules saved in oo_.dr and the simulated variables will also be the ones for the log-linear variables.';
+
+num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'aim_solver';    
 dynare_gui_.stoch_simul.solver{num,2} = '';    
 dynare_gui_.stoch_simul.solver{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) to compute the decision rules, instead of using Dynare’s default method based on a generalized Schur decomposition. This option is only valid for first order approximation. See AIM website for more details on the algorithm.';
+
+num = num+1;
+dynare_gui_.stoch_simul.solver{num,1} = 'pruning';    
+dynare_gui_.stoch_simul.solver{num,2} = '';    
+dynare_gui_.stoch_simul.solver{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.solver{num,4} = 'Discard higher order terms when iteratively computing simulations of the solution. At second order, Dynare uses the algorithm of Kim, Kim, Schaumburg and Sims (2008), while at third order its generalization by Andreasen, Fern´andez-Villaverde and Rubio-Ram´?rez (2013) is used.';
+
+num = num+1;
+dynare_gui_.stoch_simul.solver{num,1} = 'partial_information';    
+dynare_gui_.stoch_simul.solver{num,2} = '';    
+dynare_gui_.stoch_simul.solver{num,3} = 'check_option';  
+dynare_gui_.stoch_simul.solver{num,4} = 'Computes the solution of the model under partial information, along the lines of Pearlman, Currie and Levine (1986). Agents are supposed to observe only some variables of the economy. The set of observed variables is declared using the varobs command. Note that if varobs is not present or contains all endogenous variables, then this is the full information case and this option has no effect.';
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'sylvester';    
@@ -147,21 +121,7 @@ dynare_gui_.stoch_simul.solver{num,3} = 'DOUBLE';
 dynare_gui_.stoch_simul.solver{num,4} = 'It is the convergence criterion used in the fixed point Sylvester solver. Its default value is 1e-12.';
 
 
-%% Group 4: HP filter
-num = 1;
-dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_filter';    
-dynare_gui_.stoch_simul.hp_filter{num,2} = '';    
-dynare_gui_.stoch_simul.hp_filter{num,3} = 'DOUBLE';   
-dynare_gui_.stoch_simul.hp_filter{num,4} = 'Uses HP filter with lambda = DOUBLE before computing moments. Default: no filter.';      
-
-num = num+1;
-dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_ngrid';    
-dynare_gui_.stoch_simul.hp_filter{num,2} = '512';    
-dynare_gui_.stoch_simul.hp_filter{num,3} = 'INTEGER';   
-dynare_gui_.stoch_simul.hp_filter{num,4} = 'Number of points in the grid for the discrete Inverse Fast Fourier Transform used in the HP filter computation. It may be necessary to increase it for highly autocorrelated processes. Default: 512.';      
-
-
-%% Group 5: DR
+%% Group 4: DR
 num = 1;
 dynare_gui_.stoch_simul.dr{num,1} = 'dr';    
 dynare_gui_.stoch_simul.dr{num,2} = 'default';    
@@ -179,11 +139,26 @@ dynare_gui_.stoch_simul.dr{num,1} = 'dr_logarithmic_reduction_tol';
 dynare_gui_.stoch_simul.dr{num,2} = '1e-12';    
 dynare_gui_.stoch_simul.dr{num,3} = 'DOUBLE';   
 dynare_gui_.stoch_simul.dr{num,4} = 'The convergence criterion used in the logarithmic reduction algorithm. Its default value is 1e-12.';  
+
 num = num+1;
 dynare_gui_.stoch_simul.dr{num,1} = 'dr_logarithmic_reduction_maxiter';    
 dynare_gui_.stoch_simul.dr{num,2} = '100';    
 dynare_gui_.stoch_simul.dr{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.dr{num,4} = 'The maximum number of iterations used in the logarithmic reduction algorithm. Its default value is 100.';  
+
+
+%% Group 5: HP filter
+num = 1;
+dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_filter';    
+dynare_gui_.stoch_simul.hp_filter{num,2} = '';    
+dynare_gui_.stoch_simul.hp_filter{num,3} = 'DOUBLE';   
+dynare_gui_.stoch_simul.hp_filter{num,4} = 'Uses HP filter with lambda = DOUBLE before computing moments. Default: no filter.';      
+
+num = num+1;
+dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_ngrid';    
+dynare_gui_.stoch_simul.hp_filter{num,2} = '512';    
+dynare_gui_.stoch_simul.hp_filter{num,3} = 'INTEGER';   
+dynare_gui_.stoch_simul.hp_filter{num,4} = 'Number of points in the grid for the discrete Inverse Fast Fourier Transform used in the HP filter computation. It may be necessary to increase it for highly autocorrelated processes. Default: 512.';      
 
 
 %% Group 6: Output 
@@ -193,6 +168,18 @@ dynare_gui_.stoch_simul.output{num,1} = 'irf_plot_threshold';
 dynare_gui_.stoch_simul.output{num,2} = '1e-10';    
 dynare_gui_.stoch_simul.output{num,3} = 'DOUBLE';   
 dynare_gui_.stoch_simul.output{num,4} = 'Threshold size for plotting IRFs. All IRFs for a particular variable with a maximum absolute deviation from the steady state smaller than this value are not displayed. Default: 1e-10.';      
+
+% num = num+1;
+% dynare_gui_.stoch_simul.output{num,1} = 'irf_shocks';    
+% dynare_gui_.stoch_simul.output{num,2} = '';    
+% dynare_gui_.stoch_simul.output{num,3} = 'list';   
+% dynare_gui_.stoch_simul.output{num,4} = 'The exogenous variables for which to compute IRFs. Default: all.'; 
+
+num = num+1;
+dynare_gui_.stoch_simul.output{num,1} = 'relative_irf';    
+dynare_gui_.stoch_simul.output{num,2} = '';    
+dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.output{num,4} = 'Requests the computation of normalized IRFs in percentage of the standard error of each shock.';    
 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'nocorr';    
@@ -205,7 +192,6 @@ dynare_gui_.stoch_simul.output{num,1} = 'nofunctions';
 dynare_gui_.stoch_simul.output{num,2} = '';    
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.output{num,4} = 'Don''t print the coefficients of the approximated solution (printing them is the default).';      
-
 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'nomoments';    
@@ -237,11 +223,18 @@ dynare_gui_.stoch_simul.output{num,2} = '';
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.output{num,4} = 'Don''t print anything. Useful for loops.';
 
- 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'print';    
 dynare_gui_.stoch_simul.output{num,2} = '';    
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.output{num,4} = 'Print results (opposite of noprint).';
+
+num = num+1;
+dynare_gui_.stoch_simul.output{num,1} = 'conditional_variance_decomposition';    
+dynare_gui_.stoch_simul.output{num,2} = '';    
+dynare_gui_.stoch_simul.output{num,3} = 'INTEGER'; %'special'   
+dynare_gui_.stoch_simul.output{num,4} = 'Computes a conditional variance decomposition for the specified period(s). The periods must be strictly positive. Conditional variances are given by var(yt+kjt).For period 1, the conditional variance decomposition provides the decomposition of the effects of shocks upon impact. The results are stored in oo_.conditional_variance_decomposition. The variance decomposition is only conducted, if theoretical moments are requested, i.e. using the periods=0-option. In case of order=2, Dynare provides a second-order accurate approximation to the true second moments based on the linear terms of the second-order solution (see Kim, Kim, Schaumburg and Sims (2008)). Note that the unconditional variance decomposition (i.e. at horizon infinity) is automatically conducted if theoretical moments are requested.';
+
+
 
 end

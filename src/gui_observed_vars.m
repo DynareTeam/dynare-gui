@@ -29,7 +29,7 @@ panel_id = uipanel( ...
 create_panel_elements(panel_id);
 
 uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','characters','Position',[2 1 30 2], 'Callback',{@select_vars} );
-uicontrol(tabId, 'Style','pushbutton','String','Load obs. vars from data file','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@load_vars} );
+uicontrol(tabId, 'Style','pushbutton','String','Load obs. vars from data file','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@load_vars} , 'Enable', 'Off');
 uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','characters','Position',[2+30+2+30+2 1 30 2], 'Callback',{@remove_selected} );
 uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','characters','Position',[2+30+2+30+2+30+2  1 30 2], 'Callback',{@save_changes} );
 uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+30+2+30+2+30+2+30+2  1 30 2], 'Callback',{@close_tab,tabId} );

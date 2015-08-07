@@ -7,8 +7,8 @@ special_color = char(getappdata(0,'special_color'));
 
 fHandle = figure('Name', 'Dynare GUI - Command definition', ...
     'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
-    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off');
-% 'WindowStyle','modal',
+    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off','WindowStyle','modal');
+
 movegui(fHandle,'center');
 set(fHandle, 'Visible', 'on');
 
@@ -37,13 +37,15 @@ handles.uipanel = uipanel( ...
 
 
 % Create tabs
-handles.tab_group = uiextras.TabPanel( 'Parent',  handles.uipanel,  'Padding', 2, 'Visible', 'on' );
+%handles.tab_group = uiextras.TabPanel( 'Parent',  handles.uipanel,  'Padding', 2, 'Visible', 'on' );
+handles.tab_group = uitabgroup(handles.uipanel,'Position',[0 0 1 1]);
 
 for i=1:num_groups
-    create_tab(i, names(i));
+    %create_tab(i, names(i));
+    create_tab(i, names{i});
 end
 
-handles.tab_group.SelectedChild = 1;
+%handles.tab_group.SelectedChild = 1;
 % --- PUSHBUTTONS -------------------------------------
 handles.pussbuttonSimulation = uicontrol( ...
     'Parent', fHandle, ...
@@ -81,11 +83,14 @@ handles.pussbuttonReset = uicontrol( ...
 
 
     function create_tab(num,group_name)
-        new_tab = uiextras.Panel( 'Parent', handles.tab_group, 'Padding', 2);
-        handles.tab_group.TabNames(num) = group_name;
+        %new_tab = uiextras.Panel( 'Parent', handles.tab_group, 'Padding', 2);
+        %handles.tab_group.TabNames(num) = group_name;
+        new_tab = uitab(handles.tab_group, 'Title', group_name, 'UserData', num);
+        
         tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
         
-        group = getfield(comm, group_name{1});
+        %group = getfield(comm, group_name{1});
+        group = getfield(comm, group_name);
         numOptions = size(group,1);
         tab_handles = [];
         width_name = 34;

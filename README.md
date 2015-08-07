@@ -27,8 +27,6 @@ How to run it:
 ```matlab
    >> addpath c:\dynare\dynare-gui\src
    >> addpath c:\dynare\dynare-gui\src\resources
-   >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14
-   >> addpath c:\dynare\dynare-gui\src\GUILayout-v1p14\Patch
 ```
 
 - Launch the GUI
@@ -39,7 +37,6 @@ How to run it:
 
 - Important note: 
 
-```Following folders are not on GitHub, but there are necessary for running the application:
-    \src\resources and
-    \src\GUILayout-v1p14\+uiextras\Resources
-```
+Following folder is not on GitHub, but it is necessary for running the application:
+- \src\resources 
+

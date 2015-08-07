@@ -20,12 +20,14 @@ end
 created = 1;
 
 tabGroup = getappdata(0, 'tabGroup');
-index = checkIfExistsTab(tabGroup, title);
+tab = checkIfExistsTab(tabGroup, title);
 
-if(index)
-    set(tabGroup, 'SelectedIndex' , index);
-    tabs = get(tabGroup,'Children');
-    newTab = tabs(index);
+if(~isempty(tab))
+    %%% set(tabGroup, 'SelectedIndex' , index);
+    %tabs = get(tabGroup,'Children');
+    %newTab = tabs(index);
+    set(handles.tabGroup, 'SelectedTab' , tab);
+    newTab = tab;
     created = 0;
     return;
 end
@@ -35,7 +37,8 @@ num = length(get(handles.tabGroup,'Children'));
 newTab = uitab(handles.tabGroup, 'Title', title);
 % addCloseButton(newTab);
 
-set(handles.tabGroup, 'SelectedIndex' , num+1);
+%%% set(handles.tabGroup, 'SelectedIndex' , num+1);
+set(handles.tabGroup, 'SelectedTab' , newTab);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -65,15 +68,17 @@ setappdata(0,'tabGroup', tabGroup);
 %         
 %     end
     
-    function index = checkIfExistsTab(tabGroup,tabTitle)
+    function tab = checkIfExistsTab(tabGroup,tabTitle)
         tabs = get(tabGroup,'Children');
         num = length(tabs);
-        index = 0;
+        %index = 0;
+        tab = [];
         for i=1:num
             hTab = tabs(i);
             tit = get(hTab, 'Title');
             if(strcmp(tit, tabTitle))
-                index = i;
+                %index = i;
+                tab=hTab;
                 return;
             end
         end

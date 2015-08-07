@@ -44,29 +44,34 @@ panel_id = uipanel( ...
     'BorderType', 'none');
 
 %optionsTabGroup = gui_tabs.TabPanel( 'Parent',  panel_id,  'Padding', 2, 'Callback',{@selection_changed} );  %SelectionChangeFcn
-optionsTabGroup = uiextras.TabPanel( 'Parent',  panel_id,  'Padding', 2, 'Callback',{@selection_changed}, 'Visible', 'on' );  %SelectionChangeFcn
 
-variables_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
-optionsTabGroup.TabNames(1) = cellstr('variables');
+optionsTabGroup = uitabgroup(panel_id,'Position',[0 0 1 1], 'SelectionChangedFcn', {@selection_changed});
+variables_tab = uitab(optionsTabGroup, 'Title', 'Variables', 'UserData', 1);
+param_tab = uitab(optionsTabGroup, 'Title', 'Parameters','UserData', 2 );
+shocks_tab = uitab(optionsTabGroup, 'Title', 'Shocks','UserData', 3);
+
+%optionsTabGroup = uiextras.TabPanel( 'Parent',  panel_id,  'Padding', 2, 'Callback',{@selection_changed}, 'Visible', 'on' );  %SelectionChangeFcn
+%variables_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
+%optionsTabGroup.TabNames(1) = cellstr('variables');
 tabsPanel(1) = uipanel('Parent', variables_tab,'BackgroundColor', 'white', 'BorderType', 'none');
 
-param_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
-optionsTabGroup.TabNames(2) = cellstr('parameters');
+%param_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
+%optionsTabGroup.TabNames(2) = cellstr('parameters');
 tabsPanel(2) = uipanel('Parent', param_tab,'BackgroundColor', 'white', 'BorderType', 'none');
 
-shocks_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
-optionsTabGroup.TabNames(3) = cellstr('shocks');
+%shocks_tab = uiextras.Panel( 'Parent', optionsTabGroup, 'Padding', 2);
+%optionsTabGroup.TabNames(3) = cellstr('shocks');
 tabsPanel(3) = uipanel('Parent', shocks_tab,'BackgroundColor', 'white', 'BorderType', 'none');
 
 % Show the first tab
-optionsTabGroup.SelectedChild = 1;
+%optionsTabGroup.SelectedChild = 1;
 gui_variables(tabsPanel(1), current_settings.variables);
 
 uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','characters','Position',[2 1 30 2], 'Callback',{@save_settings} );
 uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
 
     function selection_changed(hObject,event)
-        tabNum = event.SelectedChild;
+        tabNum = event.NewValue.UserData;
         if(tab_created_id(tabNum) == 0)
             if(tabNum == 2)
                 gui_params(tabsPanel(2), current_settings.params);
@@ -74,6 +79,15 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 gui_shocks(tabsPanel(3), current_settings.shocks, current_settings.shocks_corr);
             end
         end
+        
+%         tabNum = event.SelectedChild;
+%         if(tab_created_id(tabNum) == 0)
+%             if(tabNum == 2)
+%                 gui_params(tabsPanel(2), current_settings.params);
+%             elseif(tabNum == 3)
+%                 gui_shocks(tabsPanel(3), current_settings.shocks, current_settings.shocks_corr);
+%             end
+%         end
     end
 
     function save_settings(hObject,event)

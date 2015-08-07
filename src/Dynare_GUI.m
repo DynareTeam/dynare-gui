@@ -22,7 +22,7 @@ function varargout = Dynare_GUI(varargin)
 
 % Edit the above text to modify the response to help Dynare_GUI
 
-% Last Modified by GUIDE v2.5 07-Jul-2015 18:58:54
+% Last Modified by GUIDE v2.5 07-Aug-2015 00:53:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -394,4 +394,3 @@ function newTab = addTab(hObject, title, handles)
 
 
 end
-

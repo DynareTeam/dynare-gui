@@ -133,22 +133,26 @@ top = 35;
         maxDisplayed = 12;
         
         % Create tabs
-        handles.result_tab_group = uiextras.TabPanel( 'Parent',  handles.uipanelResults,  'Padding', 2, 'Visible', 'on' );
+        %handles.result_tab_group = uiextras.TabPanel( 'Parent',  handles.uipanelResults,  'Padding', 2, 'Visible', 'on' );
+        handles.result_tab_group = uitabgroup(handles.uipanelResults,'Position',[0 0 1 1]);
         
         for i=1:num_groups
-            create_tab(i, names(i));
+            %create_tab(i, names(i));
+            create_tab(i, names{i});
         end
         
         % Show the first tab
-        handles.result_tab_group.SelectedChild = 1;
+        %handles.result_tab_group.SelectedChild = 1;
         
         
         function create_tab(num,group_name)
-            new_tab = uiextras.Panel( 'Parent', handles.result_tab_group, 'Padding', 2);
-            handles.result_tab_group.TabNames(num) = group_name;
+            %new_tab = uiextras.Panel( 'Parent', handles.result_tab_group, 'Padding', 2);
+            %handles.result_tab_group.TabNames(num) = group_name;
+            new_tab = uitab(handles.result_tab_group, 'Title',group_name , 'UserData', num);
             tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
             
-            group = getfield(results, group_name{1});
+            %group = getfield(results, group_name{1});
+            group = getfield(results, group_name);
             numTabResults = size(group,1);
             
             
@@ -172,7 +176,6 @@ top = 35;
                 
                 tt_string = combine_desriptions(group{ii,3});
                 handles.tab_results(num,ii) = uicontrol('Parent', tabs_panel , 'style','checkbox',...  %new_tab
-                    'clipping','on',...
                     'unit','characters',...
                     'position',[3 top_position-(2*ii) 60 2],...
                     'TooltipString', gui_tools.tool_tip_text(tt_string,50),...
@@ -343,7 +346,8 @@ top = 35;
         %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
           %  'Position',[0 0 1 1]);
          
-        handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
+        %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
+        handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
         
         position = 1;
         top_position = 25;
@@ -368,8 +372,9 @@ top = 35;
                 
                 tubNum = tubNum +1;
                 %new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle);
-                new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
-                handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+                %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
+                %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+                new_tab = uitab(handles.varsTabGroup, 'Title',tabTitle , 'UserData', tubNum);
                 varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
                 currentPanel = varsPanel(tubNum);
                 
@@ -402,7 +407,6 @@ top = 35;
             end
             
             handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-                'clipping','on',...
                 'unit','characters',...
                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
                 'TooltipString', char(gui_vars(ii,2)),...
@@ -417,7 +421,7 @@ top = 35;
         handles.numVars= currentVar;
         
          % Show the first tab
-        handles.varsTabGroup.SelectedChild = 1;
+        %handles.varsTabGroup.SelectedChild = 1;
         
         
         
@@ -449,16 +453,31 @@ top = 35;
 
 
     function index = checkIfExistsTab(tabGroup,tabTitle)
+        tabs = get(tabGroup,'Children');
+        num = length(tabs);
         index = 0;
-        tabs = tabGroup.TabNames;
-        if(~isempty(tabs))
-            for i=1:size(tabs,2)
-                if(strcmp(char(tabs(i)), tabTitle))
-                    index = i;
-                    return;
-                end
+        %tab = [];
+        for i=1:num
+            hTab = tabs(i);
+            tit = get(hTab, 'Title');
+            if(strcmp(tit, tabTitle))
+                index = i;
+                %tab=hTab;
+                return;
             end
         end
+        
+        
+%         index = 0;
+%         tabs = tabGroup.TabNames;
+%         if(~isempty(tabs))
+%             for i=1:size(tabs,2)
+%                 if(strcmp(char(tabs(i)), tabTitle))
+%                     index = i;
+%                     return;
+%                 end
+%             end
+%         end
         
 
     end
@@ -484,32 +503,7 @@ top = 35;
         end
         
         
-%          options_.solve_tolf = 1e-12;
-%         options_.mh_jscale = 0.8;
-%         options_.mh_nblck = 1;
-%         options_.plot_priors = 1;
-%        options_.datafile = 'fsdat_simul';
-%          options_.graph_format=[];
-%          options_.graph_format = 'fig';
-%          options_.nobs = 192;
-%         options_.order = 1;
-        
-        %         save('fs2000_results.mat', 'oo_', 'M_', 'options_');
-        %         if exist('estim_params_', 'var') == 1
-        %             save('fs2000_results.mat', 'estim_params_', '-append');
-        %         end
-        %         if exist('bayestopt_', 'var') == 1
-        %             save('fs2000_results.mat', 'bayestopt_', '-append');
-        %         end
-        %         if exist('dataset_', 'var') == 1
-        %             save('fs2000_results.mat', 'dataset_', '-append');
-        %         end
-        %         if exist('estimation_info', 'var') == 1
-        %             save('fs2000_results.mat', 'estimation_info', '-append');
-        %         end
-        
-        %openfig('fs2000_Priors1.fig', 'reuse')
-        
+       
         
         
 %         comm_str = get(handles.estimation, 'String');

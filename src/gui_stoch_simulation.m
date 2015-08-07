@@ -100,7 +100,7 @@ top = 35;
 			'Parent', tabId, ...
 			'Tag', 'GroupDisplayBy', ...
 			'Units', 'characters', ...
-			'Position', [2 4.5 30 2], ...
+			'Position', [42 4.5 30 2], ...
 			'Title', '', ...
 			'BorderType', 'none', ...
 			'BorderWidth', 0);
@@ -110,7 +110,7 @@ top = 35;
 			'Tag', 'radiobuttonShock', ...
 			'Style', 'radiobutton', ...
 			'Units', 'characters', ...
-			'Position', [41 0.153846153846152 10 1.76923076923077], ...
+			'Position', [0 0.2 10 1.5], ...
 			'String', 'shock');
 
 		handles.radiobuttonVariable = uicontrol( ...
@@ -118,7 +118,7 @@ top = 35;
 			'Tag', 'radiobuttonVariable', ...
 			'Style', 'radiobutton', ...
 			'Units', 'characters', ...
-			'Position', [53 0.153846153846152 17.4 1.76923076923077], ...
+			'Position', [12 0.2 15 1.5], ...
 			'String', 'variable');
         
         % --- PUSHBUTTONS -------------------------------------
@@ -169,8 +169,9 @@ top = 35;
         %%handles.shocksTabGroup = uitabgroup(handles.uipanelShocks,'BackgroundColor', special_color,...
            %'Position',[0 0 1 1]);
         
-        handles.shocksTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelShocks,  'Padding', 2);
+        %handles.shocksTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelShocks,  'Padding', 2);
         
+        handles.shocksTabGroup = uitabgroup(handles.uipanelShocks,'Position',[0 0 1 1]);
        
         position = 1;
         top_position = 25;
@@ -192,8 +193,10 @@ top = 35;
                 
                 tubNum = tubNum +1;
                 %%new_tab = uitab(handles.shocksTabGroup, 'Title', tabTitle);
-                new_tab = uiextras.Panel( 'Parent', handles.shocksTabGroup, 'Padding', 2);
-                handles.shocksTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+                %new_tab = uiextras.Panel( 'Parent', handles.shocksTabGroup, 'Padding', 2);
+                %handles.shocksTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+                new_tab = uitab(handles.shocksTabGroup, 'Title',tabTitle , 'UserData', tubNum);
+                
                 handles.shocksTabs(tubNum) = new_tab;
                 shocksPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
                 currentPanel = shocksPanel(tubNum);
@@ -227,7 +230,6 @@ top = 35;
             end
             
             handles.shocks(currentShock) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-                'clipping','on',...
                 'unit','characters',...
                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
                 'TooltipString', char(gui_shocks(ii,2)),...
@@ -245,7 +247,7 @@ top = 35;
         handles.numShocks=currentShock;
         
         % Show the first tab
-        handles.shocksTabGroup.SelectedChild = 1;
+        %handles.shocksTabGroup.SelectedChild = 1;
         
          function scrollPanel_Callback(hObject,callbackdata,tab_index, num_shocks)
             
@@ -282,7 +284,10 @@ top = 35;
         %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
           %  'Position',[0 0 1 1]);
          
-        handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
+        %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
+        
+        handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
+        
         
         position = 1;
         top_position = 25;
@@ -306,9 +311,9 @@ top = 35;
             if (tabIndex == 0)
                 
                 tubNum = tubNum +1;
-                %new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle);
-                new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
-                handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+                new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle, 'UserData', tubNum);
+                %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
+                %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
                 varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
                 currentPanel = varsPanel(tubNum);
                 
@@ -341,7 +346,6 @@ top = 35;
             end
             
             handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-                'clipping','on',...
                 'unit','characters',...
                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
                 'TooltipString', char(gui_vars(ii,2)),...
@@ -356,7 +360,7 @@ top = 35;
         handles.numVars= currentVar;
         
          % Show the first tab
-        handles.varsTabGroup.SelectedChild = 1;
+        %handles.varsTabGroup.SelectedChild = 1;
         
         
         
@@ -388,17 +392,31 @@ top = 35;
 
 
     function index = checkIfExistsTab(tabGroup,tabTitle)
+        tabs = get(tabGroup,'Children');
+        num = length(tabs);
         index = 0;
-        tabs = tabGroup.TabNames;
-        if(~isempty(tabs))
-            for i=1:size(tabs,2)
-                if(strcmp(char(tabs(i)), tabTitle))
-                    index = i;
-                    return;
-                end
+        %tab = [];
+        for i=1:num
+            hTab = tabs(i);
+            tit = get(hTab, 'Title');
+            if(strcmp(tit, tabTitle))
+                index = i;
+                %tab=hTab;
+                return;
             end
         end
         
+%         index = 0;
+%         tabs = tabGroup.TabNames;
+%         if(~isempty(tabs))
+%             for i=1:size(tabs,2)
+%                 if(strcmp(char(tabs(i)), tabTitle))
+%                     index = i;
+%                     return;
+%                 end
+%             end
+%         end
+%         
 
     end
 
@@ -515,6 +533,9 @@ top = 35;
         for ii = 1:handles.numShocks
             set(handles.shocks(ii),'Value',0);
         end
+        
+        set(handles.GroupDisplayBy, 'SelectedObject', handles.radiobuttonShock);
+        
         
     end
 

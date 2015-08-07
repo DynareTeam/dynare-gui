@@ -17,11 +17,7 @@ if(size(tabs,1)==1)
     drawnow;
 else
     delete(hTab);
-    tabs = get(tabGroup,'Children');
-    hTab = tabs(1);
-    set(hTab, 'Visible', 'on');
-    %set(handles.tabGroup, 'SelectedIndex' , 1);
-    %drawnow;
+    drawnow;
 end
 end
 

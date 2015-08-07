@@ -37,6 +37,5 @@ How to run it:
 
 - Important note: 
 
-Following folder is not on GitHub, but it is necessary for running the application:
-- \src\resources 
+Following folder is not on GitHub, but it is necessary for running the application: \src\resources 
 

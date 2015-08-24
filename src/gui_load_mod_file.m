@@ -68,9 +68,11 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
                 if step == 800
                     
                     try
-                        eval(sprintf('dynare %s noclearall > ''dynare_error.txt''',project_info.mod_file));
-                    catch
+                        eval(sprintf('dynare %s noclearall',project_info.mod_file));
+                    catch ME
                         status = 0;
+                        error = ME;
+                       
                     end
                     
                 end
@@ -80,6 +82,7 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
             delete(h);
             
             if(status)
+                
                 uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
                 %enable menu options
                 gui_tools.menu_options('model','On');
@@ -93,25 +96,10 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
                         gui_tools.menu_options('deterministic','On');
                     end
                 end
-                
-                
-                
             else
-                
-                errorText = '';
-                fileId = fopen('dynare_error.txt','rt');
-                if fileId~=-1 %if the file doesn't exist ignore the reading code
-                    %errorText = fscanf(fileId,'%c');
-                    errorText = fscanf(fileId,'%c');
-                    index = strfind(errorText, 'ERROR');
-                    if(~isempty(index))
-                        errorText = errorText(index(1):end);
-                    end
-                    fclose(fileId);
-                end
-                
-                errordlg(sprintf('Error in execution of .mod file. Please correct it!\n\n%s', errorText) ,'DynareGUI Error','modal');
-                uicontrol(hObject);
+                errosrStr = [sprintf('Error in execution of .mod file:\n\n'), error.message];
+                errordlg(errosrStr,'DynareGUI Error','modal');
+                %uicontrol(hObject);
             end
             
         else
@@ -193,9 +181,13 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
     function load_varobs()
         if(isfield(model_settings, 'varobs'))
             varobs = model_settings.varobs;
-            
             for i=1:size(varobs,1)
-                value(i,:) = varobs{i,1};
+                %value(i,:) = varobs{i,1};
+                if(i==1)
+                    value = varobs{i,1};
+                else
+                    value = char(value, varobs{i,1});
+                end
             end
             options_.varobs = value;
         end

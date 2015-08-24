@@ -568,16 +568,25 @@ top = 35;
         
         
         % computations take place here
-        %temp_options = options_;
-        status = 1;
+        %status = 1;
         try
-            dynare_estimation(var_list_);%  > 'dynare_error.txt';
-            %eval('dynare_estimation(var_list_) > ''dynare_error.txt''');
+            dynare_estimation(var_list_); 
+            
             %             jObj.stop;
             %             jObj.setBusyText('All done!');
-        catch
-            status = 0;
+            
+            uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
+            %enable menu options
+            gui_tools.menu_options('output','On');
+            
+        catch ME
+            %status = 0;
             delete(h);
+            errosrStr = [sprintf('Error in execution of estimation command:\n\n'), ME.message];
+            errordlg(errosrStr,'DynareGUI Error','modal');
+            gui_tools.project_log_entry('Error', errosrStr);
+            uicontrol(hObject);
+         
             %             jObj.stop;
             %             jObj.setBusyText('Error in execution of estimation command!');
         end
@@ -587,18 +596,7 @@ top = 35;
         %dyn_waitbar_close(h);
         
         options_ = old_options;
-        if(status)
-            uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
-            %enable menu options
-            gui_tools.menu_options('output','On');
-            
-            
-        else
-            
-            errorText = '';
-            errordlg(sprintf('Error in execution of estimation command. Please correct it!\n\n%s', errorText) ,'DynareGUI Error','modal');
-            uicontrol(hObject);
-        end
+       
     end
 
 

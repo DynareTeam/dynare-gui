@@ -61,9 +61,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 
                 remove_selected();
                 model_settings.varobs = varobs;
-
                 for i=1:size(varobs,1)
-                    data(i,:) = varobs{i,1};
+                    if(i==1)
+                        data = varobs{i,1};
+                    else
+                        data = char(data, varobs{i,1});
+                    end
                 end
                 options_.varobs = data;
                 

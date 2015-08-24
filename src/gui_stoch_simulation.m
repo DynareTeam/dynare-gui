@@ -493,26 +493,18 @@ top = 35;
                     options_ = setfield(options_, names{ii}, value);
                 end
             end
-            
-            status = 1;
+           
             try
                 info = stoch_simul(var_list_);
-            catch
-                status = 0;
+                uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
+            catch ME
+                errosrStr = [sprintf('Error in execution of stoch_simul command:\n\n'), ME.message];
+                errordlg(errosrStr,'DynareGUI Error','modal');
+                gui_tools.project_log_entry('Error', errosrStr);
             end
             options_ = old_options;
             %M_ = old_M;
             oo_ = old_oo;
-            
-            if(status)
-                uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
-            else
-                errorText = '';
-                errordlg(sprintf('Error in execution of simulation command. Please correct it!\n\n%s', errorText) ,'DynareGUI Error','modal');
-                uicontrol(hObject);
-            end
-            
-            
             
         elseif(~shockSelected)
             errordlg('Please select shocks!' ,'DynareGUI Error','modal');

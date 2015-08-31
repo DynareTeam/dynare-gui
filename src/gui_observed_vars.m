@@ -5,6 +5,17 @@ global project_info;
 global options_;
 global model_settings;
 
+if(~isfield(model_settings, 'varobs'))
+    try
+        model_settings.varobs = create_varobs_cell_array(evalin('base','options_.varobs'),evalin('base','M_.endo_names_tex'),evalin('base','M_.endo_names_long'),evalin('base','options_.varobs_id'));
+    catch ME
+        warnStr = [sprintf('varobs were not specified in .mod file! \n\nYou can change .mod file or specify varobs here by selecting them out of complete list of endogenous variables.\n')];
+        warndlg( warnStr,'DynareGUI Warning','modal');
+        gui_tools.project_log_entry('Warning', 'varobs were not specified in .mod file!');
+        model_settings.varobs = [];
+    end
+end
+ 
 varobs = model_settings.varobs;
 
 bg_color = char(getappdata(0,'bg_color'));
@@ -280,6 +291,19 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         
     end
 
+    function cellArray = create_varobs_cell_array(data,data_tex, data_long, data_id)
+        
+        n = size(data,1);
+        
+        for i = 1:n
+            name = deblank(data(i,:));
+            cellArray{i,1} = name;
+            cellArray{i,2} = deblank(data_tex(data_id(i),:));
+            cellArray{i,3} = deblank(data_long(data_id(i),:));
+            cellArray{i,4} = false;
+            
+        end
+    end
     
 
 

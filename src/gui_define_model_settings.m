@@ -1,4 +1,4 @@
-function gui_define_model_settings(tabId)
+function gui_define_model_settings(hObject)
 global project_info;
 global model_settings;
 
@@ -8,25 +8,35 @@ special_color = char(getappdata(0,'special_color'));
 top = 35;
 handles = []; %use by nasted functions
 
+model_name = project_info.model_name;
+
+if (isempty(model_settings) || isempty(fieldnames(model_settings)))
+    uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
+    status = gui_create_model_settings(model_name);
+    if(status)
+        
+        gui_tools.menu_options('estimation','On');
+        
+        if(project_info.model_type==1)
+            gui_tools.menu_options('stohastic','On');
+        else
+            gui_tools.menu_options('deterministic','On');
+        end
+    else
+        model_settings = [];
+        return;
+    end
+    
+end
+
+[tabId,created] = gui_tabs.add_tab(hObject,  'Model settings');
+
 uicontrol(tabId,'Style','text',...
     'String','Define model settings in tabs below:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
     'Units','characters','Position',[1 top 50 2] );
 
-model_name = project_info.model_name;
-
-if (isempty(model_settings) || isempty(fieldnames(model_settings)))
-    uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
-    gui_create_model_settings(model_name);
-    gui_tools.menu_options('estimation','On');
-    if(project_info.model_type==1)
-        gui_tools.menu_options('stohastic','On');
-    else
-        gui_tools.menu_options('deterministic','On');
-    end
-    
-end
 
 current_settings.shocks =  model_settings.shocks;
 current_settings.variables = model_settings.variables;

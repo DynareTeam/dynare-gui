@@ -11,7 +11,7 @@ top = 35;
 
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
-    status = specify_file();
+    status = specify_file(true);
     if(status == 0)
         return;
     end
@@ -109,7 +109,7 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
         end
     end
 
-    function status = specify_file()
+    function status = specify_file(new_project)
         status = 0;
         
         % TODO add option to select multiple .dyn files
@@ -152,6 +152,9 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
             else
                 uiwait(errordlg(['Error while coping .mod file to project folder: ', message] ,'DynareGUI Error','modal'));
             end
+        elseif(new_project)
+            %uiwait(msgbox('.mod file is already in project folder.', 'DynareGUI','modal'));
+            status = 1;
         else
             uiwait(msgbox('.mod file has not been changed. It will be loaded again.', 'DynareGUI','modal'));
             status = 1;
@@ -162,7 +165,7 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
 
 
     function change_file(hObject,event, hTab)
-       status = specify_file();
+       status = specify_file(false);
        if (status)
            set(textBoxId,'String','Loading ...');
            gui_tabs.rename_tab(hTab, project_info.mod_file);

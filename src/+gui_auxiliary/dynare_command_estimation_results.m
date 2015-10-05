@@ -17,23 +17,27 @@ dynare_gui_.est_results.results{num,1} = 'Priors';    %name
 dynare_gui_.est_results.results{num,2} = 'Prior density for each estimated parameter is plotted.';     %descriptions
 option = gui_auxiliary.required_command_option(true,false,'plot_priors',1,0,'Required option: plot_priors = 1');
 dynare_gui_.est_results.results{num,3} = option;   %command options
-dynare_gui_.est_results.results{num,4} = '';      %Dynare variable
-dynare_gui_.est_results.results{num,5} = 'DNAME_PriorsNUM.fig';      %Matlab figure name
+dynare_gui_.est_results.results{num,4} = {''};      %Dynare variable
+dynare_gui_.est_results.results{num,5} = '';      %Matlab figure location
+dynare_gui_.est_results.results{num,6} = '_Priors{1}';      %Matlab figure name reg exp
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Priors and posteriors';    
 dynare_gui_.est_results.results{num,2} = 'Priors and posteriors';    
 dynare_gui_.est_results.results{num,3} = []; %how to supress this output????   
-dynare_gui_.est_results.results{num,4} = ''; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME_PriorsAndPosteriorsNUM.fig';     
+dynare_gui_.est_results.results{num,4} = {''}; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '__PriorsAndPosteriors{1}';     
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Mode check plots';    
 dynare_gui_.est_results.results{num,2} = 'Plots the posterior density for values around the computed mode for each estimated parameter.';    
 option = gui_auxiliary.required_command_option(true,true,'mode_check','','','Required option: mode_check');
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = ''; 
-dynare_gui_.est_results.results{num,5} = 'DNAME_CheckPlotsNUM.fig';     
+dynare_gui_.est_results.results{num,4} = {''}; 
+dynare_gui_.est_results.results{num,5} = '';     
+dynare_gui_.est_results.results{num,6} = '_CheckPlots{1}';     
+
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Forecast';    
@@ -47,7 +51,8 @@ end
 option = gui_auxiliary.required_command_option(true,false,'forecast',fperiods,'','Required option: forecast = INTEGER (number of periods)');
 dynare_gui_.est_results.results{num,3} = option;   
 dynare_gui_.est_results.results{num,4} = {'oo_.PointForecast', 'oo_.MeanForecast'}; 
-dynare_gui_.est_results.results{num,5} = ''; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = 'Forecast{1}';     
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Historical and smoothed variables';    
@@ -56,8 +61,9 @@ option = gui_auxiliary.required_command_option(false,true,'smoother','','','Requ
 %option.when_selected.select = {'Smoothed variables';'Smoothed shocks'};
 %option.when_diselected.diselect = {'Smoothed variables';'Smoothed shocks'};
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = ''; 
-dynare_gui_.est_results.results{num,5} = 'DNAME_HistoricalAndSmoothedVariablesNUM.fig';  
+dynare_gui_.est_results.results{num,4} = {''}; 
+dynare_gui_.est_results.results{num,5} = '';     
+dynare_gui_.est_results.results{num,6} = '_HistoricalAndSmoothedVariables{1}';  
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Smoothed variables';    
@@ -66,8 +72,9 @@ option = gui_auxiliary.required_command_option(true,true,'smoother','','','Requi
 %option.when_selected.select = {'Historical and smoothed variables';'Smoothed shocks'};
 %option.when_diselected.diselect = {'Historical and smoothed variables';'Smoothed shocks'};
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = 'oo_.SmoothedVariables'; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME__SmoothedVariables_VAR.fig';  
+dynare_gui_.est_results.results{num,4} = {'oo_.SmoothedVariables'}; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '_SmoothedVariables{1}';
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Updated variables';    
@@ -76,8 +83,10 @@ option = gui_auxiliary.required_command_option(true,true,'filtered_vars','','','
 %option.when_selected.select = {'Filtered variables'};
 %option.when_diselected.diselect = {'Filtered variables'};
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = 'oo_.UpdatedVariables'; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME__UpdatedVariables_VAR.fig';  
+dynare_gui_.est_results.results{num,4} = {'oo_.UpdatedVariables'}; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '_UpdatedVariables{1}';
+
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Filtered variables';    
@@ -86,8 +95,10 @@ option = gui_auxiliary.required_command_option(true,true,'filtered_vars','','','
 %option.when_selected.select = {'Updated variables'};
 %option.when_diselected.diselect = {'Updated variables'};
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = 'oo_.FilteredVariables '; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME_FilteredVariables_VAR';  
+dynare_gui_.est_results.results{num,4} = {'oo_.FilteredVariables '}; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '_FilteredVariables{1}';
+
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Smoothed shocks';    
@@ -96,16 +107,19 @@ option = gui_auxiliary.required_command_option(true,true,'smoother','','','Requi
 %option.when_selected.select = {'Historical and smoothed variables';'Smoothed variables'};
 %option.when_diselected.diselect = {'Historical and smoothed variables';'Smoothed variables'};
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = 'oo_.SmoothedShocks'; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME_SmoothedShocks_VAR.fig';   
+dynare_gui_.est_results.results{num,4} = {'oo_.SmoothedShocks'}; 
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '_SmoothedShocks{1}';
+ 
 
 num = num+1;
 dynare_gui_.est_results.results{num,1} = 'Posterior IRFs';    
 dynare_gui_.est_results.results{num,2} = 'Posterior IRFs';    
 option = gui_auxiliary.required_command_option(true,true,'bayesian_irf','','','Required option: bayesian_irf');
 dynare_gui_.est_results.results{num,3} = option;   
-dynare_gui_.est_results.results{num,4} = 'oo_.PosteriorIRF.dsge'; 
-dynare_gui_.est_results.results{num,5} = '/Output/DNAME_Bayesian_IRF_SHOCK_NUM';  
+dynare_gui_.est_results.results{num,4} = {'oo_.PosteriorIRF.dsge'};
+dynare_gui_.est_results.results{num,5} = '/Output/';     
+dynare_gui_.est_results.results{num,6} = '_Bayesian_IRF{1}';
 
 
 
@@ -119,8 +133,9 @@ option(2) = gui_auxiliary.required_command_option(false,true,'nodiagnostic','','
 option(3) = gui_auxiliary.required_command_option(true,false,'mh_nblocks',2,'',', mh_nblocks > 1');
 %option(1).when_selected.diselect = {'Convergence diagnostics of Geweke'};
 dynare_gui_.est_results.diagnostics{num,3} = option;   
-dynare_gui_.est_results.diagnostics{num,4} = ''; 
-dynare_gui_.est_results.diagnostics{num,5} = '/Output/DNAME_udiagNUM.fig;/Output/DNAME_mdiag.fig';  
+dynare_gui_.est_results.diagnostics{num,4} = {''}; 
+dynare_gui_.est_results.diagnostics{num,5} = '/Output/';     
+dynare_gui_.est_results.diagnostics{num,6} = '_udiag{1}';
 
 num = num+1;
 dynare_gui_.est_results.diagnostics{num,1} = 'Convergence diagnostics of Geweke';    
@@ -128,8 +143,9 @@ dynare_gui_.est_results.diagnostics{num,2} = 'Convergence diagnostics of Geweke'
 option = gui_auxiliary.required_command_option(true,false,'mh_nblocks', 1,'','Required option: mh_nblocks = 1');
 %option.when_selected.diselect = {'MCMC univariate convergence diagnostic (Brooks and Gelman, 1998)'};
 dynare_gui_.est_results.diagnostics{num,3} = option;   
-dynare_gui_.est_results.diagnostics{num,4} = 'oo_.convergence.geweke'; 
+dynare_gui_.est_results.diagnostics{num,4} = {'oo_.convergence.geweke'}; 
 dynare_gui_.est_results.diagnostics{num,5} = '';  
+dynare_gui_.est_results.diagnostics{num,6} = ''; %?????
 
 end 
 

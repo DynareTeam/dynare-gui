@@ -115,6 +115,26 @@ top = 35;
 			'String', 'Close this tab', ...
 			'Callback',{@close_tab,tabId});
         
+        handles.pussbuttonResults = uicontrol( ...
+			'Parent', tabId, ...
+			'Tag', 'pussbuttonSimulation', ...
+			'Style', 'pushbutton', ...
+			'Units', 'characters', ...
+			'Position', [56+27 1 25 2], ...
+			'String', 'Browse results...', ...
+            'Enable', 'on',...
+			'Callback', @pussbuttonResults_Callback);
+        
+        handles.pussbuttonCloseAll = uicontrol( ...
+			'Parent', tabId, ...
+			'Tag', 'pussbuttonSimulation', ...
+			'Style', 'pushbutton', ...
+			'Units', 'characters', ...
+			'Position', [56+27+27 1 25 2], ...
+			'String', 'Close all output figures', ...
+            'Enable', 'off',...
+			'Callback', @pussbuttonCloseAll_Callback);
+        
         handles.pushbuttonCommandDefinition = uicontrol( ...
 			'Parent', tabId, ...
 			'Tag', 'pushbuttonCommandDefinition', ...
@@ -123,6 +143,8 @@ top = 35;
 			'Position', [90+55 1 30 2], ...
 			'String', 'Define command options ...', ...
 			'Callback', @pushbuttonCommandDefinition_Callback);
+        
+        
         
     function uipanelResults_CreateFcn()
         results = dynare_gui_.est_results;
@@ -484,7 +506,8 @@ top = 35;
 
     function pussbuttonEstimation_Callback(hObject,evendata)
         
-       
+        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        set(handles.pussbuttonResults, 'Enable', 'off');
         
         user_options = model_settings.estimation;
         old_options = options_;
@@ -502,19 +525,7 @@ top = 35;
             end
         end
         
-        
-       
-        
-        
-%         comm_str = get(handles.estimation, 'String');
-%         if(isempty(comm_str))
-%             errordlg('Please define estimation command first!' ,'Dynare GUI error','modal');
-%             uicontrol(hObject);
-%             return;
-%         end
-        %         errordlg('Please select variables!' ,'DynareGUI Error','modal');
-        %          uicontrol(hObject);
-        
+    
         if(~variablesSelected)
             errordlg('Please select variables!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
@@ -523,34 +534,32 @@ top = 35;
         gui_tools.project_log_entry('Doing estimation','...');
         model_name = project_info.model_name;
         
-        %h = waitbar(0,'I am doing estimation ... Please wait ...', 'Name',model_name);
-        %h = dyn_waitbar(0,'I am doing estimation ... Please wait ...', 'Name',model_name);
-        h = msgbox('I am doing estimation ... Please wait ...','DynareGUI', 'modal');
-        %child = get(h,'Children');
-        %edithandle = findobj(h,'Style','pushbutton')
-        %set(edithandle,'Visible','off')
-
-        %delete(edithandle);
-         %drawnow('expose');
-%         try
-%             % R2010a and newer
-%             iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
-%             iconsSizeEnums = javaMethod('values',iconsClassName);
-%             SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
-%             jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'I am doing estimation ... Please wait ...');  % icon, label
-%         catch
-%             % R2009b and earlier
-%             redColor   = java.awt.Color(1,0,0);
-%             blackColor = java.awt.Color(0,0,0);
-%             jObj = com.mathworks.widgets.BusyAffordance(redColor, blackColor);
-%         end
-%         jObj.setPaintsWhenStopped(true);  % default = false
-%         jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
-%         [jhandle,guihandle] = javacomponent(jObj.getComponent, [350,370,250,80], tabId);
-%         jObj.start;
-%         % do some long operation...
-%       
-%         drawnow();
+       try
+            % R2010a and newer
+            iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
+            iconsSizeEnums = javaMethod('values',iconsClassName);
+            SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
+            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'I am doing estimation ... Please wait ...');  % icon, label
+        catch
+            % R2009b and earlier
+            redColor   = java.awt.Color(1,0,0);
+            blackColor = java.awt.Color(0,0,0);
+            jObj = com.mathworks.widgets.BusyAffordance(redColor, blackColor);
+        end
+        jObj.setPaintsWhenStopped(true);  % default = false
+        jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
+        main_figure = getappdata(0, 'main_figure');
+        set(main_figure,'Units','pixels');
+        pos = get(main_figure,'Position');
+        set(main_figure,'Units','characters');
+        [jhandle,guihandle] = javacomponent(jObj.getComponent, [(pos(3)-300)/2,pos(4)*0.7,300,80], tabId);
+        set(main_figure, 'Visible','On');
+        
+        main_figure = getappdata(0, 'main_figure');
+        %[jhandle,guihandle] = javacomponent(jObj.getComponent, [500,450,250,80], main_figure);
+        jObj.start;
+        drawnow();
+ 
         var_list_=[];
         
         num_selected = 0;
@@ -566,35 +575,31 @@ top = 35;
             end
         end
         
-        
+
         % computations take place here
         %status = 1;
         try
             dynare_estimation(var_list_); 
-            
-            %             jObj.stop;
-            %             jObj.setBusyText('All done!');
-            
+            jObj.stop;
+            jObj.setBusyText('All done!');
             uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
             %enable menu options
             gui_tools.menu_options('output','On');
+            set(handles.pussbuttonCloseAll, 'Enable', 'on');
+            set(handles.pussbuttonResults, 'Enable', 'on');
             
         catch ME
-            %status = 0;
-            delete(h);
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
             errosrStr = [sprintf('Error in execution of estimation command:\n\n'), ME.message];
             errordlg(errosrStr,'DynareGUI Error','modal');
             gui_tools.project_log_entry('Error', errosrStr);
             uicontrol(hObject);
          
-            %             jObj.stop;
+           
             %             jObj.setBusyText('Error in execution of estimation command!');
         end
-        
-        %         delete(guihandle);
-        %         drawnow();
-        %dyn_waitbar_close(h);
-        
+        delete(guihandle);
         options_ = old_options;
        
     end
@@ -667,4 +672,29 @@ top = 35;
         gui_tabs.delete_tab(hTab);
         
     end
+
+    function pussbuttonResults_Callback(hObject,evendata)
+        h = gui_estimation_results();
+         
+        %uiwait(h);
+        
+        
+    end
+
+    function pussbuttonCloseAll_Callback(hObject,evendata)
+        
+        main_figure = getappdata(0,'main_figure');
+        fh=findall(0,'type','figure');
+        for i=1:length(fh)
+            if(~(fh(i)==main_figure))
+                close(fh(i));
+            end
+        end
+        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+    end
+
+
+
+
+
 end

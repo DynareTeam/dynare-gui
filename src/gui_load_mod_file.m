@@ -184,14 +184,15 @@ gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_in
     function load_varobs()
         if(isfield(model_settings, 'varobs'))
             varobs = model_settings.varobs;
-            for i=1:size(varobs,1)
-                %value(i,:) = varobs{i,1};
-                if(i==1)
-                    value = varobs{i,1};
-                else
-                    value = char(value, varobs{i,1});
-                end
-            end
+            value = varobs(:,1)';
+%             for i=1:size(varobs,1)
+%                 %value(i,:) = varobs{i,1};
+%                 if(i==1)
+%                     value = varobs{i,1};
+%                 else
+%                     value = char(value, varobs{i,1});
+%                 end
+%             end
             options_.varobs = value;
         end
     end

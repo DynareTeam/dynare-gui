@@ -66,19 +66,22 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             else
                 
                 project_info.first_obs = first_obs;
+                project_info.first_obs_date = dates(first_obs);
+                project_info.last_obs_date = dates(first_obs)+ str2num(num_obs)-1;                
                 project_info.frequency = frequency;
                 project_info.num_obs = num_obs;
                 project_info.data_file = data_file;
                 
                 remove_selected();
                 model_settings.varobs = varobs;
-                for i=1:size(varobs,1)
-                    if(i==1)
-                        data = varobs{i,1};
-                    else
-                        data = char(data, varobs{i,1});
-                    end
-                end
+                data = varobs(:,1)';
+%                 for i=1:size(varobs,1)
+%                     if(i==1)
+%                         data = varobs{i,1};
+%                     else
+%                         data = char(data, varobs{i,1});
+%                     end
+%                 end
                 options_.varobs = data;
                 
                 msgbox('Changes saved successfully', 'DynareGUI');
@@ -236,8 +239,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 'FontAngle', 'italic', ...
                 'Units','characters','Position',[1 0 width v_size] );
             
-        catch
+        catch ME
             % TODO
+            errosrStr = [sprintf('Error in creating screen for observed variables:\n\n'), ME.message];
+            errordlg(errosrStr,'DynareGUI Error','modal');
+            gui_tools.project_log_entry('Error', errosrStr);
         end
     end
 
@@ -293,10 +299,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
 
     function cellArray = create_varobs_cell_array(data,data_tex, data_long, data_id)
         
-        n = size(data,1);
+        %n = size(data,1);
+        n = length(data);
         
         for i = 1:n
-            name = deblank(data(i,:));
+            %name = deblank(data(i,:));
+            name = deblank(data{i});
             cellArray{i,1} = name;
             cellArray{i,2} = deblank(data_tex(data_id(i),:));
             cellArray{i,3} = deblank(data_long(data_id(i),:));

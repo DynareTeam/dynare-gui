@@ -93,9 +93,9 @@ handles.pussbuttonReset = uicontrol( ...
         group = getfield(comm, group_name);
         numOptions = size(group,1);
         tab_handles = [];
-        width_name = 34;
-        width_value = 20;
-        width_default = 22;
+        width_name = 40; %34;
+        width_value = 18; %20;
+        width_default = 18; %22;
         width_description = 84;
         h_space = 3;
         
@@ -355,7 +355,8 @@ handles.pussbuttonReset = uicontrol( ...
                     option = get(handles.options(ii),'String');
                     % eval(sprintf('new_comm.%s = %s',option, value));
                     
-                    if(strcmp(option_type, 'INTEGER'))
+                    %if(strcmp(option_type, 'INTEGER'))
+                    if(~isempty(strfind(option_type, 'INTEGER')))
                         new_comm = setfield(new_comm,option,str2double(value));
                     elseif(strcmp(option_type, 'DOUBLE'))
                         new_comm = setfield(new_comm,option,str2double(value));

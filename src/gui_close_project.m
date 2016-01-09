@@ -23,6 +23,7 @@ gui_tabs.close_all();
 evalin('base','clear M_;');
 evalin('base','clear oo_;');
 evalin('base','clear options_;');
+evalin('base','clear all;');
 %evalin('base','clear project_info;');
 %evalin('base','clear model_settings;');
 project_info = struct();

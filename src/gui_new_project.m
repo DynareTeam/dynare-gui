@@ -18,6 +18,8 @@ project_info.frequency = 2; % default value is quarterly data; here is the compl
 project_info.num_obs = '';
 project_info.data_file = '';
 
+% important to create after project_info is set
+gui_auxiliary.create_dynare_gui_structure;
 
 gui_project(tabId, 'New');
 

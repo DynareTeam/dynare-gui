@@ -38,6 +38,12 @@ dynare_gui_.stoch_simul.simulation{num,2} = '1';
 dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.simulation{num,4} = 'Number of series to simulate when empirical moments are requested (i.e. periods > 0). Note that if this option is greater than 1, the additional series will not be used for computing the empirical moments but will simply be saved in binary form to the file FILENAME_simul. Default: 1.';
 
+num = num+1;
+dynare_gui_.stoch_simul.simulation{num,1} = 'conditional_variance_decomposition';    
+dynare_gui_.stoch_simul.simulation{num,2} = '';    
+dynare_gui_.stoch_simul.simulation{num,3} = 'INTEGER or [INTEGER1:INTEGER2] or [INTEGER1 INTEGER2 ...]'; %'special'   
+dynare_gui_.stoch_simul.simulation{num,4} = 'Computes a conditional variance decomposition for the specified period(s). The periods must be strictly positive. Conditional variances are given by var(yt+kjt).For period 1, the conditional variance decomposition provides the decomposition of the effects of shocks upon impact. The results are stored in oo_.conditional_variance_decomposition. The variance decomposition is only conducted, if theoretical moments are requested, i.e. using the periods=0-option. In case of order=2, Dynare provides a second-order accurate approximation to the true second moments based on the linear terms of the second-order solution (see Kim, Kim, Schaumburg and Sims (2008)). Note that the unconditional variance decomposition (i.e. at horizon infinity) is automatically conducted if theoretical moments are requested.';
+
 
 %% Group 2: IRF
 num = 1;
@@ -52,6 +58,24 @@ dynare_gui_.stoch_simul.irf{num,2} = '1 or 50';
 dynare_gui_.stoch_simul.irf{num,3} = 'INTEGER'; %'special'  
 dynare_gui_.stoch_simul.irf{num,4} = 'Number of simulated series used to compute the IRFs. Default: 1 if order=1, and 50 otherwise.';
 
+num = num+1;
+dynare_gui_.stoch_simul.irf{num,1} = 'irf_plot_threshold';    
+dynare_gui_.stoch_simul.irf{num,2} = '1e-10';    
+dynare_gui_.stoch_simul.irf{num,3} = 'DOUBLE';   
+dynare_gui_.stoch_simul.irf{num,4} = 'Threshold size for plotting IRFs. All IRFs for a particular variable with a maximum absolute deviation from the steady state smaller than this value are not displayed. Default: 1e-10.';      
+
+% num = num+1;
+% dynare_gui_.stoch_simul.irf{num,1} = 'irf_shocks';    
+% dynare_gui_.stoch_simul.irf{num,2} = '';    
+% dynare_gui_.stoch_simul.irf{num,3} = 'list';   
+% dynare_gui_.stoch_simul.irf{num,4} = 'The exogenous variables for which to compute IRFs. Default: all.'; 
+
+num = num+1;
+dynare_gui_.stoch_simul.irf{num,1} = 'relative_irf';    
+dynare_gui_.stoch_simul.irf{num,2} = '';    
+dynare_gui_.stoch_simul.irf{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.irf{num,4} = 'Requests the computation of normalized IRFs in percentage of the standard error of each shock.';    
+
 
 %% Group 3: Solver
 num = 1;
@@ -64,7 +88,7 @@ num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'k_order_solver';    
 dynare_gui_.stoch_simul.solver{num,2} = '';    
 dynare_gui_.stoch_simul.solver{num,3} = 'check_option';   %'special'
-dynare_gui_.stoch_simul.solver{num,4} = 'Use a k-order solver (implemented in C++) instead of the default Dynare solver.This option is not yet compatible with the bytecode option. Default: disabled for order 1 and 2, enabled otherwise';
+dynare_gui_.stoch_simul.solver{num,4} = 'Use a k-order solver (implemented in C++) instead of the default Dynare solver. This option is not yet compatible with the bytecode option. Default: disabled for order 1 and 2, enabled otherwise';
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'qz_criterium';    
@@ -80,9 +104,9 @@ dynare_gui_.stoch_simul.solver{num,4} = 'Value used to test if a generalized eig
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'solve_algo';    
-dynare_gui_.stoch_simul.solver{num,2} = '2';    
+dynare_gui_.stoch_simul.solver{num,2} = '4';    
 dynare_gui_.stoch_simul.solver{num,3} = 'INTEGER';   
-dynare_gui_.stoch_simul.solver{num,4} = 'Determines the non-linear solver to use. Possible values for the option are: 0, 1, 2, 3, 4, 5, 6, 7 and 8. Default value is 2.';
+dynare_gui_.stoch_simul.solver{num,4} = 'Determines the non-linear solver to use. Possible values for the option are: 0, 1, 2, 3, 4, 5, 6, 7,8 and 9. Default value is 4.';
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'loglinear';    
@@ -146,46 +170,52 @@ dynare_gui_.stoch_simul.dr{num,2} = '100';
 dynare_gui_.stoch_simul.dr{num,3} = 'INTEGER';   
 dynare_gui_.stoch_simul.dr{num,4} = 'The maximum number of iterations used in the logarithmic reduction algorithm. Its default value is 100.';  
 
+num = num+1;
+dynare_gui_.stoch_simul.dr{num,1} = 'dr_display_tol';    
+dynare_gui_.stoch_simul.dr{num,2} = '1e-6';    
+dynare_gui_.stoch_simul.dr{num,3} = 'DOUBLE';   
+dynare_gui_.stoch_simul.dr{num,4} = 'Tolerance for the suppression of small terms in the display of decision rules. Rows where all terms are smaller than dr_display_tol are not displayed. Default value: 1e-6.';  
 
-%% Group 5: HP filter
+
+
+%% Group 5: Filter
 num = 1;
-dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_filter';    
-dynare_gui_.stoch_simul.hp_filter{num,2} = '';    
-dynare_gui_.stoch_simul.hp_filter{num,3} = 'DOUBLE';   
-dynare_gui_.stoch_simul.hp_filter{num,4} = 'Uses HP filter with lambda = DOUBLE before computing moments. Default: no filter.';      
+dynare_gui_.stoch_simul.filter{num,1} = 'hp_filter';    
+dynare_gui_.stoch_simul.filter{num,2} = '';    
+dynare_gui_.stoch_simul.filter{num,3} = 'DOUBLE';   
+dynare_gui_.stoch_simul.filter{num,4} = 'Uses HP filter with lambda = DOUBLE before computing moments. Default: no filter.';      
 
 num = num+1;
-dynare_gui_.stoch_simul.hp_filter{num,1} = 'hp_ngrid';    
-dynare_gui_.stoch_simul.hp_filter{num,2} = '512';    
-dynare_gui_.stoch_simul.hp_filter{num,3} = 'INTEGER';   
-dynare_gui_.stoch_simul.hp_filter{num,4} = 'Number of points in the grid for the discrete Inverse Fast Fourier Transform used in the HP filter computation. It may be necessary to increase it for highly autocorrelated processes. Default: 512.';      
+dynare_gui_.stoch_simul.filter{num,1} = 'hp_ngrid';    
+dynare_gui_.stoch_simul.filter{num,2} = '512';    
+dynare_gui_.stoch_simul.filter{num,3} = 'INTEGER';   
+dynare_gui_.stoch_simul.filter{num,4} = 'Number of points in the grid for the discrete Inverse Fast Fourier Transform used in the HP filter computation. It may be necessary to increase it for highly autocorrelated processes. Default: 512.';      
 
+num = num+1;
+dynare_gui_.stoch_simul.filter{num,1} = 'bandpass_filter';    
+dynare_gui_.stoch_simul.filter{num,2} = '';    
+dynare_gui_.stoch_simul.filter{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.filter{num,4} = 'Uses a bandpass filter with the default passband before computing moments. If theoretical moments are requested, the spectrum of the model solution is filtered using an ideal bandpass filter. If empirical moments are requested, the Baxter and King (1999)-filter is used. Default: no filter.';      
+
+num = num+1;
+dynare_gui_.stoch_simul.filter{num,1} = 'bandpass_filter';    
+dynare_gui_.stoch_simul.filter{num,2} = '[6,32]';    
+dynare_gui_.stoch_simul.filter{num,3} = '[HIGHEST_PERIODICITY LOWEST_PERIODICITY]';   
+dynare_gui_.stoch_simul.filter{num,4} = 'Uses a bandpass filter before computing moments. The passband is set to a periodicity of HIGHEST_PERIODICITY to LOWEST_PERIODICITY, e.g. 6 to 32 quarters if the model frequency is quarterly. Default: [6,32].'; 
 
 %% Group 6: Output 
 
 num = 1;
-dynare_gui_.stoch_simul.output{num,1} = 'irf_plot_threshold';    
-dynare_gui_.stoch_simul.output{num,2} = '1e-10';    
-dynare_gui_.stoch_simul.output{num,3} = 'DOUBLE';   
-dynare_gui_.stoch_simul.output{num,4} = 'Threshold size for plotting IRFs. All IRFs for a particular variable with a maximum absolute deviation from the steady state smaller than this value are not displayed. Default: 1e-10.';      
-
-% num = num+1;
-% dynare_gui_.stoch_simul.output{num,1} = 'irf_shocks';    
-% dynare_gui_.stoch_simul.output{num,2} = '';    
-% dynare_gui_.stoch_simul.output{num,3} = 'list';   
-% dynare_gui_.stoch_simul.output{num,4} = 'The exogenous variables for which to compute IRFs. Default: all.'; 
-
-num = num+1;
-dynare_gui_.stoch_simul.output{num,1} = 'relative_irf';    
-dynare_gui_.stoch_simul.output{num,2} = '';    
-dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
-dynare_gui_.stoch_simul.output{num,4} = 'Requests the computation of normalized IRFs in percentage of the standard error of each shock.';    
-
-num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'nocorr';    
 dynare_gui_.stoch_simul.output{num,2} = '';    
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.output{num,4} = 'Don''t print the correlation matrix (printing them is the default).';      
+
+num = num+1;
+dynare_gui_.stoch_simul.output{num,1} = 'nodecomposition';    
+dynare_gui_.stoch_simul.output{num,2} = '';    
+dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.output{num,4} = 'Don''t compute (and don''t print) unconditional variance decomposition.';      
 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'nofunctions';    
@@ -230,11 +260,15 @@ dynare_gui_.stoch_simul.output{num,3} = 'check_option';
 dynare_gui_.stoch_simul.output{num,4} = 'Print results (opposite of noprint).';
 
 num = num+1;
-dynare_gui_.stoch_simul.output{num,1} = 'conditional_variance_decomposition';    
+dynare_gui_.stoch_simul.output{num,1} = 'tex';    
 dynare_gui_.stoch_simul.output{num,2} = '';    
-dynare_gui_.stoch_simul.output{num,3} = 'INTEGER'; %'special'   
-dynare_gui_.stoch_simul.output{num,4} = 'Computes a conditional variance decomposition for the specified period(s). The periods must be strictly positive. Conditional variances are given by var(yt+kjt).For period 1, the conditional variance decomposition provides the decomposition of the effects of shocks upon impact. The results are stored in oo_.conditional_variance_decomposition. The variance decomposition is only conducted, if theoretical moments are requested, i.e. using the periods=0-option. In case of order=2, Dynare provides a second-order accurate approximation to the true second moments based on the linear terms of the second-order solution (see Kim, Kim, Schaumburg and Sims (2008)). Note that the unconditional variance decomposition (i.e. at horizon infinity) is automatically conducted if theoretical moments are requested.';
+dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
+dynare_gui_.stoch_simul.output{num,4} = 'Requests the printing of results and graphs in TEX tables and graphics that can be later directly included in LATEX files.';
 
-
+num = num+1;
+dynare_gui_.stoch_simul.output{num,1} = 'contemporaneous_correlation';    
+dynare_gui_.stoch_simul.output{num,2} = '';    
+dynare_gui_.stoch_simul.output{num,3} = 'check_option'; 
+dynare_gui_.stoch_simul.output{num,4} = 'Saves the contemporaneous correlation between the endogenous variables in oo_.contemporaneous_correlation. Requires the nocorr-option not to be set.';
 
 end

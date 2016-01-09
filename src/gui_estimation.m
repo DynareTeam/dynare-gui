@@ -525,7 +525,6 @@ top = 35;
             end
         end
         
-    
         if(~variablesSelected)
             errordlg('Please select variables!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
@@ -579,7 +578,7 @@ top = 35;
         % computations take place here
         %status = 1;
         try
-            dynare_estimation(var_list_); 
+            oo_recursive_ = dynare_estimation(var_list_); 
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
@@ -600,7 +599,7 @@ top = 35;
             %             jObj.setBusyText('Error in execution of estimation command!');
         end
         delete(guihandle);
-        options_ = old_options;
+        %options_ = old_options;
        
     end
 

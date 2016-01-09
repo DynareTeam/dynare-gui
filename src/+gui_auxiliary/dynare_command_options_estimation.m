@@ -21,6 +21,12 @@ dynare_gui_.estimation.data{num,3} = 'FILENAME';   %type
 dynare_gui_.estimation.data{num,4} = 'The datafile: a .m file, a .mat file, a .csv file, or a .xls/.xlsx file.';      %additinal comment
 
 num = num+1;
+dynare_gui_.estimation.data{num,1} = 'dirname';    
+dynare_gui_.estimation.data{num,2} = '<mod_file>';    
+dynare_gui_.estimation.data{num,3} = 'FILENAME';   
+dynare_gui_.estimation.data{num,4} = 'Directory in which to store estimation output. To pass a subdirectory of a directory, you must quote the argument. Default: <mod_file>.';     
+
+num = num+1;
 dynare_gui_.estimation.data{num,1} = 'xls_sheet';    
 dynare_gui_.estimation.data{num,2} = '';    
 dynare_gui_.estimation.data{num,3} = 'NAME';   
@@ -35,20 +41,33 @@ dynare_gui_.estimation.data{num,4} = 'The range with the data in an Excel file.'
 num = num+1;
 dynare_gui_.estimation.data{num,1} = 'nobs';    
 dynare_gui_.estimation.data{num,2} = '';    
-dynare_gui_.estimation.data{num,3} = 'INTEGER';   % or [INTEGER1:INTEGER2]
-dynare_gui_.estimation.data{num,4} = 'The number of observations to be used. Default: all observations in the file. If type is [INTEGER1:INTEGER2] runs a recursive estimation and forecast for samples of size ranging of INTEGER1 to INTEGER2. Option forecast must also be specified. The forecasts are stored in the RecursiveForecast field of the results structure.';        
+dynare_gui_.estimation.data{num,3} = 'INTEGER or [INTEGER1:INTEGER2]'; 
+dynare_gui_.estimation.data{num,4} = 'The number of observations following [first obs] to be used. Default: all observations in the file after first_obs. If type is [INTEGER1:INTEGER2] runs a recursive estimation and forecast for samples of size ranging of INTEGER1 to INTEGER2. Option forecast must also be specified. The forecasts are stored in the RecursiveForecast field of the results structure.';        
 
 num = num+1;
 dynare_gui_.estimation.data{num,1} = 'first_obs';    
 dynare_gui_.estimation.data{num,2} = '1';    
-dynare_gui_.estimation.data{num,3} = 'INTEGER';   
-dynare_gui_.estimation.data{num,4} = 'The number of the first observation to be used. Default: 1.';   
+dynare_gui_.estimation.data{num,3} = 'INTEGER or [INTEGER1:INTEGER2]';
+dynare_gui_.estimation.data{num,4} = 'The number of the first observation to be used. In case of estimating a DSGE-VAR, first_obs needs to be larger than the number of lags. Default: 1';   
 
 num = num+1;
 dynare_gui_.estimation.data{num,1} = 'prefilter';    
 dynare_gui_.estimation.data{num,2} = '0';    
 dynare_gui_.estimation.data{num,3} = 'INTEGER';   
 dynare_gui_.estimation.data{num,4} = 'A value of 1 means that the estimation procedure will demean each data series by its empirical mean. Default: 0, i.e. no prefiltering.';      
+
+num = num+1;
+dynare_gui_.estimation.data{num,1} = 'consider_all_endogenous';    
+dynare_gui_.estimation.data{num,2} = '';    
+dynare_gui_.estimation.data{num,3} = 'check_option';   
+dynare_gui_.estimation.data{num,4} = 'Compute the posterior moments, smoothed variables, k-step ahead filtered variables and forecasts (when requested) on all the endogenous variables. This is equivalent to manually listing all the endogenous variables after the estimation command.';      
+
+num = num+1;
+dynare_gui_.estimation.data{num,1} = 'consider_only_observed';    
+dynare_gui_.estimation.data{num,2} = '';    
+dynare_gui_.estimation.data{num,3} = 'check_option';   
+dynare_gui_.estimation.data{num,4} = 'Compute the posterior moments, smoothed variables, k-step ahead filtered variables and forecasts (when requested) on all the observed variables. This is equivalent to manually listing all the observed variables after the estimation command.';      
+
 
 
 
@@ -63,8 +82,14 @@ dynare_gui_.estimation.optimizer{num,4} = 'Name of the file containing previous 
 num = num+1;
 dynare_gui_.estimation.optimizer{num,1} = 'mode_compute';    
 dynare_gui_.estimation.optimizer{num,2} = '4';    
-dynare_gui_.estimation.optimizer{num,3} = 'INTEGER';   % | FUNCTION_NAME
-dynare_gui_.estimation.optimizer{num,4} = 'Specifies the optimizer for the mode computation: 0-10 or FUNCTION_NAME.';
+dynare_gui_.estimation.optimizer{num,3} = 'INTEGER or FUNCTION_NAME';
+dynare_gui_.estimation.optimizer{num,4} = 'Specifies the optimizer for the mode computation: 0-10,101,102 or FUNCTION_NAME. Default value is 4.';
+
+num = num+1;
+dynare_gui_.estimation.optimizer{num,1} = 'silent_optimizer';    
+dynare_gui_.estimation.optimizer{num,2} = '';    
+dynare_gui_.estimation.optimizer{num,3} = 'check_option';
+dynare_gui_.estimation.optimizer{num,4} = 'Instructs Dynare to run mode computing/optimization silently without displaying results or saving files in between. Useful when running loops.';
 
 num = num+1;
 dynare_gui_.estimation.optimizer{num,1} = 'mode_check';    
@@ -97,6 +122,12 @@ dynare_gui_.estimation.optimizer{num,3} = 'DOUBLE';
 dynare_gui_.estimation.optimizer{num,4} = 'Probability of extreme values of the prior density that is ignored when computing bounds for the parameters. Default: 1e-32.';
 
 num = num+1;
+dynare_gui_.estimation.optimizer{num,1} = 'huge_number';    
+dynare_gui_.estimation.optimizer{num,2} = '1e7';    
+dynare_gui_.estimation.optimizer{num,3} = 'DOUBLE';   
+dynare_gui_.estimation.optimizer{num,4} = 'Value for replacing infinite values in the definition of (prior) bounds when finite values are required for computational reasons. Default: 1e7';
+
+num = num+1;
 dynare_gui_.estimation.optimizer{num,1} = 'endogenous_prior';    
 dynare_gui_.estimation.optimizer{num,2} =  '';    
 dynare_gui_.estimation.optimizer{num,3} = 'check_option';   
@@ -122,7 +153,7 @@ dynare_gui_.estimation.optimizer{num,4} = 'The number of lags used to estimate a
 
 num = num+1;
 dynare_gui_.estimation.optimizer{num,1} = 'optim';    
-dynare_gui_.estimation.optimizer{num,2} = '20';    
+dynare_gui_.estimation.optimizer{num,2} = '';    
 dynare_gui_.estimation.optimizer{num,3} = '(NAME, VALUE, ...)';  % 'special' 
 dynare_gui_.estimation.optimizer{num,4} = 'A list of NAME and VALUE pairs. Can be used to set options for the optimization routines. The set of available options depends on the selected optimization routine (ie on the value of option [mode compute]).';
 
@@ -154,10 +185,16 @@ dynare_gui_.estimation.solver{num,3} = 'check_option';
 dynare_gui_.estimation.solver{num,4} = 'Computes a log-linear approximation of the model instead of a linear approximation. As always in the context of estimation, the data must correspond to the definition of the variables used in the model (see Pfeifer 2013 for more details on how to correctly specify observation equations linking model variables and the data). If you specify the loglinear option, Dynare will take the logarithm of both your model variables and of your data as it assumes the data to correspond to the original non-logged model variables. The displayed posterior results like impulse responses, smoothed variables, and moments will be for the logged variables, not the original un-logged ones. Default: computes a linear approximation.';
 
 num = num+1;
+dynare_gui_.estimation.solver{num,1} = 'logdata';    
+dynare_gui_.estimation.solver{num,2} = '';    
+dynare_gui_.estimation.solver{num,3} = 'check_option';   
+dynare_gui_.estimation.solver{num,4} = 'Dynare applies the log transformation to the provided data if a log-linearization of the model is requested ([loglinear]) unless logdata option is used. This option is necessary if the user provides data already in logs, otherwise the log transformation will be applied twice (this may result in complex data).';
+
+num = num+1;
 dynare_gui_.estimation.solver{num,1} = 'solve_algo';    
-dynare_gui_.estimation.solver{num,2} = '2';    
+dynare_gui_.estimation.solver{num,2} = '4';    
 dynare_gui_.estimation.solver{num,3} = 'INTEGER'; 
-dynare_gui_.estimation.solver{num,4} = 'Determines the non-linear solver to use. Possible values for the option are: 0, 1, 2, 3, 4, 5, 6, 7 and 8. Default value is 2.';
+dynare_gui_.estimation.solver{num,4} = 'Determines the non-linear solver to use. Possible values for the option are: 0, 1, 2, 3, 4, 5, 6, 7,8 and 9. Default value is 4.';
 
 num = num+1;
 dynare_gui_.estimation.solver{num,1} = 'aim_solver';    
@@ -183,8 +220,6 @@ dynare_gui_.estimation.solver{num,2} = '1e-6';
 dynare_gui_.estimation.solver{num,3} = 'DOUBLE';   
 dynare_gui_.estimation.solver{num,4} = 'Value used to test if a generalized eigenvalue is 0/0 in the generalized Schur decomposition (in which case the model does not admit a unique solution). Default:1e-6.';
 
-
-
 %% Group 4: MH_options
 num = 1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_conf_sig';    
@@ -200,9 +235,15 @@ dynare_gui_.estimation.MH_options{num,4} = 'Number of replications for Metropoli
 
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'sub_draws';    
-dynare_gui_.estimation.MH_options{num,2} = 'min(1200,0.25*Total number of draws)';    
+dynare_gui_.estimation.MH_options{num,2} = 'min(posterior_max_subsample_draws,0.25*Total number of draws)';    
 dynare_gui_.estimation.MH_options{num,3} = 'INTEGER';   
 dynare_gui_.estimation.MH_options{num,4} = 'Number of draws from the Metropolis iterations that are used to compute posterior distribution of various objects (smoothed variable, smoothed shocks, forecast, moments, IRF). sub_draws should be smaller than the total number of Metropolis draws available. Default: min(1200,0.25*Total number of draws)';     
+
+num = num+1;
+dynare_gui_.estimation.MH_options{num,1} = 'posterior_max_subsample_draws';    
+dynare_gui_.estimation.MH_options{num,2} = '1200';    
+dynare_gui_.estimation.MH_options{num,3} = 'INTEGER';   
+dynare_gui_.estimation.MH_options{num,4} = 'Maximum number of draws from the MCMC used to compute posterior distribution of various objects (smoothed variable, smoothed shocks, forecast, moments, IRF), if not overriden by option [sub draws]. Default: 1200';     
 
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_nblocks';    
@@ -270,6 +311,33 @@ dynare_gui_.estimation.MH_options{num,2} = '[0.2 0.5]';
 dynare_gui_.estimation.MH_options{num,3} = '[DOUBLE DOUBLE]';   %special
 dynare_gui_.estimation.MH_options{num,4} = 'Percentage of MCMC draws at the beginning and end of the MCMC chain taken to compute the Geweke (1992,1999) convergence diagnostics (requires [mh nblocks]=1) after discarding the first [mh drop], page 54 percent of draws as a burnin. Default: [0.2 0.5].';    
 
+num = num+1;
+dynare_gui_.estimation.MH_options{num,1} = 'use_tarb';    
+dynare_gui_.estimation.MH_options{num,2} = '';    
+dynare_gui_.estimation.MH_options{num,3} = 'check_option';   
+dynare_gui_.estimation.MH_options{num,4} = 'Instructs Dynare to use the Tailored randomized block (TaRB) Metropolis-Hastings algorithm proposed by Chib and Ramamurthy (2010) instead of the standard Random-Walk Metropolis-Hastings.';    
+
+num = num+1;
+dynare_gui_.estimation.MH_options{num,1} = 'tarb_new_block_probability';    
+dynare_gui_.estimation.MH_options{num,2} = '0.25';    
+dynare_gui_.estimation.MH_options{num,3} = 'DOUBLE';   
+dynare_gui_.estimation.MH_options{num,4} = 'Specifies the probability of the next parameter belonging to a new block when the random blocking in the TaRB Metropolis-Hastings algorithm is conducted. The higher this number, the smaller is the average block size and the more random blocks are formed during each parameter sweep. Default: 0.25.';    
+
+num = num+1;
+dynare_gui_.estimation.MH_options{num,1} = 'tarb_mode_compute';    
+dynare_gui_.estimation.MH_options{num,2} = '4';    
+dynare_gui_.estimation.MH_options{num,3} = 'INTEGER';   
+dynare_gui_.estimation.MH_options{num,4} = 'Specifies the mode-finder run in every iteration for every block of the TaRB Metropolis-Hastings algorithm. See [mode compute]. Default: 4.';  
+
+num = num+1;
+dynare_gui_.estimation.MH_options{num,1} = 'tarb_optim';    
+dynare_gui_.estimation.MH_options{num,2} = '';    
+dynare_gui_.estimation.MH_options{num,3} = 'INTEGER';   
+dynare_gui_.estimation.MH_options{num,4} = 'Specifies the options for the mode-finder used in the TaRB Metropolis-Hastings algorithm. See [optim].';    
+
+
+
+
 
 %% Group 5: filter
 num = 1;
@@ -288,13 +356,25 @@ num = num+1;
 dynare_gui_.estimation.filter{num,1} = 'presample';    
 dynare_gui_.estimation.filter{num,2} = '0';    
 dynare_gui_.estimation.filter{num,3} = 'INTEGER';   
-dynare_gui_.estimation.filter{num,4} = 'The number of observations to be skipped before evaluating the likelihood. These first observations are used as a training sample. Default: 0.';     
+dynare_gui_.estimation.filter{num,4} = 'The number of observations after [first obs], page 57 to be skipped before evaluating the likelihood. These presample observations do not enter the likelihood, but are used as a training sample for starting the Kalman filter iterations. This option is incompatible with estimating a DSGE-VAR. Default: 0';     
+
+num = num+1;
+dynare_gui_.estimation.filter{num,1} = 'fast_kalman_filter';    
+dynare_gui_.estimation.filter{num,2} = '';    
+dynare_gui_.estimation.filter{num,3} = 'check_option';   
+dynare_gui_.estimation.filter{num,4} = 'Select the fast Kalman filter using Chandrasekhar recursions as described by Herbst, 2015. This setting is only used with kalman_algo=1 or kalman_algo=3. It is not yet compatible with analytical_derivation.';      
 
 num = num+1;
 dynare_gui_.estimation.filter{num,1} = 'kalman_tol';    
 dynare_gui_.estimation.filter{num,2} = '1e-10';    
 dynare_gui_.estimation.filter{num,3} = 'DOUBLE';   
 dynare_gui_.estimation.filter{num,4} = 'Numerical tolerance for determining the singularity of the covariance matrix of the prediction errors during the Kalman filter (minimum allowed reciprocal of the matrix condition number). Default value is 1e-10.';      
+
+num = num+1;
+dynare_gui_.estimation.filter{num,1} = 'diffuse_kalman_tol';    
+dynare_gui_.estimation.filter{num,2} = '1e-6';    
+dynare_gui_.estimation.filter{num,3} = 'DOUBLE';   
+dynare_gui_.estimation.filter{num,4} = 'Numerical tolerance for determining the singularity of the covariance matrix of the prediction errors and the rank of the covariance matrix of the non-stationary state variables during the Diffuse Kalman filter. Default value is 1e-6';      
 
 num = num+1;
 dynare_gui_.estimation.filter{num,1} = 'filter_covariance';    
@@ -316,7 +396,7 @@ dynare_gui_.estimation.filter{num,4} = 'Uses the diffuse Kalman filter (as descr
 
 num = num+1;
 dynare_gui_.estimation.filter{num,1} = 'lyapunov';    
-dynare_gui_.estimation.filter{num,2} = '';    
+dynare_gui_.estimation.filter{num,2} = 'default';    
 dynare_gui_.estimation.filter{num,3} = 'default | fixed_point | doubling | square_root_solver';   %special
 dynare_gui_.estimation.filter{num,4} = 'Determines the algorithm used to solve the Lyapunov equation to initialized the variance-covariance matrix of the Kalman filter using the steady-state value of state variables. Possible values for OPTION are: default, fixed_point, doubling, square_root_solver. Default value is default.';      
 
@@ -332,6 +412,12 @@ dynare_gui_.estimation.filter{num,2} = '1e-16';
 dynare_gui_.estimation.filter{num,3} = 'DOUBLE';   
 dynare_gui_.estimation.filter{num,4} = 'This is the convergence criterion used in the doubling algorithm to solve the Lyapunov equation. Its default value is 1e-16.';      
 
+num = num+1;
+dynare_gui_.estimation.filter{num,1} = 'filter_algorithm';    
+dynare_gui_.estimation.filter{num,2} = '';    
+dynare_gui_.estimation.filter{num,3} = 'sis | apf | gf | gmf | cpf';   
+dynare_gui_.estimation.filter{num,4} = 'Sets the particle filter algorithm. Possible values for OPTION are: sis, apf, gf, gmf and cpf.';      
+
 
 
     
@@ -344,10 +430,29 @@ dynare_gui_.estimation.postprocessing{num,4} = 'Triggers the computation of the 
 
 
 num = num+1;
+dynare_gui_.estimation.postprocessing{num,1} = 'relative_irf';    
+dynare_gui_.estimation.postprocessing{num,2} = '';    
+dynare_gui_.estimation.postprocessing{num,3} = 'check_option';   
+dynare_gui_.estimation.postprocessing{num,4} = 'Requests the computation of normalized IRFs.';
+
+
+num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'moments_varendo';    
 dynare_gui_.estimation.postprocessing{num,2} = '';    
 dynare_gui_.estimation.postprocessing{num,3} = 'check_option';   
 dynare_gui_.estimation.postprocessing{num,4} = 'Triggers the computation of the posterior distribution of the theoretical moments of the endogenous variables. Results are stored in oo_.PosteriorTheoreticalMoments.The number of lags in the autocorrelation function is controlled by the ar option.';
+
+num = num+1;
+dynare_gui_.estimation.postprocessing{num,1} = 'contemporaneous_correlation';    
+dynare_gui_.estimation.postprocessing{num,2} = '';    
+dynare_gui_.estimation.postprocessing{num,3} = 'check_option';   
+dynare_gui_.estimation.postprocessing{num,4} = 'Saves the contemporaneous correlation between the endogenous variables in oo_.contemporaneous_correlation. Results are stored in oo_.PosteriorTheoreticalMoments. Note that the nocorr-option has no effect.';
+
+num = num+1;
+dynare_gui_.estimation.postprocessing{num,1} = 'no_posterior_kernel_density';    
+dynare_gui_.estimation.postprocessing{num,2} = '';    
+dynare_gui_.estimation.postprocessing{num,3} = 'check_option';   
+dynare_gui_.estimation.postprocessing{num,4} = 'Shuts off the computation of the kernel density estimator for the posterior objects(see [density-field]).';
 
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'ar';    %name
@@ -358,7 +463,7 @@ dynare_gui_.estimation.postprocessing{num,4} = 'Order of autocorrelation coeffic
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'conditional_variance_decomposition';    
 dynare_gui_.estimation.postprocessing{num,2} = '';    
-dynare_gui_.estimation.postprocessing{num,3} = '[INTEGER1 INTEGER2 ...]';   
+dynare_gui_.estimation.postprocessing{num,3} = 'INTEGER or [INTEGER1:INTEGER2] or [INTEGER1 INTEGER2 ...]';   
 dynare_gui_.estimation.postprocessing{num,4} = 'Computes the posterior distribution of the conditional variance decomposition for the specified period(s). The periods must be strictly positive. Conditional variances are given by var(yt+kjt). For period 1, the conditional variance decomposition provides the decomposition of the effects of shocks upon impact. The results are stored in oo_.PosteriorTheoreticalMoments.dsge.ConditionalVarianceDecomposition, but currently there is no displayed output. Note that this option requires the option moments_varendo to be specified.';
 
 num = num+1;
@@ -388,7 +493,7 @@ dynare_gui_.estimation.postprocessing{num,4} = 'Computes the posterior distribut
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'filter_step_ahead';    
 dynare_gui_.estimation.postprocessing{num,2} = '';    
-dynare_gui_.estimation.postprocessing{num,3} = '[INTEGER1 INTEGER2 ...]';   %special
+dynare_gui_.estimation.postprocessing{num,3} = '[INTEGER1:INTEGER2] or [INTEGER1 INTEGER2 ...]';   %special
 dynare_gui_.estimation.postprocessing{num,4} = 'Triggers the computation k-step ahead filtered values. Stores results in oo_.FilteredVariablesKStepAhead and oo_.FilteredVariablesKStepAheadVariances.';      
 
 num = num+1;
@@ -406,11 +511,49 @@ dynare_gui_.estimation.postprocessing{num,4} = 'Number of periods on which to co
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'irf_shocks';    
 dynare_gui_.estimation.postprocessing{num,2} = '';    
-dynare_gui_.estimation.postprocessing{num,3} = 'exo_var_list';   % special
+dynare_gui_.estimation.postprocessing{num,3} = '( VARIABLE_NAME [[,] VARIABLE_NAME ...] )';   % special
 dynare_gui_.estimation.postprocessing{num,4} = 'The exogenous variables for which to compute IRFs. Default: all. Only used if [bayesian irf] is passed. Cannot be used with [dsge var].'; 
 
+num = num+1;
+dynare_gui_.estimation.postprocessing{num,1} = 'proposal_approximation';    
+dynare_gui_.estimation.postprocessing{num,2} = 'cubature';    
+dynare_gui_.estimation.postprocessing{num,3} = 'cubature | montecarlo | unscented';   
+dynare_gui_.estimation.postprocessing{num,4} = 'Sets the method for approximating the proposal distribution. Possible values for OPTION are: cubature, montecarlo and unscented. Default value is cubature.';      
 
-%% Group 7: output
+num = num+1;
+dynare_gui_.estimation.postprocessing{num,1} = 'distribution_approximation';    
+dynare_gui_.estimation.postprocessing{num,2} = 'cubature';    
+dynare_gui_.estimation.postprocessing{num,3} = 'cubature | montecarlo | unscented';   
+dynare_gui_.estimation.postprocessing{num,4} = 'Sets the method for approximating the particle distribution. Possible values for OPTION are: cubature, montecarlo and unscented. Default value is unscented.';      
+
+
+%% Group 7: resampling
+num = 1;
+dynare_gui_.estimation.resampling{num,1} = 'number_of_particles';    
+dynare_gui_.estimation.resampling{num,2} = '1000';    
+dynare_gui_.estimation.resampling{num,3} = 'INTEGER';   
+dynare_gui_.estimation.resampling{num,4} = 'Number of particles used when evaluating the likelihood of a non linear state space model. Default: 1000.';
+
+num = num+1;
+dynare_gui_.estimation.resampling{num,1} = 'resampling';    
+dynare_gui_.estimation.resampling{num,2} = '';    %default is ???
+dynare_gui_.estimation.resampling{num,3} = 'none | systematic | generic';   
+dynare_gui_.estimation.resampling{num,4} = 'Determines if resampling of the particles is done. Possible values for OPTION are: none, systematic and generic.';
+
+num = num+1;
+dynare_gui_.estimation.resampling{num,1} = 'resampling_threshold';    
+dynare_gui_.estimation.resampling{num,2} = '';    
+dynare_gui_.estimation.resampling{num,3} = 'DOUBLE';   
+dynare_gui_.estimation.resampling{num,4} = 'A real number between zero and one. The resampling step is triggered as soon as the effective number of particles is less than this number times the total number of particles (as set by [number of particles]). This option is effective if and only if option [resampling] has value generic.';
+
+num = num+1;
+dynare_gui_.estimation.resampling{num,1} = 'resampling_method';    
+dynare_gui_.estimation.resampling{num,2} = '';    %default is ???
+dynare_gui_.estimation.resampling{num,3} = 'kitagawa | stratified | smooth';   
+dynare_gui_.estimation.resampling{num,4} = 'Sets the resampling method. Possible values for OPTION are: kitagawa, stratified and smooth.';
+
+
+%% Group 8: output
 num = 1;
 dynare_gui_.estimation.output{num,1} = 'plot_priors';    
 dynare_gui_.estimation.output{num,2} = '1';    

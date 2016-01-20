@@ -40,6 +40,8 @@ load_file(fullFileName);
 load_varobs();
 load_estim_params();
 
+
+
 gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_info.mod_file));
 
 

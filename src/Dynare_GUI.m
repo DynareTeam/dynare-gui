@@ -25,6 +25,7 @@ function varargout = dynare_gui(varargin)
 % Last Modified by GUIDE v2.5 24-Aug-2015 23:49:45
 
 % Begin initialization code - DO NOT EDIT
+
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
@@ -42,6 +43,7 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
+evalin('base','diary off;');
 
 end
 
@@ -67,9 +69,12 @@ setappdata(0, 'bg_color', 'default');
 setappdata(0, 'special_color', 'white');
 setappdata(0, 'main_figure', hObject);
 
-global dynare_gui_;
-global project_info;
-global model_settings;
+dynareroot = dynare_config;
+warning_config()
+
+evalin('base','global dynare_gui_ project_info model_settings');
+evalin('base','global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_');
+evalin('base','diary(''dynare_gui.log'');');
 
 % fileName = 'dynare_gui.mat';
 % 
@@ -800,7 +805,7 @@ h28 = uicontrol(...
     'Max',get(0,'defaultuicontrolMax'),...
     'Min',get(0,'defaultuicontrolMin'),...
     'SliderStep',get(0,'defaultuicontrolSliderStep'),...
-    'String','Prototype v.0.4',...
+    'String','Prototype v.0.4.1',...
     'Style','text',...
     'Value',get(0,'defaultuicontrolValue'),...
     'Position',[71 13 30 2],...

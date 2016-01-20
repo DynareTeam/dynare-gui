@@ -2,7 +2,7 @@ function gui_open_project(hObject)
 
 global project_info;
 global model_settings;
-global dynare_gui_;
+global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_;
 
 
 % TODO close existing project
@@ -21,11 +21,40 @@ try
         [tabId,created] = gui_tabs.add_tab(hObject, ['Project: ',project_name]);
         
         data = load([pathName,fileName],'-mat');
-        project_info = data.project_info;
-        if(isfield(data, 'model_settings'))
-            model_settings = data.model_settings;
-            
+        flds = fieldnames(data);
+        for i=1: size(flds,1)
+            var_i = getfield(data, flds{i}); 
+            %eval( sprintf(' %s = evalin(''base'', ''var'');', flds{i}));
+            assignin('base', flds{i}, var_i);
+            eval( sprintf(' %s = data.%s;', flds{i}, flds{i}));
         end
+        
+        
+%         project_info = data.project_info;
+%         if(isfield(data, 'model_settings'))
+%             model_settings = data.model_settings;
+%             
+%         end
+%         
+%         if(isfield(data, 'options_'))
+%             options_ = data.options_;
+%             
+%         end
+%         
+%         if(isfield(data, 'M_'))
+%             M_ = data.M_;
+%             
+%         end
+%         
+%         if(isfield(data, 'oo_'))
+%             oo_ = data.oo_;
+%             
+%         end
+%         
+%         if(isfield(data, 'estim_params_'))
+%             estim_params_ = data.estim_params_;
+%             
+%         end
 
         % TODO check if project name equals project name
         
@@ -47,6 +76,18 @@ try
         
         %enable menu options
         gui_tools.menu_options('project','On');
+        gui_tools.menu_options('model','On');
+        
+        if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
+            
+            gui_tools.menu_options('estimation','On');
+            if(project_info.model_type==1)
+                gui_tools.menu_options('stohastic','On');
+            else
+                gui_tools.menu_options('deterministic','On');
+            end
+            gui_tools.menu_options('output','On');
+        end
         gui_tools.project_log_entry('Project Open',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
     end
 catch

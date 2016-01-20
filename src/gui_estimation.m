@@ -9,6 +9,7 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
+%new_options_ = [];
 
 %set(tabId, 'OnShow', @showTab_Callback);
 do_not_check_all_results = 0;
@@ -50,7 +51,7 @@ top = 35;
 			'Tag', 'text7', ...
 			'Style', 'text', ...
 			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [2 top 75 1.5], ...
+			'Position', [2 top 75 2], ...
 			'FontWeight', 'bold', ...
 			'String', 'Select wanted results:', ...
 			'HorizontalAlignment', 'left');
@@ -60,7 +61,7 @@ top = 35;
 			'Tag', 'text7', ...
 			'Style', 'text', ...
 			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [90 top 75 1.5], ...
+			'Position', [90 top 75 2], ...
 			'FontWeight', 'bold', ...
 			'String', 'Select endogenous variables that will be used in estimation:', ...
 			'HorizontalAlignment', 'left'); 
@@ -230,32 +231,47 @@ top = 35;
                 end
                 if(value)
                     for i=1:num_options
+                        option_value = comm_option(i).option;
+                        indx = findstr(comm_option(i).option, '.');
+                        if(~isempty(indx))
+                            option_value = option_value(1:indx(1)-1);
+                        end
+                        
                         if(comm_option(i).flag)
+                            
                             if(comm_option(i).used)
-                                    user_options = setfield(user_options, comm_option(i).option, 1); %flags
-                               
-                               
+                                user_options = setfield(user_options, option_value, 1); %flags
+                                
+                                
                             else
                                 if(isfield(user_options, comm_option(i).option))
-                                    user_options = rmfield(user_options, comm_option(i).option);
+                                    user_options = rmfield(user_options, option_value);
                                 end
                                 
                             end
                         else
-                            user_options = setfield(user_options, comm_option(i).option, comm_option(i).value_if_selected ); 
+                            user_options = setfield(user_options, option_value, comm_option(i).value_if_selected );
                         end
                     end
                 else
                     for i=1:num_options
+                        option_value = comm_option(i).option;
+                        indx = findstr(comm_option(i).option, '.');
+                        if(~isempty(indx))
+                            option_value = option_value(1:indx(1)-1);
+                        end
+                        
+                        
+                        
                         if(comm_option(i).flag)
                             if(comm_option(i).used)
-                                user_options = rmfield(user_options, comm_option(i).option);
+                                user_options = rmfield(user_options, option_value);
                             end
                         else
                             if(~isempty(comm_option(i).value_if_not_selected))
-                                user_options = setfield(user_options, comm_option(i).option, comm_option(i).value_if_not_selected );
+                                user_options = setfield(user_options, option_value, comm_option(i).value_if_not_selected );
                             else
-                                user_options = rmfield(user_options, comm_option(i).option);
+                                user_options = rmfield(user_options, option_value);
                             end
                             
                         end
@@ -266,6 +282,8 @@ top = 35;
                 comm_str = gui_tools.command_string('estimation', user_options);
                 
                 set(handles.estimation, 'String', comm_str);
+                set(handles.estimation, 'TooltipString', comm_str);
+                
                 if(~do_not_check_all_results)
                     check_all_result_option();
                 end
@@ -326,11 +344,13 @@ top = 35;
                     selected = 1;
                 end
                 jj=1;
-                while jj<=num_options && selected
+                while jj<=num_options && selected %only if result requires specific options
                     if(comm_option(jj).flag)
                         if(comm_option(jj).used)
                             if(~isfield(user_options, comm_option(jj).option))
                                 selected = 0;
+%                             elseif(str2num(getfield(user_options, comm_option(jj).option))==0)
+%                                 selected = 0;
                             end
                         else
                             if(isfield(user_options, comm_option(jj).option))
@@ -512,24 +532,66 @@ top = 35;
         user_options = model_settings.estimation;
         old_options = options_;
         
-        if(~isempty(user_options))
-            
-            names = fieldnames(user_options);
-            for ii=1: size(names,1)
-                value = getfield(user_options, names{ii});
-                if(isempty(value))
-                    options_ = setfield(options_, names{ii}, 1); %flags
-                else
-                    options_ = setfield(options_, names{ii}, value);
-                end
-            end
-        end
+%         if(~isempty(user_options))
+%             
+%             names = fieldnames(user_options);
+%             for ii=1: size(names,1)
+%                 value = getfield(user_options, names{ii});
+%                 if(isempty(value))
+%                     options_ = setfield(options_, names{ii}, 1); %flags
+%                 else
+%                     options_ = setfield(options_, names{ii}, value);
+%                 end
+%             end
+%         end
         
+%         if(~isempty(new_options_))
+%             
+%             names = fieldnames(new_options_);
+%             for ii=1: size(names,1)
+%                 value = getfield(new_options_, names{ii});
+%                 %options_path = 'options_';
+%                 options_path = ['options_.',names{ii}];
+%                 while(isstruct(value))
+%                     %current_value = 
+%                     sub_fields = fieldnames(value);
+%                     options_path = [options_path, '.',sub_fields{1}];
+%                     value = getfield(value, sub_fields{1});
+%                 end
+%                 
+%                 if(strcmp(names{ii},'graph_format'))
+%                    value = strsplit(value,','); 
+%                 end
+%                 
+%                 eval(sprintf('%s= value;',options_path ));
+%                 %options_ = setfield(options_, names{ii}, value);
+%                 
+%             end
+%         end
+        
+        
+        %options_.load_mh_file = 0;
         if(~variablesSelected)
             errordlg('Please select variables!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
             return;
         end
+        
+        if(~isempty(user_options))
+            
+            names = fieldnames(user_options);
+            for ii=1: size(names,1)
+                value = getfield(user_options, names{ii});
+                
+                if(isempty(value))
+                    gui_auxiliary.set_command_option(names{ii}, 1, 'check_option');
+                else
+                    gui_auxiliary.set_command_option(names{ii}, value, '');
+                end
+            end
+        end
+        
+        
         gui_tools.project_log_entry('Doing estimation','...');
         model_name = project_info.model_name;
         
@@ -621,7 +683,7 @@ top = 35;
         
         %h = gui_define_comm_stoch_simul();
          
-        
+        old_comm = model_settings.estimation;
         
         h = gui_define_comm_options(dynare_gui_.estimation,'estimation');
          
@@ -629,16 +691,59 @@ top = 35;
          
         try
             new_comm = getappdata(0,'estimation');
-            model_settings.estimation = new_comm;
+            model_settings.estimation = new_comm;   
+            
+             %new_comm = model_settings.user_options.estimation; 
+            %new_options_ = getappdata(0,'new_options_');
+            
+            
+            if(isfield(new_comm,'consider_all_endogenous'))
+                set_all_endogenous(1);
+                new_comm = rmfield(new_comm,'consider_all_endogenous');
+                %new_options_ = rmfield(new_options_,'consider_all_endogenous');
+            else
+                set_all_endogenous(0);
+            end
+            
+            if(isfield(new_comm,'consider_only_observed'))
+                select_only_observed();
+                new_comm = rmfield(new_comm,'consider_only_observed');
+                %new_options_ = rmfield(new_options_,'consider_only_observed');
+            end
+            
+                  
             comm_str = gui_tools.command_string('estimation', new_comm);
+            
+            
+            
         
             set(handles.estimation, 'String', comm_str);
+            set(handles.estimation, 'TooltipString', comm_str);
             check_all_result_option();
             gui_tools.project_log_entry('Defined command estimation',comm_str);
             
             %set(handles.estimation, 'String', getappdata(0,'estimation'));
         catch
             
+        end
+        
+    end
+
+    function set_all_endogenous(value)
+        for ii = 1:handles.numVars
+            set(handles.vars(ii),'Value',value);
+            
+        end
+        
+    end
+
+    function select_only_observed
+        for ii = 1:handles.numVars
+            if(isempty(find(ismember(options_.varobs,get(handles.vars(ii),'TooltipString')))))
+                set(handles.vars(ii),'Value',0);
+            else
+                set(handles.vars(ii),'Value',1);
+            end
         end
         
     end

@@ -72,6 +72,19 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 project_info.num_obs = num_obs;
                 project_info.data_file = data_file;
                 
+                
+%                 options_.dataset.file = data_file;
+%                 %options_.dataset.series = [];
+%                 options_.dataset.firstobs = dates(first_obs);
+%                 options_.dataset.lastobs = dates(first_obs)+ str2num(num_obs)-1;  
+%                 options_.dataset.nobs = str2num(num_obs);   
+%                 %options_.dataset.xls_sheet = [];
+%                 %options_.dataset.xls_range = [];
+                
+                options_.datafile = data_file;
+                options_.nobs = str2num(num_obs); 
+                %options_.first_obs = str2num(first_obs);
+                
                 remove_selected();
                 model_settings.varobs = varobs;
                 data = varobs(:,1)';

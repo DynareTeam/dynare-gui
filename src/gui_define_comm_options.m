@@ -1,6 +1,7 @@
 function fHandle= gui_define_comm_options(comm, comm_name)
 
 global model_settings;
+global options_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -18,6 +19,13 @@ current_option = 1;
 maxDisplayed = 11;
 handles = [];
 top = 32;
+
+if(isfield(model_settings,comm_name))
+    user_options = getfield(model_settings,comm_name);
+else
+    user_options = struct();
+    model_settings = setfield(model_settings, comm_name, user_options);
+end
 
 uicontrol( ...
     'Parent', fHandle, ...
@@ -47,13 +55,13 @@ end
 
 %handles.tab_group.SelectedChild = 1;
 % --- PUSHBUTTONS -------------------------------------
-handles.pussbuttonSimulation = uicontrol( ...
+handles.pussbuttonUseOptions = uicontrol( ...
     'Parent', fHandle, ...
     'Style', 'pushbutton', ...
     'Units', 'characters', ...
     'Position', [2 1 25 2], ...
     'String', 'Use these options', ...
-    'Callback', @pussbuttonSimulation_Callback);
+    'Callback', @pussbuttonUseOptions_Callback);
 
 handles.pushbuttonSaveDefaults = uicontrol( ...
     'Parent', fHandle, ...
@@ -80,6 +88,13 @@ handles.pussbuttonReset = uicontrol( ...
     'String', 'Reset options', ...
     'Callback', @pussbuttonReset_Callback);
 
+handles.pussbuttonClose = uicontrol( ...
+    'Parent', fHandle, ...
+    'Style', 'pushbutton', ...
+    'Units', 'characters', ...
+    'Position', [83 1 25 2], ...
+    'String', 'Close this window', ...
+    'Callback', @pussbuttonClose_Callback);
 
 
     function create_tab(num,group_name)
@@ -94,9 +109,9 @@ handles.pussbuttonReset = uicontrol( ...
         numOptions = size(group,1);
         tab_handles = [];
         width_name = 40; %34;
-        width_value = 18; %20;
-        width_default = 18; %22;
-        width_description = 84;
+        width_value = 20; %20;
+        width_default = 20; %22;
+        width_description = 55; %84;
         h_space = 3;
         
         % Create slider
@@ -122,7 +137,7 @@ handles.pussbuttonReset = uicontrol( ...
             'Units', 'characters', 'BackgroundColor', special_color,...
             'Position', [h_space*2+width_name top-9 width_value 1.5], ...
             'FontWeight', 'bold', ...
-            'String', 'Define value:', ...
+            'String', 'Define new value:', ...
             'HorizontalAlignment', 'left');
         
         uicontrol( ...
@@ -131,6 +146,15 @@ handles.pussbuttonReset = uicontrol( ...
             'Units', 'characters', 'BackgroundColor', special_color,...
             'Position', [h_space*3+width_name+width_value top-9 width_default 1.5], ...
             'FontWeight', 'bold', ...
+            'String', 'Current value:', ...
+            'HorizontalAlignment', 'left');
+        
+        uicontrol( ...
+            'Parent',  tabs_panel, ...
+            'Style', 'text', ...
+            'Units', 'characters', 'BackgroundColor', special_color,...
+            'Position', [h_space*4+width_name+width_value*2 top-9 width_default 1.5], ...
+            'FontWeight', 'bold', ...
             'String', 'Default value:', ...
             'HorizontalAlignment', 'left');
         
@@ -138,7 +162,7 @@ handles.pussbuttonReset = uicontrol( ...
             'Parent',  tabs_panel, ...
             'Style', 'text', ...
             'Units', 'characters', 'BackgroundColor', special_color,...
-            'Position', [h_space*4+width_name+width_value+width_default top-9 width_description 1.5], ...
+            'Position', [h_space*5+width_name+width_value*3 top-9 width_description 1.5], ...
             'FontWeight', 'bold', ...
             'String', 'Description:', ...
             'HorizontalAlignment', 'left');
@@ -156,25 +180,18 @@ handles.pussbuttonReset = uicontrol( ...
                 'Style', 'text', ...
                 'Units', 'characters', 'BackgroundColor', special_color,...
                 'Position', [h_space new_top-ii*2 width_name 1.5], ...
-                'String', group{ii,1}, ...
+                'String', group{ii,1}, ... %'UserData', group{ii,5}, ...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
             
             option_type = group{ii,3};
             
-            if(isfield(model_settings,comm_name))
-                model_structure = getfield(model_settings,comm_name);
-            else
-                model_structure = struct();
-                model_settings = setfield(model_settings, comm_name, model_structure);
-            end
-            %model_structure = eval(sprintf('model_settings.%s',comm_name));
             
-            if(isfield(model_structure,  group{ii,1}))
+            if(isfield(user_options,  group{ii,1}))
                 userDefaultValue =  eval(sprintf('model_settings.%s.%s;',comm_name, group{ii,1}));
-                if(strcmp(option_type, 'check_option'))
-                    userDefaultValue= 1;
-                elseif(strcmp(option_type, 'INTEGER'))
+%                 if(strcmp(option_type, 'check_option'))
+%                     userDefaultValue= 1;
+                if(strcmp(option_type, 'INTEGER'))
                     userDefaultValue = num2str(userDefaultValue);
                 elseif(strcmp(option_type, 'DOUBLE'))
                     userDefaultValue = num2str(userDefaultValue);
@@ -204,27 +221,77 @@ handles.pussbuttonReset = uicontrol( ...
                     'Visible', visible);
                 
                 
-            elseif(iscell(option_type))
-                tab_handles.values(ii)=uicontrol( ...
-                    'Parent',  tabs_panel, ...
-                    'Style', 'edit', ...
-                    'Units', 'characters', 'BackgroundColor', special_color,...
-                    'Position', [h_space*2+width_name new_top-ii*2 width_value 1.5], ...
-                    'String', userDefaultValue,...
-                    'TooltipString', option_type{1},...
-                    'HorizontalAlignment', 'left',...
-                    'Visible', visible);
             else
+                if(iscell(option_type))
+                    tool_tip_string = option_type{1};
+                else
+                    tool_tip_string = option_type;
+                end 
                 tab_handles.values(ii)=uicontrol( ...
                     'Parent',  tabs_panel, ...
                     'Style', 'edit', ...
                     'Units', 'characters', 'BackgroundColor', special_color,...
                     'Position', [h_space*2+width_name new_top-ii*2 width_value 1.5], ...
                     'String', userDefaultValue,...
-                    'TooltipString', option_type,...
+                    'TooltipString', tool_tip_string,...
                     'HorizontalAlignment', 'left',...
                     'Visible', visible);
+           
             end
+            try
+                %current_value= eval(sprintf('options_.%s;',group{ii,5}));
+                current_value= gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
+                if(isstruct(current_value))
+                   flds = fieldnames(current_value);
+                   for ff=1: length(flds)
+                       fname = flds{ff};
+                       if(eval(sprintf('current_value.%s;', fname)))
+                           actual_value = fname;
+                       end
+                   end
+                   current_value = actual_value;
+                end
+                
+                if(ismatrix(current_value) && ~ischar(current_value) && length(current_value)>1)
+                    if iscellstr(current_value)
+                        current_value = char(current_value);
+                    elseif(isnumeric(current_value))
+                        if(size(current_value,1)>1)
+                            current_value = ['[',num2str(current_value'), ']'];
+                        else
+                            current_value = ['[',num2str(current_value), ']'];
+                        end
+                    end
+                end
+                
+                if(islogical(current_value))
+                   if(current_value)
+                      actual_value = 1;
+                   else
+                      actual_value = 0;
+                   end
+                   current_value = actual_value;
+                end
+            catch
+                option_field = group{ii,1};
+                current_value = '???';
+            end
+            tab_handles.current_values(ii)=uicontrol( ...
+                    'Parent',  tabs_panel, ...
+                    'Style', 'edit', ...
+                    'Units', 'characters', 'BackgroundColor', special_color,...
+                    'Position', [h_space*3+width_name+width_value new_top-ii*2 width_value 1.5], ...
+                    'String',current_value ,...
+                    'Enable', 'off',...
+                    'HorizontalAlignment', 'left',...
+                    'Visible', visible);
+            
+%             if(strcmp(option_type, 'check_option'))
+%                 if(isnumeric(current_value))    
+%                     set(tab_handles.values(ii),'Value', current_value);
+%                 end
+%             end
+            
             defaultString = group{ii,2};
             if (length(defaultString)> width_default)
                 defaultString = strcat(defaultString(1:width_default-3),'...');
@@ -233,7 +300,7 @@ handles.pussbuttonReset = uicontrol( ...
                 'Parent',  tabs_panel, ...
                 'Style', 'text', ...
                 'Units', 'characters', 'BackgroundColor', special_color,...
-                'Position', [h_space*3+width_name+width_value new_top-ii*2 width_default 1.5], ...
+                'Position', [h_space*4+width_name+width_value*2 new_top-ii*2 width_default 1.5], ...
                 'String', defaultString, 'TooltipString', group{ii,2},...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
@@ -271,7 +338,7 @@ handles.pussbuttonReset = uicontrol( ...
                 'Parent',  tabs_panel, ...
                 'Style', 'text', ...
                 'Units', 'characters', 'BackgroundColor', special_color,...
-                'Position', [h_space*4+width_name+width_value+width_default new_top-ii*2 width_description 1.5], ...
+                'Position', [h_space*5+width_name+width_value*3 new_top-ii*2 width_description 1.5], ...
                 'String', textDesc, ...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
@@ -280,6 +347,7 @@ handles.pussbuttonReset = uicontrol( ...
             
             handles.options(current_option) = tab_handles.options(ii);
             handles.values(current_option) = tab_handles.values(ii);
+            handles.current_values(current_option) = tab_handles.current_values(ii);
             current_option = current_option +1;
             
         end
@@ -297,6 +365,7 @@ handles.pussbuttonReset = uicontrol( ...
                     visible = 'off';
                     set(tab_handles.options(ii), 'Visible', visible);
                     set(tab_handles.values(ii), 'Visible', visible);
+                    set(tab_handles.current_values(ii), 'Visible', visible);
                     set(tab_handles.defaults(ii), 'Visible', visible);
                     set(tab_handles.description(ii), 'Visible', visible);
                     
@@ -306,10 +375,12 @@ handles.pussbuttonReset = uicontrol( ...
                     set(tab_handles.options(ii), 'Position', [h_space new_top-(ii-move)*2 width_name 1.5]);
                     set(tab_handles.values(ii), 'Visible', visible);
                     set(tab_handles.values(ii), 'Position', [h_space*2+width_name new_top-(ii-move)*2 width_value 1.5]);
+                    set(tab_handles.current_values(ii), 'Visible', visible);
+                    set(tab_handles.current_values(ii), 'Position', [h_space*3+width_name+width_value new_top-(ii-move)*2 width_value 1.5]);
                     set(tab_handles.defaults(ii), 'Visible', visible);
-                    set(tab_handles.defaults(ii), 'Position',[h_space*3+width_name+width_value new_top-(ii-move)*2 width_default 1.5]);
+                    set(tab_handles.defaults(ii), 'Position',[h_space*4+width_name+width_value*2 new_top-(ii-move)*2 width_default 1.5]);
                     set(tab_handles.description(ii), 'Visible', visible);
-                    set(tab_handles.description(ii), 'Position',[h_space*4+width_name+width_value+width_default new_top-(ii-move)*2 width_description 1.5]);
+                    set(tab_handles.description(ii), 'Position',[h_space*4+width_name+width_value*3 new_top-(ii-move)*2 width_description 1.5]);
                 end
                 
                 
@@ -317,15 +388,20 @@ handles.pussbuttonReset = uicontrol( ...
         end
     end
 
-    function pussbuttonSimulation_Callback(hObject,callbackdata)
-        %comm_str = createCommandString();
+    function pussbuttonUseOptions_Callback(hObject,callbackdata)
+        %saveUserOptions();
+        %setappdata(0,comm_name,user_options);
         
-        new_comm = createCommand();
+        comm_str = saveUserOptions();
+        setappdata(0,comm_name,comm_str);
+        
+        %[new_comm, new_options] = createCommand();
         %comm_str = gui_tools.command_string(comm_name, new_comm);
         
         %gui_tools.project_log_entry(sprintf('Defined %s command', comm_name),comm_str);
         %setappdata(0,comm_name,comm_str);
-        setappdata(0,comm_name,new_comm);
+        %setappdata(0,comm_name,new_comm);
+        %setappdata(0,'new_options_',new_options);
         close;
         
         %set(fHandle, 'UserData', comm_str);
@@ -335,33 +411,51 @@ handles.pussbuttonReset = uicontrol( ...
     end
 
 
-    function new_comm = createCommand()
+    function new_user_options = saveUserOptions()
         
-        new_comm = struct();
+%         if(~isfield(model_settings, 'user_options'))
+%            model_settings.user_options = struct();
+%         end
+%          
+%         if(~isfield(model_settings.user_options, comm_name))
+%            model_settings.user_options = setfield(model_settings.user_options,comm_name,struct());
+%         end
+%         
+%         user_options = getfield(model_settings.user_options,comm_name); 
+%         
+        new_user_options = struct();
+        
+
         numOptions = size(handles.values,2);
         for ii = 1:numOptions
             
             option_type = get(handles.values(ii),'TooltipString');
             if(strcmp(option_type, 'check_option'))
                 value = get(handles.values(ii),'Value');
-                if(value)
-                    option = get(handles.options(ii),'String');
-                    new_comm = setfield(new_comm,option,'');
+                current_value = get(handles.current_values(ii),'String');
+                if(value || (value ~= str2num(current_value)))
+                    comm_option = get(handles.options(ii),'String');
+                    %new_comm = setfield(new_comm,comm_option,'');
+                    new_user_options = setfield(new_user_options,comm_option,value);
                 end
                
             else 
                 value = strtrim(get(handles.values(ii),'String'));
                 if(~isempty(value))
-                    option = get(handles.options(ii),'String');
+                    comm_option = get(handles.options(ii),'String');
                     % eval(sprintf('new_comm.%s = %s',option, value));
+                    
                     
                     %if(strcmp(option_type, 'INTEGER'))
                     if(~isempty(strfind(option_type, 'INTEGER')))
-                        new_comm = setfield(new_comm,option,str2double(value));
+                        new_user_options = setfield(new_user_options,comm_option,str2double(value));
+                        
                     elseif(strcmp(option_type, 'DOUBLE'))
-                        new_comm = setfield(new_comm,option,str2double(value));
+                        new_user_options = setfield(new_user_options,comm_option,str2double(value));
+                        
                     else %we save it as a string
-                        new_comm = setfield(new_comm,option,value);
+                        new_user_options = setfield(new_user_options,comm_option,value);
+                        
                     end
                     
                     
@@ -369,9 +463,54 @@ handles.pussbuttonReset = uicontrol( ...
             end
             
         end
-               
+      % model_settings.user_options = setfield(model_settings.user_options,comm_name,user_options);        
         
     end
+
+%     function [new_comm, new_options] = createCommand()
+%         
+%         new_comm = struct();
+%         new_options = struct();
+%         numOptions = size(handles.values,2);
+%         for ii = 1:numOptions
+%             
+%             option_type = get(handles.values(ii),'TooltipString');
+%             if(strcmp(option_type, 'check_option'))
+%                 value = get(handles.values(ii),'Value');
+%                 if(value)
+%                     comm_option = get(handles.options(ii),'String');
+%                     new_comm = setfield(new_comm,comm_option,'');
+%                     option = get(handles.options(ii),'UserData');
+%                     eval(sprintf('new_options.%s=1;',option));
+%                 end
+%                
+%             else 
+%                 value = strtrim(get(handles.values(ii),'String'));
+%                 if(~isempty(value))
+%                     comm_option = get(handles.options(ii),'String');
+%                     % eval(sprintf('new_comm.%s = %s',option, value));
+%                     option = get(handles.options(ii),'UserData');
+%                     
+%                     %if(strcmp(option_type, 'INTEGER'))
+%                     if(~isempty(strfind(option_type, 'INTEGER')))
+%                         new_comm = setfield(new_comm,comm_option,str2double(value));
+%                         eval(sprintf('new_options.%s=%d;',option,str2double(value) ));
+%                     elseif(strcmp(option_type, 'DOUBLE'))
+%                         new_comm = setfield(new_comm,comm_option,str2double(value));
+%                         eval(sprintf('new_options.%s=%d;',option,str2double(value) ));
+%                     else %we save it as a string
+%                         new_comm = setfield(new_comm,comm_option,value);
+%                         eval(sprintf('new_options.%s=''%s'';',option,value));
+%                     end
+%                     
+%                     
+%                 end
+%             end
+%             
+%         end
+%                
+%         
+%     end
 
 
 %     function comm_str = createCommandString()
@@ -490,5 +629,9 @@ handles.pussbuttonReset = uicontrol( ...
             
             
         end
+    end
+
+    function pussbuttonClose_Callback(hObject,callbackdata)
+        close;
     end
 end

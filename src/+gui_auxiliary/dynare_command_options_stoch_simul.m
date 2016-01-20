@@ -152,6 +152,7 @@ dynare_gui_.stoch_simul.dr{num,2} = 'default';
 dynare_gui_.stoch_simul.dr{num,3} = 'default | cycle_reduction | logarithmic_reduction';   
 dynare_gui_.stoch_simul.dr{num,4} = 'Determines the method used to compute the decision rule. Possible values for OPTION are: default - uses the default method to compute the decision rule based on the generalized Schur decomposition (see Villemot (2011) for more information), cycle_reduction - uses the cycle reduction algorithm to solve the polynomial equation for retrieving the coefficients associated to the endogenous variables in the decision rule. This method is faster than the default one for large scale models, logarithmic_reduction - uses the logarithmic reduction algorithm to solve the polynomial equation for retrieving the coefficients associated to the endogenous variables in the decision rule. This method is in general slower than the cycle_reduction. Default value is default.';     
 
+
 num = num+1;
 dynare_gui_.stoch_simul.dr{num,1} = 'dr_cycle_reduction_tol';    
 dynare_gui_.stoch_simul.dr{num,2} = '1e-7';    
@@ -253,11 +254,11 @@ dynare_gui_.stoch_simul.output{num,2} = '';
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
 dynare_gui_.stoch_simul.output{num,4} = 'Don''t print anything. Useful for loops.';
 
-num = num+1;
-dynare_gui_.stoch_simul.output{num,1} = 'print';    
-dynare_gui_.stoch_simul.output{num,2} = '';    
-dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
-dynare_gui_.stoch_simul.output{num,4} = 'Print results (opposite of noprint).';
+% num = num+1;
+% dynare_gui_.stoch_simul.output{num,1} = 'print';    
+% dynare_gui_.stoch_simul.output{num,2} = '';    
+% dynare_gui_.stoch_simul.output{num,3} = 'check_option';   
+% dynare_gui_.stoch_simul.output{num,4} = 'Print results (opposite of noprint).';
 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'tex';    

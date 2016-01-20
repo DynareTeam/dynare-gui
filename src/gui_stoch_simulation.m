@@ -488,12 +488,19 @@ top = 35;
             for ii=1: size(names,1)
                 value = getfield(user_options, names{ii});
                 if(isempty(value))
-                    options_ = setfield(options_, names{ii}, 1); %flags
+                    gui_auxiliary.set_command_option(names{ii}, 1, 'check_option');
                 else
-                    options_ = setfield(options_, names{ii}, value);
+                    gui_auxiliary.set_command_option(names{ii}, value, '');
                 end
+                
+%                 
+%                 if(isempty(value))
+%                     options_ = setfield(options_, names{ii}, 1); %flags
+%                 else
+%                     options_ = setfield(options_, names{ii}, value);
+%                 end
             end
-           
+           options_.nodisplay = 0;
             try
                 info = stoch_simul(var_list_);
                 uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
@@ -501,10 +508,10 @@ top = 35;
                 errosrStr = [sprintf('Error in execution of stoch_simul command:\n\n'), ME.message];
                 errordlg(errosrStr,'DynareGUI Error','modal');
                 gui_tools.project_log_entry('Error', errosrStr);
+                oo_ = old_oo;
             end
-            options_ = old_options;
-            %M_ = old_M;
-            oo_ = old_oo;
+            %options_ = old_options;
+            %oo_ = old_oo;
             
         elseif(~shockSelected)
             errordlg('Please select shocks!' ,'DynareGUI Error','modal');

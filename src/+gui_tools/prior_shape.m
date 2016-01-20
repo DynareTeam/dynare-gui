@@ -17,6 +17,8 @@ if(isnumeric(value))
             str_value = 'uniform_pdf';
         case 6
             str_value = 'inv_gamma2_pdf';
+%         case 8
+%             str_value = 'Weibull';
         otherwise
             str_value = '...';
             

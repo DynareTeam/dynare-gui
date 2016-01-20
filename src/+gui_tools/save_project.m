@@ -39,38 +39,56 @@ if(~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
     save(fullFileName,'model_settings', '-append');
     project_structures = 'project_structures= model_settings';
 end
+
 W = evalin('base','whos'); %or 'base'
 
-if(ismember('M_',{W.name}','rows')) %ismember('M_',[W(:).name]))
-    M_ = evalin('base', 'M_');
-    save(fullFileName,'M_', '-append');
-    if(isempty(project_structures))
-        project_structures = 'project_structures= M_';
-    else
-        project_structures = [project_structures, ', M_'];
-    end
+for i=1: size(W,1)
+    eval( sprintf(' %s = evalin(''base'', ''%s'');', W(i).name,W(i).name));
+    save(fullFileName,sprintf('%s',  W(i).name), '-append');
 end
 
-if(ismember('oo_',{W.name}','rows'))
-    oo_  = evalin('base', 'oo_');
-    save(fullFileName,'oo_', '-append');
-    if(isempty(project_structures))
-        project_structures = 'project_structures= oo_';
-    else
-        project_structures = [project_structures, ', oo_'];
-    end
-end
+% if(ismember('M_',{W.name}','rows')) %ismember('M_',[W(:).name]))
+%     M_ = evalin('base', 'M_');
+%     save(fullFileName,'M_', '-append');
+%     if(isempty(project_structures))
+%         project_structures = 'project_structures= M_';
+%     else
+%         project_structures = [project_structures, ', M_'];
+%     end
+% end
+% 
+% if(ismember('oo_',{W.name}','rows'))
+%     oo_  = evalin('base', 'oo_');
+%     save(fullFileName,'oo_', '-append');
+%     if(isempty(project_structures))
+%         project_structures = 'project_structures= oo_';
+%     else
+%         project_structures = [project_structures, ', oo_'];
+%     end
+% end
+% 
+% if(ismember('options_',{W.name}','rows'))
+%     options_ = evalin('base', 'options_');
+%     save(fullFileName,'options_', '-append');
+%     if(isempty(project_structures))
+%         project_structures = 'project_structures= options_';
+%     else
+%         project_structures = [project_structures, ', options_'];
+%     end
+% end
+% 
+% if(ismember('estim_params_',{W.name}','rows')) %ismember('M_',[W(:).name]))
+%     estim_params_ = evalin('base', 'estim_params_');
+%     save(fullFileName,'estim_params_', '-append');
+%     if(isempty(project_structures))
+%         project_structures = 'project_structures= estim_params_';
+%     else
+%         project_structures = [project_structures, ', estim_params_'];
+%     end
+% end
 
-if(ismember('options_',{W.name}','rows'))
-    options_ = evalin('base', 'options_');
-    save(fullFileName,'options_', '-append');
-    if(isempty(project_structures))
-        project_structures = 'project_structures= options_';
-    else
-        project_structures = [project_structures, ', options_'];
-    end
-end
-
+%save(fullFileName, 'W', '-append');
+ 
 project_data = [project_data, ', ', project_structures]
 gui_tools.project_log_entry('Saving project data',project_data);
                    

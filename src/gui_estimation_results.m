@@ -12,7 +12,7 @@ p = main_figure.Position;
 
 fHandle = figure('Name', 'Dynare GUI - Estimation results', ...
     'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
-    'Position', [p(1)+3 p(2)+2 70 34.5], 'Visible', 'off', 'Resize', 'off'); %,'WindowStyle','modal');
+    'Position', [p(1)+3 p(2)+2 70 34.5], 'Visible', 'off', 'Resize', 'off', 'WindowStyle','modal');
 
 warning('off', 'MATLAB:uitreenode:DeprecatedFunction');
 warning('off', 'MATLAB:uitree:DeprecatedFunction');

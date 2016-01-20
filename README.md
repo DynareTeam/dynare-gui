@@ -10,8 +10,10 @@ Main functionalities:
 - Dynare_GUI log file
 - Select observed variables
 - Specification of estimated parameters & shocks
-- Estimation command (basic functionalities)
-- Stochastic simulation (basic functionalities).
+- Estimation command 
+- Stochastic simulation
+- Shock decomposition
+- Conditional forecast.
 
 How to run it:
 --------------

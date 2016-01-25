@@ -18,8 +18,8 @@ switch oid
         
     case 'model'
         set(handles.model_settings, 'Enable', status);
-        %set(handles.model_save_snapshot, 'Enable', status);
-        %set(handles.model_load_snapshot, 'Enable', status);
+        set(handles.model_save_snapshot, 'Enable', status);
+        set(handles.model_load_snapshot, 'Enable', status);
         %set(handles.model_export, 'Enable', status);
         
         

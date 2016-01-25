@@ -17,8 +17,8 @@ if(isnumeric(value))
             str_value = 'uniform_pdf';
         case 6
             str_value = 'inv_gamma2_pdf';
-%         case 8
-%             str_value = 'Weibull';
+        case 8
+             str_value = 'Weibull';
         otherwise
             str_value = '...';
             
@@ -38,7 +38,9 @@ else
             num_value = 5;
         case 'inv_gamma2_pdf'
             num_value = 6;
-        
+         case 'Weibull'
+            num_value = 8;
+       
             
     end
 end

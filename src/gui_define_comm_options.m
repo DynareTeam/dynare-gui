@@ -1,6 +1,7 @@
 function fHandle= gui_define_comm_options(comm, comm_name)
 
 global model_settings;
+global project_info;
 global options_;
 
 bg_color = char(getappdata(0,'bg_color'));
@@ -8,7 +9,7 @@ special_color = char(getappdata(0,'special_color'));
 
 fHandle = figure('Name', 'Dynare GUI - Command definition', ...
     'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
-    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off','WindowStyle','modal');
+    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off');%,'WindowStyle','modal');
 
 movegui(fHandle,'center');
 set(fHandle, 'Visible', 'on');
@@ -25,6 +26,12 @@ if(isfield(model_settings,comm_name))
 else
     user_options = struct();
     model_settings = setfield(model_settings, comm_name, user_options);
+end
+
+if(isempty(fieldnames(user_options)))
+    %default values
+    user_options.tex = project_info.latex;
+
 end
 
 uicontrol( ...
@@ -188,7 +195,8 @@ handles.pussbuttonClose = uicontrol( ...
             
             
             if(isfield(user_options,  group{ii,1}))
-                userDefaultValue =  eval(sprintf('model_settings.%s.%s;',comm_name, group{ii,1}));
+                userDefaultValue = getfield(user_options, group{ii,1});
+                %userDefaultValue =  eval(sprintf('model_settings.%s.%s;',comm_name, group{ii,1}));
 %                 if(strcmp(option_type, 'check_option'))
 %                     userDefaultValue= 1;
                 if(strcmp(option_type, 'INTEGER'))

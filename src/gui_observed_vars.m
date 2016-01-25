@@ -8,6 +8,7 @@ global model_settings;
 if(~isfield(model_settings, 'varobs'))
     try
         model_settings.varobs = create_varobs_cell_array(evalin('base','options_.varobs'),evalin('base','M_.endo_names_tex'),evalin('base','M_.endo_names_long'),evalin('base','options_.varobs_id'));
+        project_info.modified = 1;
     catch ME
         warnStr = [sprintf('varobs were not specified in .mod file! \n\nYou can change .mod file or specify varobs here by selecting them out of complete list of endogenous variables.\n')];
         warndlg( warnStr,'DynareGUI Warning','modal');
@@ -17,6 +18,11 @@ if(~isfield(model_settings, 'varobs'))
 end
  
 varobs = model_settings.varobs;
+
+if(~isfield(model_settings, 'all_varobs'))
+    model_settings.all_varobs = {};
+end
+all_varobs = model_settings.all_varobs;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -40,10 +46,9 @@ panel_id = uipanel( ...
 create_panel_elements(panel_id);
 
 uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','characters','Position',[2 1 30 2], 'Callback',{@select_vars} );
-uicontrol(tabId, 'Style','pushbutton','String','Load obs. vars from data file','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@load_vars} , 'Enable', 'Off');
-uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','characters','Position',[2+30+2+30+2 1 30 2], 'Callback',{@remove_selected} );
-uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','characters','Position',[2+30+2+30+2+30+2  1 30 2], 'Callback',{@save_changes} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+30+2+30+2+30+2+30+2  1 30 2], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@remove_selected} );
+uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','characters','Position',[2+30+2+30+2  1 30 2], 'Callback',{@save_changes} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+30+2+30+2+30+2  1 30 2], 'Callback',{@close_tab,tabId} );
 
     function save_changes(hObject,event, hTab)
          try
@@ -71,7 +76,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 project_info.frequency = frequency;
                 project_info.num_obs = num_obs;
                 project_info.data_file = data_file;
-                
+                project_info.modified = 1;
                 
 %                 options_.dataset.file = data_file;
 %                 %options_.dataset.series = [];
@@ -88,15 +93,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 remove_selected();
                 model_settings.varobs = varobs;
                 data = varobs(:,1)';
-%                 for i=1:size(varobs,1)
-%                     if(i==1)
-%                         data = varobs{i,1};
-%                     else
-%                         data = char(data, varobs{i,1});
-%                     end
-%                 end
                 options_.varobs = data;
-                
                 msgbox('Changes saved successfully', 'DynareGUI');
             end
          catch ME
@@ -117,9 +114,10 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         setappdata(0,'varobs',varobs);
         %h = gui_select_observed_vars();
         window_title = 'Dynare GUI - Select observed variables';
-        subtitle = 'Select observed variables out of complete list of endogenous variables:';
+        subtitle = 'Select which observed variables will be used:';
         field_name = 'varobs';  %model_settings filed name
-        base_field_name = 'variables';  
+        %base_field_name = 'variables';  
+        base_field_name = 'all_varobs';  
         column_names = {'Endogenous variable','LATEX name ', 'Long name ', 'Set as observed variable '};
 
         h = gui_select_window(field_name, base_field_name, window_title, subtitle, column_names);
@@ -134,10 +132,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         
     end
 
-    function load_vars(hObject,event)
-        
-        
-    end
+   
 
     function remove_selected(hObject,event)
          data = varobs;
@@ -159,22 +154,47 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         v_size = 1.5;
         
         try
+ 
+            uicontrol(panel_id,'Style','text',...
+                'String','Data file:',...
+                'FontWeight', 'bold', ...
+                'HorizontalAlignment', 'left','BackgroundColor', special_color,...
+                'Units','characters','Position',[1 top width v_size] );
+            
+            handles.data_file = uicontrol(panel_id,'Style','edit',...
+                'String', project_info.data_file, ...
+                'HorizontalAlignment', 'left',...
+                'Units','characters','Position',[width+h_space top width*2 v_size] );
+            
+            uicontrol(panel_id,'Style','text',...
+                'String','*',...
+                'HorizontalAlignment', 'left','BackgroundColor', special_color,...
+                'Units','characters','Position',[1+width+h_space+width*2 top 1 v_size] );
+            
+            
+            handles.data_file_button = uicontrol(panel_id,'Style','pushbutton',...
+                'String', 'Select...',...
+                'Units','characters','Position',[1+ width+h_space+width*2+v_space top width/2 v_size] ,...
+                'Callback',{@select_file});
+            
+            
             uicontrol(panel_id,'Style','text',...
                 'String','First observation:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top width v_size] );
+                'Units','characters','Position',[1 top-v_space width v_size] );
             
             handles.first_obs =  uicontrol(panel_id,'Style','edit',...
                 'String', project_info.first_obs, ...
                  'TooltipString','For example: 1990Y, 1990Q3, 1990M11,1990W49',...
                 'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top width v_size] );
+                'Units','characters','Position',[width+h_space top-v_space width v_size],...
+                'Enable', 'off');
             
             uicontrol(panel_id,'Style','text',...
                 'String','* (in Dynare dates format)',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width*2+h_space top width v_size] );
+                'Units','characters','Position',[1+width*2+h_space top-v_space width v_size] );
             
             
             
@@ -182,56 +202,39 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 'String','Data frequency:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space width v_size] );
+                'Units','characters','Position',[1 top-v_space*2 width v_size] );
             
             
             handles.frequency = uicontrol(panel_id, 'Style', 'popup',...
                 'String', {'annual','quarterly','monthly','weekly'},...
                 'Value', project_info.frequency,...
-                'Units','characters',  'Position',[width+h_space top-v_space width v_size] );
-            %'Value',...
+                'Units','characters',  'Position',[width+h_space top-v_space*2 width v_size] ,...
+                'Enable', 'off');
+           
             
-             uicontrol(panel_id,'Style','text',...
-                'String','*',...
-                'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width*2+h_space top-v_space 1 v_size] );
-            
-            uicontrol(panel_id,'Style','text',...
-                'String','Number of observations:',...
-                'FontWeight', 'bold', ...
-                'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space*2 width v_size] );
-            
-            handles.num_obs = uicontrol(panel_id,'Style','edit',...
-                'String', project_info.num_obs,...
-                'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top-v_space*2 width v_size] );
              uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','characters','Position',[1+width*2+h_space top-v_space*2 1 v_size] );
             
             uicontrol(panel_id,'Style','text',...
-                'String','Data file:',...
+                'String','Number of observations:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','characters','Position',[1 top-v_space*3 width v_size] );
             
-            handles.data_file = uicontrol(panel_id,'Style','edit',...
-                'String', project_info.data_file, ...
+            handles.num_obs = uicontrol(panel_id,'Style','edit',...
+                'String', project_info.num_obs,...
                 'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top-v_space*3 width*2 v_size] );
+                'Units','characters','Position',[width+h_space top-v_space*3 width v_size] ,...
+                'Enable', 'off');
             
-            uicontrol(panel_id,'Style','text',...
+             uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width+h_space+width*2 top-v_space*3 1 v_size] );
+                'Units','characters','Position',[1+width*2+h_space top-v_space*3 1 v_size] );
             
-            
-            handles.data_file_button = uicontrol(panel_id,'Style','pushbutton',...
-                'String', 'Select...',...
-                'Units','characters','Position',[1+ width+h_space+width*2+v_space top-v_space*3 width/2 v_size] ,...
-                'Callback',{@select_file});
+
             
             
              uicontrol(panel_id,'Style','text',...
@@ -263,7 +266,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     function select_file(hObject,event)
         try
             
-            [fileName,pathName] = uigetfile({'*.m';'*.mat';'*.xls';'*.csv'},'Select data file');
+            [fileName,pathName] = uigetfile({'*.m';'*.mat';'*.xls';'*.xlsx';'*.csv'},'Select data file');
             
             if(fileName ==0)
                 return;
@@ -275,14 +278,137 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
           
             end
             
+            [directory,basename,extension] = fileparts(fileName);
             
-            project_info.data_file = fileName;
-            set(handles.data_file,'String',fileName);
+            first_obs = '';
+            observable_vars = {};
+            num_observables = [];
+            freq = [];
+            set(handles.first_obs,'Enable', 'off');
+            set(handles.frequency,'Enable', 'off');
             
-        catch
+            try
+                switch extension
+                    case '.m'
+                        W1 = evalin('base','whos();');
+                        evalin('base',basename);
+                        W2 = evalin('base','whos();');
+                        num_obs_vars = 0;
+                        invalid_data = 0;
+                        for i=1: size(W2,1)
+                            found = 0;
+                            j=1;
+                            while ~found && j <= size(W1,1)
+                                if(strcmp(W2(i).name, W1(j).name))
+                                   found = 1;
+                                end
+                                j = j+1;
+                            end
+                            
+                            if(~found)
+                                num_obs_vars = num_obs_vars+1;
+                                observable_vars{num_obs_vars} = W2(i).name;
+                                evalin('base',sprintf('clear %s,',W2(i).name));
+                                if(num_obs_vars == 1)
+                                    num_observables = W2(i).size(1);
+                                else
+                                    if(W2(i).size(1)~=num_observables)
+                                        invalid_data = 1;
+                                    end
+                                end
+                            end
+                            
+                        end
+                        
+                        if(invalid_data)
+                           error('data size is too large'); 
+                        end
+                        
+                    case '.mat'
+                        data = load(fileName);
+                        observable_vars = fields(data);
+                        num_observables = size(getfield(data, observable_vars{1}),1);
+                        
+                        
+                
+                    case { '.xls', '.xlsx' }
+                         xls_sheet = 1;
+                         xls_range = '';
+                         [freq,init,data,observable_vars] = load_xls_file_data(fileName,xls_sheet,xls_range);
+                         num_observables = size(data,1);
+                         first_obs =  gui_tools.dates2str(init);
+                         
+                    case '.csv'
+                        %TODO Check why load_csv_file_data is not working
+%                         [freq,init,data,observable_vars] = load_csv_file_data(fileName);
+%                         num_observables = size(data,1);
+%                         first_obs =  gui_tools.dates2str(init);
+                        
+                        
+                        [num,txt,raw] = xlsread(fileName);
+                        firs_cell = 1;
+                        if(isempty(txt{1,1})) % there is time of observation info in first column
+                            first_cell = 2;
+                            first_obs = txt{2,1};
+                        end
+                        observable_vars = txt(1,firs_cell:end);%names of observable variables is in forst raw
+                        num_observables = size(num,1);
+                        set(handles.first_obs,'Enable', 'on');
+            
+
+                end
+                
+                if(~isempty(freq))
+                    switch freq
+                        case 1
+                            new_freq = 1;
+                        case 4
+                            new_freq = 2;
+                        case 12
+                            new_freq = 3;
+                        case 52
+                            new_freq = 4;
+                            
+                    end
+                else
+                    set(handles.frequency,'Enable', 'on');
+                    new_freq = 2; %default is quarterly data
+                end
+                
+                if(isempty(first_obs))
+                    set(handles.first_obs,'Enable', 'on');
+                end
+                
+                set_all_observables(observable_vars);
+                
+                project_info.data_file = fileName;
+                set(handles.data_file,'String',fileName);
+                set(handles.first_obs,'String', first_obs);
+                set(handles.frequency,'Value', new_freq);
+                set(handles.num_obs,'String', num_observables);
+                
+            catch ME
+                errordlg('Data file is not valid! Please specify new data file.' ,'DynareGUI Error','modal');
+            end
+            
+            
+        catch ME
             errordlg('Error while selecting data file!' ,'DynareGUI Error','modal');
         end
     end
+
+    function set_all_observables(observable_vars)
+       all_varobs = {};
+       all_endo = model_settings.variables;
+       if(~isempty(observable_vars))
+           indx = ismember(all_endo(:,2),observable_vars);
+           all_varobs = all_endo(indx, :);
+       else
+           all_varobs = all_endo;
+       end
+       model_settings.all_varobs = all_varobs;
+    end
+
 
     function obs_variables(panel_id,data, h_pos, v_pos)
         column_names = {'Observed var.','LATEX name ', 'Long name ', 'Remove obs. var'};

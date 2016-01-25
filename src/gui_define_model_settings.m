@@ -1,6 +1,7 @@
 function gui_define_model_settings(hObject)
 global project_info;
 global model_settings;
+global oo_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -110,6 +111,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             
             msgbox('Model settings are saved successfully', 'DynareGUI');
             gui_tools.project_log_entry('Saving model settings','...');
+            project_info.modified = 1;
         catch
             errorStr = 'Error while saving model settings!';
             errordlg( errorStr,'DynareGUI Error','modal');
@@ -247,12 +249,17 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     function gui_params(tabId, data)
         
         % TODO add estimated values after estimation command
-        for i = 1:size(data,1)
-            try
-                estim_value = evalin('base',data{i,2});
-                data{i,6} = estim_value;
-            catch
-                % TODO error ???
+        % what should be displayed if this structure is not present !!!!
+        if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'parameters'))
+            for i = 1:size(data,1)
+                try
+                    %estim_value = evalin('base',data{i,2});
+                    estim_value = getfield(oo_.posterior_mean.parameters,data{i,2})
+                    data{i,6} = estim_value;
+                catch
+                    % TODO error ???
+                    errordlg('Error while displaying parameters estimated values','DynareGUI Error','modal');
+                end
             end
         end
         

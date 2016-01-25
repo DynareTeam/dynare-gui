@@ -1,6 +1,7 @@
 function status = gui_create_model_settings(modelName)
 
 global model_settings;
+global project_info;
 status = 1;
 try
 
@@ -16,6 +17,7 @@ model_settings.params = create_params_cell_array(evalin('base','M_.param_names')
 %model_settings.varobs = create_varobs_cell_array(evalin('base','options_.varobs'),evalin('base','M_.endo_names_tex'),evalin('base','M_.endo_names_long'),evalin('base','options_.varobs_id'));
 
 gui_tools.project_log_entry('Creating model settings','...');
+project_info.modified = 1;
 catch ME
     status = 0;
     errosrStr = [sprintf('Error while creating model settings:\n\n'), ME.message, sprintf('\n\nPlease use correct .mod file\n')];

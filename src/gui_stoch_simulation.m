@@ -504,6 +504,7 @@ top = 35;
             try
                 info = stoch_simul(var_list_);
                 uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
+                project_info.modified = 1;
             catch ME
                 errosrStr = [sprintf('Error in execution of stoch_simul command:\n\n'), ME.message];
                 errordlg(errosrStr,'DynareGUI Error','modal');

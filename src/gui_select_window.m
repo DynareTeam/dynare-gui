@@ -12,7 +12,7 @@ fHandle = figure('Name',window_title ,  ...
 movegui(fHandle,'center'); 
 set(fHandle, 'Visible', 'on');
 
-base_items = eval(sprintf('model_settings.%s',base_field_name)); %model_settings.variables;
+base_items = eval(sprintf('model_settings.%s',base_field_name)); 
 
 base_items = base_items(:,2:4);
 
@@ -97,7 +97,7 @@ handles.pussbuttonClose = uicontrol( ...
         num_selected = size(selected_items,1);
         
         switch base_field_name
-            case 'variables'
+            case 'all_varobs'
                 name_column_id = 1; 
             case 'params'
                 name_column_id = 3;
@@ -105,6 +105,7 @@ handles.pussbuttonClose = uicontrol( ...
                 name_column_id = 3;
             otherwise
                 % TODO error
+                %error('');
                 
         end
         for i=1:num_items
@@ -128,7 +129,7 @@ handles.pussbuttonClose = uicontrol( ...
         
         
         switch base_field_name
-            case 'variables'
+            case 'all_varobs'
                 selected_items = base_items(selected,:);
                 selected_items(:,4)= {false};
             case 'params'
@@ -136,8 +137,10 @@ handles.pussbuttonClose = uicontrol( ...
                 selected_(:,3)= selected_(:,1);
                 selected_(:,1)= {'param'}
                 selected_(:,2)= {0}; %id
-                selected_(:,4)= {-inf};
-                selected_(:,5)= {inf};
+                %selected_(:,4)= {-inf};
+                %selected_(:,5)= {inf};
+                selected_(:,4)= {''};
+                selected_(:,5)= {''};
                 selected_(:,6)= {''};
                 selected_(:,7:8)= {0};
                 selected_(:,9)= {false};
@@ -245,7 +248,7 @@ handles.pussbuttonClose = uicontrol( ...
     end
 
     function id = find_id(item_name)
-        all_items = eval(sprintf('model_settings.%s',base_field_name)); %model_settings.variables;
+        all_items = eval(sprintf('model_settings.%s',base_field_name)); 
         id=0;
         index = strfind(all_items(:,2),item_name);
         j=1;

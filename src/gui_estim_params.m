@@ -84,6 +84,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 end
                 
                 msgbox('Changes saved successfully', 'DynareGUI');
+                gui_tools.project_log_entry('Saving estim_params','...');
+                project_info.modified = 1;
             end
         catch ME
             errosrStr = [errosrStr,': ',ME.message];
@@ -177,7 +179,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         h_space = 5;
         v_size = 1.5;
         
-        prior_shapes = { 'Select...', 'beta_pdf', 'gamma_pdf', 'normal_pdf', 'inv_gamma_pdf /inv_gamma1_pdf', 'uniform_pdf', 'inv_gamma2_pdf'};
+        prior_shapes = { 'Select...', 'beta_pdf', 'gamma_pdf', 'normal_pdf', 'inv_gamma_pdf /inv_gamma1_pdf', 'uniform_pdf', 'inv_gamma2_pdf', 'Weibull'};
         column_names = {'Param/var_exo','Name ', 'Lower bound ', 'Upper bound ','Prior shape ','Prior mean ','Prior std ', 'Remove from estimation'};
         column_format = {'char','char','numeric', 'numeric', prior_shapes,'numeric','numeric', 'logical'};
         
@@ -205,10 +207,23 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             c = callbackdata.Indices(2);
             %data{r,c} = val;
             estim_params{r,c+1} = val;
+            if(c==5) %prior shape
+                [LB, UB] = gui_tools.prior_range_defaults(val);
+                estim_params{r,c-1} = LB;
+                estim_params{r,c} = UB;
+                callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:9)];
+            elseif(c==6) %prior mean
+                 [LB, UB] = gui_tools.prior_range_defaults(estim_params{r,c});
+                 if(val<LB || val > UB)
+                    error_str = sprintf('Not valid prior mean value! Value must be in following interval:[%d,%d]', LB, UB);
+                    uiwait(errordlg( error_str,'DynareGUI Error','modal'));
+                    estim_params{r,c+1} = 0;
+                 end
+                 callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:9)];
+            end
             
             
-        end
-        
+          end
     end
 
     function cellArray = create_estim_params_cell_array(param_names, exo_names, data)
@@ -223,10 +238,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             cellArray{i,2} = params(i,1); %id
             name = deblank(param_names(params(i,1),:));
             cellArray{i,3} = name;
-            cellArray{i,4} = params(i,3);% lower bound
-            cellArray{i,5} = params(i,4);% upper bound
+            [LB, UB] = gui_tools.prior_range_defaults(params(i,5));
+            cellArray{i,4} = LB; %params(i,3);% lower bound
+            cellArray{i,5} = UB; %params(i,4);% upper bound
             
             cellArray{i,6} = gui_tools.prior_shape(params(i,5));% prior shape
+            
             cellArray{i,7} = params(i,6);% prior mean
             cellArray{i,8} = params(i,7);% prior std
             cellArray{i,9} = false;% remove flag
@@ -238,8 +255,9 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             cellArray{n+i,2} = var_exo(i,1); %id
             name = deblank(exo_names(var_exo(i,1),:));
             cellArray{n+i,3} = name;
-            cellArray{n+i,4} = var_exo(i,3);% lower bound
-            cellArray{n+i,5} = var_exo(i,4);% upper bound
+            [LB, UB] = gui_tools.prior_range_defaults(var_exo(i,5));
+            cellArray{n+i,4} = LB; %var_exo(i,3);% lower bound
+            cellArray{n+i,5} = UB; %var_exo(i,4);% upper bound
             
             cellArray{n+i,6} =  gui_tools.prior_shape(var_exo(i,5));% prior shape
             cellArray{n+i,7} = var_exo(i,6);% prior mean

@@ -593,6 +593,7 @@ top = 35;
         
         
         gui_tools.project_log_entry('Doing estimation','...');
+        
         model_name = project_info.model_name;
         
        try
@@ -640,6 +641,9 @@ top = 35;
         % computations take place here
         %status = 1;
         try
+            %TODO Check with Dynare team/Ratto!!!
+            gui_tools.clear_dynare_oo_structure();
+            
             oo_recursive_ = dynare_estimation(var_list_); 
             jObj.stop;
             jObj.setBusyText('All done!');
@@ -648,6 +652,7 @@ top = 35;
             gui_tools.menu_options('output','On');
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             set(handles.pussbuttonResults, 'Enable', 'on');
+            project_info.modified = 1;
             
         catch ME
             jObj.stop;
@@ -691,22 +696,25 @@ top = 35;
          
         try
             new_comm = getappdata(0,'estimation');
-            model_settings.estimation = new_comm;   
-            
+            if(~isempty(new_comm))
+                model_settings.estimation = new_comm;   
+            end
              %new_comm = model_settings.user_options.estimation; 
             %new_options_ = getappdata(0,'new_options_');
             
             
             if(isfield(new_comm,'consider_all_endogenous'))
-                set_all_endogenous(1);
+                set_all_endogenous(new_comm.consider_all_endogenous);
                 new_comm = rmfield(new_comm,'consider_all_endogenous');
                 %new_options_ = rmfield(new_options_,'consider_all_endogenous');
-            else
-                set_all_endogenous(0);
+            %else
+                %set_all_endogenous(0);
             end
             
             if(isfield(new_comm,'consider_only_observed'))
-                select_only_observed();
+                if(new_comm.consider_only_observed)
+                    select_only_observed();
+                end
                 new_comm = rmfield(new_comm,'consider_only_observed');
                 %new_options_ = rmfield(new_options_,'consider_only_observed');
             end

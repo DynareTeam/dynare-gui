@@ -43,7 +43,7 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
-evalin('base','diary off;');
+
 
 end
 
@@ -55,6 +55,8 @@ function dynare_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to dynare_gui (see VARARGIN)
 
+
+
 % Choose default command line output for dynare_gui
 handles.output = hObject;
 movegui(hObject,'center');
@@ -64,17 +66,27 @@ movegui(hObject,'center');
 
 %axis off; % Remove axis ticks and numbers
 %axis image; % Set aspect ratio to obtain square pixels
+global dynare_gui_root;
 
 setappdata(0, 'bg_color', 'default');
 setappdata(0, 'special_color', 'white');
 setappdata(0, 'main_figure', hObject);
 
 dynareroot = dynare_config;
-warning_config()
+%TODO check with Dynare team/Ratto!!!
+addpath([dynareroot '/missing/stats']);
+addpath([dynareroot '/missing/nanmean']);
 
-evalin('base','global dynare_gui_ project_info model_settings');
+warning_config();
+
+evalin('base','global dynare_gui_ project_info model_settings dynare_gui_root');
 evalin('base','global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_');
-evalin('base','diary(''dynare_gui.log'');');
+
+evalin('base','dynare_gui_root = which(''dynare_gui'');');
+
+dynare_gui_root = dynare_gui_root(1: strfind(dynare_gui_root, 'dynare_gui.m')-1);
+
+%evalin('base','diary(''dynare_gui.log'');');
 
 % fileName = 'dynare_gui.mat';
 % 
@@ -121,6 +133,14 @@ function project_new_Callback(hObject, eventdata, handles)
 % hObject    handle to project_new (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+global project_info;
+
+% TODO if open, close existing project
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)))%if(exist('project_info', 'var') == 1) 
+   gui_close_project();
+end
+
 tabId = addTab(hObject, 'New project');
 gui_new_project(tabId);
 end
@@ -130,6 +150,14 @@ function project_open_Callback(hObject, eventdata, handles)
 % hObject    handle to project_open (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+global project_info;
+
+% TODO if open, close existing project
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)))%if(exist('project_info', 'var') == 1) 
+   gui_close_project();
+end
+
 gui_open_project(hObject);
 end
 
@@ -162,15 +190,29 @@ function project_exit_Callback(hObject, eventdata, handles)
 % hObject    handle to project_exit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% TODO: Before quitting check if current project have been modified and ask 'Save changes to current project?'
-answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No')
+
+global project_info;
+
+answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No');
 if(strcmp(answer,'Yes'))
+    % Before quitting check if current project have been modified and ask 'Save changes to current project?'
+    if(isstruct(project_info) && isfield(project_info, 'modified') && project_info.modified)
+        answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
+        if(strcmp(answer,'Yes'))
+            gui_tools.save_project();
+        elseif (strcmp(answer,'Cancel'))
+            return;
+        end
+        
+    end
+    
+    %evalin('base','diary off;');
     appdata = getappdata(0);
     fns = fieldnames(appdata);
     for ii = 1:numel(fns)
         rmappdata(0,fns{ii});
     end
-    
+    evalin('base','clear all;');
     close;
 end
 end
@@ -210,6 +252,7 @@ function model_save_snapshot_Callback(hObject, eventdata, handles)
 % hObject    handle to model_save_snapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_tools.save_model_snapshot();
 end
 
 
@@ -218,6 +261,7 @@ function model_load_snapshot_Callback(hObject, eventdata, handles)
 % hObject    handle to model_load_snapshot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_tools.load_model_snapshot();
 end
 
 
@@ -375,7 +419,9 @@ function help_dynare_manual_Callback(hObject, eventdata, handles)
 % hObject    handle to help_dynare_manual (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-open('dynare.pdf');
+global dynare_gui_root;
+open([dynare_gui_root, 'resources',filesep, 'dynare.html', filesep, 'index.html']);
+%open('dynare.pdf');
 end
 
 % --------------------------------------------------------------------
@@ -805,7 +851,7 @@ h28 = uicontrol(...
     'Max',get(0,'defaultuicontrolMax'),...
     'Min',get(0,'defaultuicontrolMin'),...
     'SliderStep',get(0,'defaultuicontrolSliderStep'),...
-    'String','Prototype v.0.4.1',...
+    'String','Prototype v.0.4.2',...
     'Style','text',...
     'Value',get(0,'defaultuicontrolValue'),...
     'Position',[71 13 30 2],...

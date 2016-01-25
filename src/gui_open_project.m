@@ -5,11 +5,6 @@ global model_settings;
 global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_;
 
 
-% TODO close existing project
-%if(~isempty(fieldnames(project_info)))
-%    gui_close_project();
-%end
-
 [fileName,pathName] = uigetfile('*.dproj','Select Dynare GUI project file:');
 
 try
@@ -65,7 +60,9 @@ try
         else
             setappdata(0,'new_project_location',false);    
         end
-            
+        
+        evalin('base',sprintf('diary(''dynare_gui_%s.log'');',project_name ));
+        
         % important to create after project_info is set
         gui_auxiliary.create_dynare_gui_structure;
         
@@ -76,21 +73,25 @@ try
         
         %enable menu options
         gui_tools.menu_options('project','On');
-        gui_tools.menu_options('model','On');
         
-        if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
-            
-            gui_tools.menu_options('estimation','On');
-            if(project_info.model_type==1)
-                gui_tools.menu_options('stohastic','On');
-            else
-                gui_tools.menu_options('deterministic','On');
+        if (~isempty(project_info) && isfield(project_info, 'model_name'))
+            gui_tools.menu_options('model','On');
+        
+            if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
+                
+                gui_tools.menu_options('estimation','On');
+                if(project_info.model_type==1)
+                    gui_tools.menu_options('stohastic','On');
+                else
+                    gui_tools.menu_options('deterministic','On');
+                end
+                gui_tools.menu_options('output','On');
             end
-            gui_tools.menu_options('output','On');
         end
+        project_info.modified = 0;
         gui_tools.project_log_entry('Project Open',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
     end
-catch
+catch ME
     uiwait(errordlg( error_str,'DynareGUI Error','modal'));
 end
 

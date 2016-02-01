@@ -8,10 +8,14 @@ Main functionalities:
 - Load .mod file: an interface to load a mod file
 - Model settings: an interface for defining various model and GUI options
 - Dynare_GUI log file
-- Select observed variables
+- Export to .mod file
+- Save/load model snapshots
+- Define observed variables and datafile
 - Specification of estimated parameters & shocks
-- Estimation command 
+- Estimation command
+- Calibrated smoother command
 - Stochastic simulation
+- Deterministic simulation
 - Shock decomposition
 - Conditional forecast.
 

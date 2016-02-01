@@ -73,22 +73,25 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 project_info.first_obs = first_obs;
                 project_info.first_obs_date = dates(first_obs);
                 project_info.last_obs_date = dates(first_obs)+ str2num(num_obs)-1;                
-                project_info.frequency = frequency;
-                project_info.num_obs = num_obs;
+                project_info.freq = frequency;
+                project_info.nobs = num_obs;
                 project_info.data_file = data_file;
                 project_info.modified = 1;
                 
-%                 options_.dataset.file = data_file;
-%                 %options_.dataset.series = [];
-%                 options_.dataset.firstobs = dates(first_obs);
-%                 options_.dataset.lastobs = dates(first_obs)+ str2num(num_obs)-1;  
-%                 options_.dataset.nobs = str2num(num_obs);   
-%                 %options_.dataset.xls_sheet = [];
-%                 %options_.dataset.xls_range = [];
-                
-                options_.datafile = data_file;
-                options_.nobs = str2num(num_obs); 
-                %options_.first_obs = str2num(first_obs);
+                if(project_info.new_data_format )
+                    %new data interface
+                    options_.dataset.file = data_file;
+                    %options_.dataset.series = [];
+                    options_.dataset.firstobs = dates(first_obs);
+                    %options_.dataset.lastobs = dates(first_obs)+ str2num(num_obs)-1;
+                    options_.dataset.nobs = str2double(num_obs);
+                    %options_.dataset.xls_sheet = 1;
+                    %options_.dataset.xls_range = '';
+                else
+                    % old data interface
+                    options_.datafile = data_file;
+                    options_.nobs = str2double(num_obs);
+                end
                 
                 remove_selected();
                 model_settings.varobs = varobs;
@@ -207,7 +210,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             
             handles.frequency = uicontrol(panel_id, 'Style', 'popup',...
                 'String', {'annual','quarterly','monthly','weekly'},...
-                'Value', project_info.frequency,...
+                'Value', project_info.freq,...
                 'Units','characters',  'Position',[width+h_space top-v_space*2 width v_size] ,...
                 'Enable', 'off');
            
@@ -224,7 +227,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 'Units','characters','Position',[1 top-v_space*3 width v_size] );
             
             handles.num_obs = uicontrol(panel_id,'Style','edit',...
-                'String', project_info.num_obs,...
+                'String', project_info.nobs,...
                 'HorizontalAlignment', 'left',...
                 'Units','characters','Position',[width+h_space top-v_space*3 width v_size] ,...
                 'Enable', 'off');

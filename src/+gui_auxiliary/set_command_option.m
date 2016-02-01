@@ -3,6 +3,7 @@ function status = set_command_option(name, value, type)
 %   Detailed explanation goes here
 
 global options_;
+
 status = 1;
 
 % if(strcmp(type, 'check_option'))
@@ -50,6 +51,9 @@ switch(name)
         elseif(strcmp(value, 'logarithmic_reduction'))
             options_.dr_logarithmic_reduction = 1;
         end
+        
+    case 'first_obs'
+        options_.first_obs = value;    
         
     case 'bandpass_filter'
         if(strcmp(type, 'check_option'))

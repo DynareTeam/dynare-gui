@@ -135,7 +135,7 @@ dynare_gui_.stoch_simul.solver{num,4} = 'Computes the solution of the model unde
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'sylvester';    
 dynare_gui_.stoch_simul.solver{num,2} =  'default';  
-dynare_gui_.stoch_simul.solver{num,3} = 'default | fixed_point';
+dynare_gui_.stoch_simul.solver{num,3} = {'','default','fixed_point'};
 dynare_gui_.stoch_simul.solver{num,4} = 'Determines the algorithm used to solve the Sylvester equation for block decomposed model. Possible values for OPTION are: default and fixed_point. Default value is default.';
 
 num = num+1;
@@ -149,7 +149,7 @@ dynare_gui_.stoch_simul.solver{num,4} = 'It is the convergence criterion used in
 num = 1;
 dynare_gui_.stoch_simul.dr{num,1} = 'dr';    
 dynare_gui_.stoch_simul.dr{num,2} = 'default';    
-dynare_gui_.stoch_simul.dr{num,3} = 'default | cycle_reduction | logarithmic_reduction';   
+dynare_gui_.stoch_simul.dr{num,3} = {'','default','cycle_reduction','logarithmic_reduction'};   
 dynare_gui_.stoch_simul.dr{num,4} = 'Determines the method used to compute the decision rule. Possible values for OPTION are: default - uses the default method to compute the decision rule based on the generalized Schur decomposition (see Villemot (2011) for more information), cycle_reduction - uses the cycle reduction algorithm to solve the polynomial equation for retrieving the coefficients associated to the endogenous variables in the decision rule. This method is faster than the default one for large scale models, logarithmic_reduction - uses the logarithmic reduction algorithm to solve the polynomial equation for retrieving the coefficients associated to the endogenous variables in the decision rule. This method is in general slower than the cycle_reduction. Default value is default.';     
 
 
@@ -201,7 +201,7 @@ dynare_gui_.stoch_simul.filter{num,4} = 'Uses a bandpass filter with the default
 num = num+1;
 dynare_gui_.stoch_simul.filter{num,1} = 'bandpass_filter';    
 dynare_gui_.stoch_simul.filter{num,2} = '[6,32]';    
-dynare_gui_.stoch_simul.filter{num,3} = '[HIGHEST_PERIODICITY LOWEST_PERIODICITY]';   
+dynare_gui_.stoch_simul.filter{num,3} = '[INTEGER1:INTEGER2]';  %'[HIGHEST_PERIODICITY LOWEST_PERIODICITY]';   
 dynare_gui_.stoch_simul.filter{num,4} = 'Uses a bandpass filter before computing moments. The passband is set to a periodicity of HIGHEST_PERIODICITY to LOWEST_PERIODICITY, e.g. 6 to 32 quarters if the model frequency is quarterly. Default: [6,32].'; 
 
 %% Group 6: Output 

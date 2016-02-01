@@ -5,6 +5,7 @@ global M_;
 global oo_;
 global options_ ;
 global model_settings;
+global dynare_gui_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -13,9 +14,12 @@ handles = [];
 cf_vars = [];
 shocks = [];
 
+if(~isfield(model_settings,'conditional_forecast_options'))
+    model_settings.conditional_forecast_options = dynare_gui_.conditional_forecast_options;
+end
+
 %set(tabId, 'OnShow', @showTab_Callback);
-do_not_check_all_results = 0;
-v_size = 30; %28
+v_size = 28; %30
 top = 35;
 % --- PANELS -------------------------------------
          handles.uipanelConditions = uipanel( ...
@@ -38,7 +42,13 @@ top = 35;
         
         uipanelVars_CreateFcn;
 
-        
+         handles.uipanelComm = uipanel( ...
+            'Parent', tabId, ...
+            'Tag', 'uipanelCommOptions', ...
+            'UserData', zeros(1,0), ...
+            'Units', 'characters', 'BackgroundColor', bg_color, ...
+            'Position', [2 3.5 172 3.5], ... %[90 3 85 3.5]
+            'Title', 'Current command options:');%, ...
      
 	% --- STATIC TEXTS -------------------------------------
 	
@@ -62,8 +72,24 @@ top = 35;
 			'String', 'Select endogenous variables for conditional forecast:', ...
 			'HorizontalAlignment', 'left'); 
         
-    
-       
+        if(isfield(model_settings,'conditional_forecast'))
+            comm = getfield(model_settings,'conditional_forecast');
+            comm_str = gui_tools.command_string('conditional_forecast', comm);
+        else
+            comm_str = '';
+        end
+        
+        handles.conditional_forecast = uicontrol( ...
+            'Parent', handles.uipanelComm, ...
+            'Tag', 'stoch_simul', ...
+            'Style', 'text', ...
+            'Units', 'characters', 'BackgroundColor', bg_color,...
+            'Position', [0 0 171 2], ...
+            'FontAngle', 'italic', ...
+            'String', comm_str, ...
+            'TooltipString', comm_str, ...
+            'HorizontalAlignment', 'left');
+        
         
         % --- PUSHBUTTONS -------------------------------------
         handles.pussbuttonCondForecast = uicontrol( ...
@@ -98,14 +124,23 @@ top = 35;
 			'Parent', tabId, ...
 			'Tag', 'pussbuttonReset', ...
 			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [56+27 1 25 2], ...
-			'String', 'Close this tab', ...
-			'Callback',{@close_tab,tabId});
+            'Units', 'characters', ...
+            'Position', [56+27 1 25 2], ...
+            'String', 'Close this tab', ...
+            'Callback',{@close_tab,tabId});
+        
+        handles.pushbuttonCommandDefinition = uicontrol( ...
+            'Parent', tabId, ...
+            'Tag', 'pushbuttonCommandDefinition', ...
+            'Style', 'pushbutton', ...
+            'Units', 'characters', ...
+            'Position', [90+55 1 30 2], ...
+            'String', 'Define command options ...', ...
+            'Callback', @pushbuttonCommandDefinition_Callback);
         
         handles.pushbuttonAddCond = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pushbuttonAddCond', ...
+            'Parent', tabId, ...
+            'Tag', 'pushbuttonAddCond', ...
 			'Style', 'pushbutton', ...
 			'Units', 'characters', ...
 			'Position', [48 33.5 19 1.5], ...
@@ -151,7 +186,7 @@ top = 35;
         cf_vars= model_settings.variables;
         numVariables = length(cf_vars);
         
-        listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units', 'characters','Position',[2 23 80 1.5]);
+        listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units', 'characters','Position',[2 21 80 1.5]);
         %list = cf_vars; 
         list = cf_vars(:,4);
         set(listBox,'String',['Select endogenous variable for constrained path...'; list]);
@@ -168,8 +203,10 @@ top = 35;
             'ColumnEditable', [false false true false],...
             'ColumnWidth', {'auto', 'auto', 'auto', 'auto'}, ...
             'RowName',[],...
-            'Position',[2,6,80,15],...
+            'Position',[2,5,80,15],...
             'CellEditCallback',@savedata);
+        
+        %%%listBox.UserData = handles.uit(tubNum);
         
         shocks = model_settings.shocks;
         listBox2 = uicontrol('Parent',tempPanel,'Style','popupmenu','Units', 'characters','Position',[2 2 80 1.5]);
@@ -277,7 +314,7 @@ top = 35;
                 %new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle);
                 %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
                 %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
-                new_tab = uitab(handles.varsTabGroup, 'Title',tabTitle , 'UserData', tubNum);
+                new_tab = uitab(handles.varsTabGroup, 'Title',tabTitle );%, 'UserData', tubNum);
                 varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
                 currentPanel = varsPanel(tubNum);
                 
@@ -300,7 +337,7 @@ top = 35;
                 sld = uicontrol('Style', 'slider',...
                     'Parent', currentPanel, ...
                     'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-                    'Units', 'characters','Position', [81.1 0 3 28],...
+                    'Units', 'characters','Position', [81.1 0 3 26],...
                     'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
             end
             
@@ -373,27 +410,28 @@ top = 35;
 
     function pussbuttonCondForecast_Callback(hObject,evendata)
    
+        comm_str = get(handles.conditional_forecast, 'String');
+        if(isempty(comm_str))
+            errordlg('Please define conditional_forecast command!' ,'Dynare GUI error','modal');
+            uicontrol(hObject);
+            return;
+        end
+        
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
         
         failCondition = conditionNotDefined();
         if(failCondition)
             errordlg(sprintf('You must define conditions first: Cond %d is not defined correctly.', failCondition) ,'DynareGUI Error','modal');
-            uicontrol(hObject);
+            handles.tabConditionalPanel.SelectedTab = handles.htabPanel(failCondition);
+            %handles.tabConditionalPanel.Children(failCondition);
+            %uicontrol(hObject);
             return;
         end
         
-        
-        
         old_options = options_;
         options_.datafile = project_info.data_file;
-        
-        %options_.qz_criterium = 1.000001; %0.999999; %1.000001;
-
         options_.nodisplay = 0;
-       
 
-        
-    
         if(~variablesSelected)
             errordlg('Please select variables!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
@@ -444,21 +482,44 @@ top = 35;
             end
             
         end
-
-
-        options_cond_fcst_ = struct();
-        options_cond_fcst_.periods = 20;
-        options_cond_fcst_.replic = 1500;
-        options_cond_fcst_.parameter_set = 'posterior_mean';
+        
+        user_options = model_settings.conditional_forecast;
+        options_cond_fcst_ = model_settings.conditional_forecast_options;
         options_cond_fcst_.controlled_varexo = var_exo_;
         
+        if(~isempty(user_options))
+            if isfield(user_options,'parameter_set')
+                options_cond_fcst_.parameter_set = user_options.parameter_set;
+            end
+            
+            if isfield(user_options,'replic')
+                options_cond_fcst_.replic = user_options.replic;
+            end
+            
+            if isfield(user_options,'periods')
+                options_cond_fcst_.periods = user_options.periods;
+            end
+            
+            if isfield(user_options,'conf_sig')
+                options_cond_fcst_.conf_sig = user_options.conf_sig;
+            end
+        end
         
-        
+        model_settings.conditional_forecast_options = options_cond_fcst_;
+        model_settings.constrained_paths_ = constrained_paths_;
+        model_settings.constrained_vars_ = constrained_vars_;
+        model_settings.varlist_.conditional_forecast = var_list_;
+
         % computations take place here
-        %status = 1;
         try
             imcforecast(constrained_paths_, constrained_vars_, options_cond_fcst_);
-            plot_icforecast(var_list_, 20, options_);
+            if isfield(user_options,'plot_periods')
+                plot_periods = user_options.plot_periods;
+            else
+                plot_periods = options_cond_fcst_.plot_periods;
+            end
+            
+            plot_icforecast(var_list_, plot_periods, options_);
             
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             uiwait(msgbox('Conditional forecast command executed successfully!', 'DynareGUI','modal'));
@@ -489,8 +550,6 @@ top = 35;
             
             selected = selectedTab.UserData;
             
-            %delete(handles.htabPanel(selected));
-            
             handles.htabPanel(selected)= [];
             handles.tempPanel(selected)= [];
             handles.uit(selected) = [];
@@ -504,6 +563,7 @@ top = 35;
             if(handles.tubNum>0)
                 for ii=1:handles.tubNum
                     children(ii).Title = sprintf('Cond %d', ii);
+                    children(ii).UserData = ii; %new tab number
                 end
                 
             end
@@ -613,5 +673,32 @@ top = 35;
         end
         
     end
-  
+
+    function pushbuttonCommandDefinition_Callback(hObject,evendata)
+        
+        %h = gui_define_comm_stoch_simul();
+        
+        %old_comm = model_settings.conditional_forecast;
+        
+        h = gui_define_comm_options(dynare_gui_.conditional_forecast,'conditional_forecast');
+        
+        uiwait(h);
+        
+        try
+            new_comm = getappdata(0,'conditional_forecast');
+            if(~isempty(new_comm))
+                model_settings.conditional_forecast = new_comm;
+            end
+            comm_str = gui_tools.command_string('conditional_forecast', new_comm);
+            set(handles.conditional_forecast, 'String', comm_str);
+            set(handles.conditional_forecast, 'TooltipString', comm_str);
+            
+            gui_tools.project_log_entry('Defined command conditional_forecast',comm_str);
+            
+        catch
+            
+        end
+        
+    end
+
 end

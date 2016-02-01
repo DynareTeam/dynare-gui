@@ -23,7 +23,7 @@ dynare_gui_.estimation.data{num,4} = 'The datafile: a .m file, a .mat file, a .c
 num = num+1;
 dynare_gui_.estimation.data{num,1} = 'dirname';    
 dynare_gui_.estimation.data{num,2} = '<mod_file>';    
-dynare_gui_.estimation.data{num,3} = 'FILENAME';   
+dynare_gui_.estimation.data{num,3} = 'NAME'; %'FILENAME';   
 dynare_gui_.estimation.data{num,4} = 'Directory in which to store estimation output. To pass a subdirectory of a directory, you must quote the argument. Default: <mod_file>.';     
 
 num = num+1;
@@ -204,7 +204,7 @@ dynare_gui_.estimation.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) t
 num = num+1;
 dynare_gui_.estimation.solver{num,1} = 'sylvester';    
 dynare_gui_.estimation.solver{num,2} =  'default';  
-dynare_gui_.estimation.solver{num,3} = {'default', 'fixed_point'}; % special
+dynare_gui_.estimation.solver{num,3} = {'','default', 'fixed_point'}; % special
 dynare_gui_.estimation.solver{num,4} = 'Determines the algorithm used to solve the Sylvester equation for block decomposed model. Possible values for OPTION are: default and fixed_point. Default value is default.';
 
 num = num+1;
@@ -289,7 +289,7 @@ dynare_gui_.estimation.MH_options{num,4} = 'Tells Dynare to add to previous Metr
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mcmc_jumping_covariance';    
 dynare_gui_.estimation.MH_options{num,2} = 'hessian';    
-dynare_gui_.estimation.MH_options{num,3} = 'hessian | prior_variance | identity_matrix | FILENAME';    %special
+dynare_gui_.estimation.MH_options{num,3} = {'hessian','prior_variance','identity_matrix','FILENAME'};    %special
 dynare_gui_.estimation.MH_options{num,4} = 'Tells Dynare which covariance to use for the proposal density of the MCMC sampler. mcmc_jumping_covariance can be one of the following: hessian,prior_variance,identity_matrix or FILENAME. Default value is hessian.';      
 
 
@@ -398,7 +398,7 @@ dynare_gui_.estimation.filter{num,4} = 'Uses the diffuse Kalman filter (as descr
 num = num+1;
 dynare_gui_.estimation.filter{num,1} = 'lyapunov';    
 dynare_gui_.estimation.filter{num,2} = 'default';    
-dynare_gui_.estimation.filter{num,3} = {'default', 'fixed_point', 'doubling', 'square_root_solver'};   %special
+dynare_gui_.estimation.filter{num,3} = {'','default', 'fixed_point', 'doubling', 'square_root_solver'};   %special
 dynare_gui_.estimation.filter{num,4} = 'Determines the algorithm used to solve the Lyapunov equation to initialized the variance-covariance matrix of the Kalman filter using the steady-state value of state variables. Possible values for OPTION are: default, fixed_point, doubling, square_root_solver. Default value is default.';      
 
 
@@ -510,13 +510,13 @@ dynare_gui_.estimation.postprocessing{num,4} = 'Number of periods on which to co
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'proposal_approximation';    
 dynare_gui_.estimation.postprocessing{num,2} = 'cubature';    
-dynare_gui_.estimation.postprocessing{num,3} = 'cubature | montecarlo | unscented';   
+dynare_gui_.estimation.postprocessing{num,3} = {'cubature','montecarlo','unscented'};   
 dynare_gui_.estimation.postprocessing{num,4} = 'Sets the method for approximating the proposal distribution. Possible values for OPTION are: cubature, montecarlo and unscented. Default value is cubature.';      
 
 num = num+1;
 dynare_gui_.estimation.postprocessing{num,1} = 'distribution_approximation';    
 dynare_gui_.estimation.postprocessing{num,2} = 'cubature';    
-dynare_gui_.estimation.postprocessing{num,3} = 'cubature | montecarlo | unscented';   
+dynare_gui_.estimation.postprocessing{num,3} = {'cubature','montecarlo','unscented'};
 dynare_gui_.estimation.postprocessing{num,4} = 'Sets the method for approximating the particle distribution. Possible values for OPTION are: cubature, montecarlo and unscented. Default value is unscented.';      
 
 
@@ -534,7 +534,7 @@ dynare_gui_.estimation.Particle_filter{num,4} = 'Number of particles used when e
 num = num+1;
 dynare_gui_.estimation.Particle_filter{num,1} = 'resampling';    
 dynare_gui_.estimation.Particle_filter{num,2} = '';    %default is systematic ???
-dynare_gui_.estimation.Particle_filter{num,3} = 'none | systematic | generic';   
+dynare_gui_.estimation.Particle_filter{num,3} = {'','none','systematic','generic'};  
 dynare_gui_.estimation.Particle_filter{num,4} = 'Determines if resampling of the particles is done. Possible values for OPTION are: none, systematic and generic.';
 
 
@@ -548,14 +548,14 @@ dynare_gui_.estimation.Particle_filter{num,4} = 'A real number between zero and 
 num = num+1;
 dynare_gui_.estimation.Particle_filter{num,1} = 'resampling_method';    
 dynare_gui_.estimation.Particle_filter{num,2} = '';    %default is kitagawa???
-dynare_gui_.estimation.Particle_filter{num,3} = 'kitagawa | stratified | smooth';   
+dynare_gui_.estimation.Particle_filter{num,3} = {'kitagawa','stratified','smooth'};  
 dynare_gui_.estimation.Particle_filter{num,4} = 'Sets the resampling method. Possible values for OPTION are: kitagawa, stratified and smooth.';
 
 
 num = num+1;
-dynare_gui_.estimation.Particle_filter{num,1} = 'filter_algorithm';    
+dynare_gui_.estimation.Particle_filter{num,1} = 'filter_algorithm'    
 dynare_gui_.estimation.Particle_filter{num,2} = '';    
-dynare_gui_.estimation.Particle_filter{num,3} = 'sis | apf | gf | gmf | cpf';   
+dynare_gui_.estimation.Particle_filter{num,3} = {'','sis','apf','gf','gmf','cpf'};   
 dynare_gui_.estimation.Particle_filter{num,4} = 'Sets the particle filter algorithm. Possible values for OPTION are: sis, apf, gf, gmf and cpf.';      
 
 

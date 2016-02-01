@@ -4,6 +4,7 @@ global model_settings;
 global project_info;
 global options_;
 
+
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
@@ -21,7 +22,7 @@ maxDisplayed = 11;
 handles = [];
 top = 32;
 
-if(isfield(model_settings,comm_name))
+if(isfield(model_settings,comm_name)&& ~isempty(getfield(model_settings,comm_name)))
     user_options = getfield(model_settings,comm_name);
 else
     user_options = struct();
@@ -31,6 +32,8 @@ end
 if(isempty(fieldnames(user_options)))
     %default values
     user_options.tex = project_info.latex;
+    user_options.graph_format = 'fig,eps';
+    user_options.order = 1;
 
 end
 
@@ -203,12 +206,13 @@ handles.pussbuttonClose = uicontrol( ...
                     userDefaultValue = num2str(userDefaultValue);
                 elseif(strcmp(option_type, 'DOUBLE'))
                     userDefaultValue = num2str(userDefaultValue);
-                    
                 end
                 
             else
                 if(strcmp(option_type, 'check_option'))
                     userDefaultValue= 0;
+                elseif (iscell(option_type))
+                    userDefaultValue= 1;
                 else
                     userDefaultValue='';
                 end
@@ -231,24 +235,74 @@ handles.pussbuttonClose = uicontrol( ...
                 
             else
                 if(iscell(option_type))
-                    tool_tip_string = option_type{1};
+                    %tool_tip_string = sprintf(' %s',option_type{1});
+                    if(~isnumeric(userDefaultValue))
+                        
+                        %[found, ind]  = ismember(option_type, userDefaultValue);
+                        ind  = find(ismember(option_type, userDefaultValue));
+                        if(~isempty(ind))
+                            userDefaultValue = ind;
+                        else
+                            userDefaultValue = 1;    
+                        end
+                        
+                        %                         found = 0;
+%                         for j=1: size(ind,2)
+%                             if ind(j)
+%                                 userDefaultValue = j;
+%                                 found = 1;
+%                             end
+%                         end
+%                         if(~found)
+%                             userDefaultValue = 1;
+%                         end
+                        
+                    end
+                    tab_handles.values(ii)=  uicontrol('Parent',  tabs_panel, ...
+                        'Style', 'popup',...
+                        'String', option_type,...
+                        'Value', userDefaultValue,...
+                        'Units','characters',  'Position',[h_space*2+width_name new_top-ii*2 width_value 1.5],...
+                        'HorizontalAlignment', 'left',...
+                        'TooltipString', 'popup_value',...
+                        'Visible', visible);
+                    
+                    
                 else
                     tool_tip_string = option_type;
-                end 
-                tab_handles.values(ii)=uicontrol( ...
-                    'Parent',  tabs_panel, ...
-                    'Style', 'edit', ...
-                    'Units', 'characters', 'BackgroundColor', special_color,...
-                    'Position', [h_space*2+width_name new_top-ii*2 width_value 1.5], ...
-                    'String', userDefaultValue,...
-                    'TooltipString', tool_tip_string,...
-                    'HorizontalAlignment', 'left',...
-                    'Visible', visible);
-           
+                    
+                    
+                    tab_handles.values(ii)=uicontrol( ...
+                        'Parent',  tabs_panel, ...
+                        'Style', 'edit', ...
+                        'Units', 'characters', 'BackgroundColor', special_color,...
+                        'Position', [h_space*2+width_name new_top-ii*2 width_value 1.5], ...
+                        'String', userDefaultValue,...
+                        'TooltipString', tool_tip_string,...
+                        'HorizontalAlignment', 'left',...
+                        'Visible', visible,...
+                        'Callback',{@checkUserInput_Callback,group{ii,1},option_type});
+                end
+                if(strcmp(option_type,'FILENAME'))
+                    uicontrol('Parent',  tabs_panel,'Style','pushbutton',...
+                        'String', '...',...
+                        'Units','characters',...
+                        'Position', [h_space*2+width_name+width_value-3 new_top-ii*2 3 1.5], ...
+                        'Callback',{@select_file, group{ii,1},tab_handles.values(ii)});
+                    
+                end
+                
             end
+            
+            
+            
             try
                 %current_value= eval(sprintf('options_.%s;',group{ii,5}));
-                current_value= gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
+                if(strcmp(comm_name,'conditional_forecast'))
+                    current_value= getfield(model_settings.conditional_forecast_options, group{ii,1});
+                else
+                    current_value= gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
+                end
                 if(isstruct(current_value))
                    flds = fieldnames(current_value);
                    for ff=1: length(flds)
@@ -359,6 +413,82 @@ handles.pussbuttonClose = uicontrol( ...
             current_option = current_option +1;
             
         end
+        function select_file(hObject,callbackdata, option_name, uicontrol)
+            try
+                file_types = {'*.*'};
+                switch option_name
+                    case 'datafile'
+                        file_types = {'*.m';'*.mat';'*.xls';'*.xlsx';'*.csv'};
+                    case 'mode_file'
+                        file_types = {'*.mat'}
+                        
+                end
+                
+                [fileName,pathName] = uigetfile(file_types,sprintf('Select %s ...', option_name));
+                
+                if(fileName ==0)
+                    return;
+                end
+                project_folder= project_info.project_folder;
+                if(strcmp([pathName,fileName],[project_folder,filesep,fileName])~=1)
+                    
+                    [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
+                    if(status)
+                        uiwait(msgbox('File copied to project folder', 'DynareGUI','modal'));
+                    else
+                        uiwait(errordlg(['Error while coping file to project folder: ', message] ,'DynareGUI Error','modal'));
+                    end
+                end
+                set(uicontrol, 'String', fileName);
+                
+            catch ME
+                errordlg(['Error while selecting ',option_name, ' !'] ,'DynareGUI Error','modal');
+            end
+        end
+        
+        function checkUserInput_Callback(hObject,callbackdata, option_name, option_type)
+            value = get(hObject, 'String');
+            if isempty(value)
+                return;
+            end
+            switch option_type
+                case {'INTEGER', 'INTEGER or [INTEGER1:INTEGER2]','[INTEGER1:INTEGER2]', 'DOUBLE', '[DOUBLE DOUBLE]', '[INTEGER1 INTEGER2 ...]', ...
+                        'INTEGER or [INTEGER1:INTEGER2] or [INTEGER1 INTEGER2 ...]', '[INTEGER1:INTEGER2] or [INTEGER1 INTEGER2 ...]'}
+                    [num, status] = str2num(value);
+                    if(strcmp(option_type,'[DOUBLE DOUBLE]'))
+                        if(size(num,1)~= 1 || size(num,2)~= 2)
+                            status = 0;
+                        end
+                    end
+                    if(strcmp(option_type,'[INTEGER1 INTEGER2 ...]'))
+                        if(size(num,1)~= 1 || size(num,2) < 2)
+                            status = 0;
+                        end
+                    end
+                    if(strcmp(option_type,'INTEGER'))
+                        if(size(num,1)~= 1 || size(num,2) ~= 1 || floor(num)~=num)
+                            status = 0;
+                        end
+                    end
+                    if(strcmp(option_type,'[INTEGER1:INTEGER2]'))
+                        if(size(num,1)~= 1 || size(num,2) ~= 2 || floor(num)~=num)
+                            status = 0;
+                        end
+                    end
+                    
+                    if(~status)
+                        errosrStr = sprintf('Not valid input! Please define option %s as %s',option_name, option_type );
+                        errordlg(errosrStr,'DynareGUI Error','modal');
+                        set(hObject, 'String','');
+                       
+                    end
+                case '(NAME, VALUE, ...)'
+                   %TODO optim
+ 
+                    
+            end
+            
+        end
         
         function scrollPanel_Callback(hObject,callbackdata)
             
@@ -449,6 +579,7 @@ handles.pussbuttonClose = uicontrol( ...
                
             else 
                 value = strtrim(get(handles.values(ii),'String'));
+                
                 if(~isempty(value))
                     comm_option = get(handles.options(ii),'String');
                     % eval(sprintf('new_comm.%s = %s',option, value));
@@ -461,7 +592,16 @@ handles.pussbuttonClose = uicontrol( ...
                     elseif(strcmp(option_type, 'DOUBLE'))
                         new_user_options = setfield(new_user_options,comm_option,str2double(value));
                         
-                    else %we save it as a string
+                     elseif(strcmp(option_type, 'popup_value')) %elseif(iscell(value))
+                        selected_value = get(handles.values(ii),'Value');
+                        user_value = value{selected_value};
+                        current_value = get(handles.current_values(ii),'String');
+                        
+                        if(~isempty(user_value) && ~strcmp(user_value,current_value))
+                            new_user_options = setfield(new_user_options,comm_option,user_value);
+                        end
+                    
+                    else%we save it as a string
                         new_user_options = setfield(new_user_options,comm_option,value);
                         
                     end
@@ -571,6 +711,10 @@ handles.pussbuttonClose = uicontrol( ...
                 %eval(sprintf('model_settings.defaults.%s.%s = %d;',comm_name, get(handles.options(ii),'String'),value));
             else
                 value = strtrim(get(handles.values(ii),'String'));
+                if(iscell(value))
+                   user_value = value {get(handles.values(ii),'Value')}; 
+                   value = user_value;
+                end
                 %eval(sprintf('model_settings.%s.%s = ''%s'';',comm_name, get(handles.options(ii),'String'),value));
             end
             defaults = setfield(defaults,get(handles.options(ii),'String'),value);
@@ -613,8 +757,38 @@ handles.pussbuttonClose = uicontrol( ...
             
             
             if(strcmp(option_type, 'check_option'))
+                if(~isnumeric(value))
+                    value = 0;
+                end
+                
                 set(handles.values(ii),'Value', value);
+            elseif(strcmp(option_type, 'popup_value'))
+                if(~isnumeric(value))
+                    userValue = 1;
+                    [found, ind] = ismember(value,  get(handles.values(ii),'String'));
+                    %ind = find(ismember(value,  get(handles.values(ii),'String')));
+                    if(found)
+                        userValue = ind;
+                    end
+                    
+%                     found = 0;
+%                     for j=1: size(ind,2)
+%                         if ind(j)
+%                             userValue = j;
+%                             found = 1;
+%                         end
+%                     end
+%                     if(~found)
+%                         userValue = 1;
+%                     end
+                    
+                else
+                    userValue = value;
+                end
+                
+                set(handles.values(ii),'Value', userValue);
             else
+                
                 set(handles.values(ii),'String', value);
             end
             

@@ -184,7 +184,7 @@ top = 35;
                 sld = uicontrol('Style', 'slider',...
                     'Parent', tabs_panel, ...
                     'Min',0,'Max',numTabResults - maxDisplayed,'Value',numTabResults - maxDisplayed ,...
-                    'Units', 'characters','Position', [80 -0.2 3 26],...
+                    'Units', 'characters','Position', [81 -0.2 3 26],...
                     'Callback', {@scrollPanel_Callback,num,numTabResults} );
             end
             
@@ -439,7 +439,7 @@ top = 35;
                 sld = uicontrol('Style', 'slider',...
                     'Parent', currentPanel, ...
                     'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-                    'Units', 'characters','Position', [80 -0.2 3 26],...
+                    'Units', 'characters','Position', [81 -0.2 3 26],...
                     'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
             end
             
@@ -637,7 +637,7 @@ top = 35;
             end
         end
         
-
+        model_settings.varlist_.estimation = var_list_;
         % computations take place here
         %status = 1;
         try
@@ -786,7 +786,7 @@ top = 35;
     end
 
     function pussbuttonResults_Callback(hObject,evendata)
-        h = gui_estimation_results();
+        h = gui_results('estimation', dynare_gui_.est_results);
          
         %uiwait(h);
         

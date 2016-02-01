@@ -273,7 +273,11 @@ end
     function load_varobs()
         if(isfield(model_settings, 'varobs'))
             varobs = model_settings.varobs;
-            value = varobs(:,1)';
+            if(~isempty(varobs))
+                value = varobs(:,1)';
+            else
+                value = [];
+            end
 %             for i=1:size(varobs,1)
 %                 %value(i,:) = varobs{i,1};
 %                 if(i==1)

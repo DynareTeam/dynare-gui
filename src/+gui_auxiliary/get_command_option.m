@@ -3,6 +3,7 @@ function value = get_command_option(name, type)
 %   Detailed explanation goes here
 
 global options_;
+global project_info;
 
 try
 switch(name)
@@ -52,6 +53,16 @@ switch(name)
                 value = [value,',' temp{i}]; 
             end
         end
+    
+    case 'first_obs'
+        value = options_.first_obs;
+%         mapping = gui_auxiliary.command_option_mapping(name);
+%         value = eval(sprintf('options_.%s;',mapping ));
+%         
+%         if(project_info.new_data_format)
+%             %value is in date format
+%             value = gui_tools.dates2str(value);
+%         end
         
     otherwise
        
@@ -60,7 +71,7 @@ switch(name)
         value = eval(sprintf('options_.%s;',mapping ));
         
 end
-catch
+catch ME
    %TODO handle this
    if(strcmp(type, 'check_option'))
        value = 0;

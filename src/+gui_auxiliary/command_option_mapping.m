@@ -2,11 +2,37 @@ function mapping = command_option_mapping(name)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
+global project_info;
+
 mapping = name;
 
 switch(name)
 
     % estimation command options
+    
+           
+    case 'datafile'
+        if(project_info.new_data_format )
+            mapping = 'dataset.file';
+        else
+            mapping = 'datafile';
+        end
+        
+    case 'nobs'
+        if(project_info.new_data_format )
+            mapping = 'dataset.nobs';
+        else
+            mapping = 'nobs';
+        end
+        
+    case 'first_obs'
+        if(project_info.new_data_format )
+            mapping = 'dataset.firstobs';
+        else
+            mapping = 'first_obs';
+        end
+                   
+                    
     case 'mode_check'
         mapping = 'mode_check.status';
         

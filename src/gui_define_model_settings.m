@@ -121,7 +121,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
 
     function gui_shocks(tabId, data, data_corr)
         if(project_info.model_type == 1) %stohastic  case
-            
+            %TODO Add stderr  for shocks 
             column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'stderr ', 'Show/Hide ', 'Show/Hide group '};
             column_format = {'char','char','char','char','numeric' , 'logical', 'logical'};
             uit = uitable(tabId,'Data',data,...
@@ -160,6 +160,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 'CellEditCallback',@savecorrdata);
             
         else % deterministic case
+            %TODO Add initval for shocks 
+            
             column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'initval ', 'Show/Hide ', 'Show/Hide group '};
             column_format = {'char','char','char','char','numeric' , 'logical', 'logical'};
             uit = uitable(tabId,'Data',data,...

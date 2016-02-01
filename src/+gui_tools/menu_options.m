@@ -20,13 +20,14 @@ switch oid
         set(handles.model_settings, 'Enable', status);
         set(handles.model_save_snapshot, 'Enable', status);
         set(handles.model_load_snapshot, 'Enable', status);
-        %set(handles.model_export, 'Enable', status);
+       
         
         
     case 'estimation'
+        set(handles.model_export, 'Enable', status);
         set(handles.estimation_observed_variables, 'Enable', status);
         set(handles.estimation_parameters_shocks, 'Enable', status);
-        %set(handles.estimation_run_calibrated_smoother, 'Enable', status);
+        set(handles.estimation_run_calibrated_smoother, 'Enable', status);
         set(handles.estimation_run, 'Enable', status);
         
     case 'stohastic'

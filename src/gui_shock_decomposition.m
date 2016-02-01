@@ -353,11 +353,8 @@ top = 35;
         user_options = model_settings.estimation;
         old_options = options_;
         options_.datafile = project_info.data_file;
-        %options_.parameter_set='posterior_mode';
         values = get(handles.parameterSet, 'String');
         options_.parameter_set=char(values( get(handles.parameterSet, 'Value')));
-        
-        %%%options_.initial_date= dseries(project_info.first_obs_date);
         
         quarter1 = get(handles.firstPeriodQuarter,'Value');
         year1=  get(handles.firstPeriodYear,'Value');
@@ -367,7 +364,7 @@ top = 35;
         year2=  get(handles.lastPeriodYear,'Value');
         last_period = (year2-1)*4 + quarter2- handles.firstPeriodQuarterDefault +1;
         
-        if(last_period > first_period && last_period <= str2double(project_info.num_obs))
+        if(last_period > first_period && last_period <= str2double(project_info.nobs))
             options_.initial_date.first = first_period;
             options_.initial_date.last = last_period;
         elseif(last_period<=first_period)
@@ -380,27 +377,12 @@ top = 35;
             return;
         end
         
-        %options_.qz_criterium = 1.000001; %0.999999; %1.000001;
 
         options_.nodisplay = 0;
         options_.plot_priors = 0;
-        options_.shock_grouping = get(handles.useShockGrouping,'Value');
-        options_.model_settings.shocks = model_settings.shocks;
+
+        shock_grouping = get(handles.useShockGrouping,'Value');
         
-%         if(~isempty(user_options))
-%             
-%             names = fieldnames(user_options);
-%             for ii=1: size(names,1)
-%                 value = getfield(user_options, names{ii});
-%                 if(isempty(value))
-%                     options_ = setfield(options_, names{ii}, 1); %flags
-%                 else
-%                     options_ = setfield(options_, names{ii}, value);
-%                 end
-%             end
-%         end
-        
-    
         if(~variablesSelected)
             errordlg('Please select variables!' ,'DynareGUI Error','modal');
             uicontrol(hObject);
@@ -420,15 +402,37 @@ top = 35;
                 else
                     var_list_ = char(var_list_, varName);
                 end
+                cell_var_list_{num_selected} = varName;
             end
         end
         
-
-        % computations take place here
-        %status = 1;
-        try
+        dynare_default = 1;
+        if(isfield(oo_, 'FilteredVariables') && isfield(oo_, 'SmoothedVariables') && isfield(oo_, 'UpdatedVariables'))
+            sfields = fieldnames(oo_.FilteredVariables);
+            x = find(strcmp(sfields, 'Mean'));
             
-            oo_ = shock_decomposition(M_,oo_,options_,var_list_);
+            if(isempty(x))
+                dynare_default = 0;
+            end
+        end
+        
+        % computations take place here
+       
+        try
+            if(~dynare_default)
+                
+                options_.first_obs = 1;
+                %d = project_info.first_obs_date(1) + first_period -1;
+                d = project_info.first_obs_date(1);
+                [ex_names, leg] = get_shock_groups(shock_grouping);
+                gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0);
+            
+            else
+                options_.model_settings.shocks = model_settings.shocks;
+                options_.shock_grouping = shock_grouping;
+                oo_ = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_);
+            end
+            
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             uiwait(msgbox('Shock decomposition command executed successfully!', 'DynareGUI','modal'));
             
@@ -443,6 +447,47 @@ top = 35;
         options_ = old_options;
     end
 
+    function [ex_names, leg] = get_shock_groups(shock_grouping)
+        shocks = model_settings.shocks();
+        num_shocks = size(shocks,1);
+  
+        if(shock_grouping)
+            ex_names = cell(0,num_shocks);
+            leg = cell(0,1);
+            num_groups = 0;
+            for(i=1:num_shocks)
+                gname = shocks{i,1};
+                sname = shocks{i,2};
+                if(num_groups==0)
+                    num_groups = 1;
+                    leg{num_groups,1} = gname;
+                    ex_names{num_groups,1} = sname;
+                else
+                    ind = find(ismember(char(leg),gname,'rows'));
+                    if(~isempty(ind))
+                        j = 1; %2
+                        empty_spot = 0;
+                        while ~empty_spot && j <= num_shocks
+                            if(isempty(ex_names{ind,j}))
+                                empty_spot = 1;
+                                ex_names{ind,j} = sname;
+                            end
+                            j=j+1;
+                        end
+                    else
+                        num_groups = num_groups +1;
+                        leg{num_groups,1} = gname;
+                        ex_names{num_groups,1} = sname;
+                    end
+                end
+            end
+        else %no shock grouping
+            ex_names = shocks(:,2);
+            leg = ex_names;
+            num_groups = num_shocks;
+        end
+        leg{num_groups+1,1} = 'Others';
+    end
 
     function pussbuttonReset_Callback(hObject,evendata)
         for ii = 1:handles.numVars

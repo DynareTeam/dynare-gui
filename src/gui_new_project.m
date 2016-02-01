@@ -13,9 +13,11 @@ project_info.default_forecast_periods = 20; %default value
 project_info.modified = 1;
 
 project_info.first_obs = '';
-project_info.frequency = 2; % default value is quarterly data; here is the complete list: {'annual','quarterly','monthly','weekly'}
-project_info.num_obs = '';
+project_info.freq = 2; % default value is quarterly data; here is the complete list: {'annual','quarterly','monthly','weekly'}
+project_info.nobs = '';
 project_info.data_file = '';
+
+project_info.new_data_format = 0; %default value
 
 % important to create after project_info is set
 gui_auxiliary.create_dynare_gui_structure;

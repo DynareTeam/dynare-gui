@@ -136,8 +136,8 @@ function project_new_Callback(hObject, eventdata, handles)
 
 global project_info;
 
-% TODO if open, close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)))%if(exist('project_info', 'var') == 1) 
+% Close existing project
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1) 
    gui_close_project();
 end
 
@@ -153,8 +153,8 @@ function project_open_Callback(hObject, eventdata, handles)
 
 global project_info;
 
-% TODO if open, close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)))%if(exist('project_info', 'var') == 1) 
+% Close existing project
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1) 
    gui_close_project();
 end
 
@@ -196,7 +196,7 @@ global project_info;
 answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No');
 if(strcmp(answer,'Yes'))
     % Before quitting check if current project have been modified and ask 'Save changes to current project?'
-    if(isstruct(project_info) && isfield(project_info, 'modified') && project_info.modified)
+    if(isstruct(project_info) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name) && isfield(project_info, 'modified') && project_info.modified)
         answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
         if(strcmp(answer,'Yes'))
             gui_tools.save_project();
@@ -270,6 +270,7 @@ function model_export_Callback(hObject, eventdata, handles)
 % hObject    handle to model_export (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_tools.gui_export_to_mod_file();
 end
 
 
@@ -337,6 +338,8 @@ function estimation_run_calibrated_smoother_Callback(hObject, eventdata, handles
 % hObject    handle to estimation_run_calibrated_smoother (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+tabId = addTab(hObject, 'Calib. smoother ', handles);
+gui_calib_smoother(tabId);
 end
 
 % Simulation!
@@ -362,8 +365,8 @@ function simulation_deterministic_Callback(hObject, eventdata, handles)
 % hObject    handle to simulation_deterministic (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tabId = addTab(hObject, 'Shocks ', handles);
-
+tabId = addTab(hObject, 'Determ simul. ', handles);
+gui_determ_simulation(tabId);
 end
 
 
@@ -851,7 +854,7 @@ h28 = uicontrol(...
     'Max',get(0,'defaultuicontrolMax'),...
     'Min',get(0,'defaultuicontrolMin'),...
     'SliderStep',get(0,'defaultuicontrolSliderStep'),...
-    'String','Prototype v.0.4.2',...
+    'String','Prototype v.0.5',...
     'Style','text',...
     'Value',get(0,'defaultuicontrolValue'),...
     'Position',[71 13 30 2],...

@@ -61,7 +61,7 @@ end
             cellArray{i,3} = deblank(data_tex(i,:));
             cellArray{i,4} = deblank(data_long(i,:));
             
-            cellArray{i,5} = evalin('base',name);
+            cellArray{i,5} = get_param_by_name(name);
             cellArray{i,6} = ''; %estimated value
             
             index = strfind(name, 'AUX');

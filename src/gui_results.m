@@ -3,6 +3,8 @@ function fHandle= gui_results(comm_name, comm_results)
 import javax.swing.tree.*;
 global project_info;
 global dynare_gui_;
+global M_;
+global oo_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -29,7 +31,7 @@ uicontrol( ...
     'Units', 'characters', 'BackgroundColor', bg_color,...
     'Position', [2 32.5 75 1.5], ...
     'FontWeight', 'bold', ...
-    'String', 'Select estimation results:', ...
+    'String', 'Browse through results:', ...
     'HorizontalAlignment', 'left');
 
 handles.uipanelSelect = uipanel( ...
@@ -205,6 +207,13 @@ handles.pussbuttonCloseAll = uicontrol( ...
                 for j=1:numResults
                     structure_names = group{j,4};
                     
+                    if(strcmp(structure_names, 'oo_.endo_simul'))
+                        f_node = createCustomNodes('oo_.endo_simul', oo_.endo_simul, M_.endo_names);
+                        if(~isempty(f_node))
+                            num = num+1;
+                            f_nodes(num) = f_node;
+                        end
+                    else
                     for k = 1: size(structure_names,2)
                         
                         f_node = createDynareStructureNodes(structure_names{k} );
@@ -214,6 +223,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
                         end
                         
                     end
+                    end
                 end
             end
             
@@ -222,6 +232,45 @@ handles.pussbuttonCloseAll = uicontrol( ...
             end
         end
         
+        function fnode = createCustomNodes(structure_name, structure, vars)
+            fnode= [];
+            if(isempty(structure))
+                return;
+            end
+            
+            num= 0;
+            
+            try
+                
+                numVars = size(vars,1);
+                for j=1:numVars
+                    var_name = deblank(vars(j,:));
+                    num = num+1;
+                    long_name = gui_tools.get_long_name(var_name,'var'); 
+                    if(~strcmp(long_name,var_name ))
+                       str_name =  sprintf('%s (%s)', long_name, var_name);
+                    else
+                        str_name = long_name; 
+                    end
+                    child_nodes(num) = uitreenode('v0','Structure',str_name, '', 1);
+                    set(child_nodes(num), 'UserData', sprintf('%s(%d,:)''',structure_name,j));
+                end
+                
+                mtree.add(fnode,child_nodes);
+                
+            catch ME
+                h=1;
+            end
+            
+            
+            
+            if(num>0)
+                fnode =  uitreenode('v0',structure_name, structure_name, [], 0);
+                mtree.add(fnode,child_nodes);
+            end
+            
+        end
+   
         function fnode = createDynareStructureNodes(structure_name)
             fnode= [];
             if(isempty(structure_name))

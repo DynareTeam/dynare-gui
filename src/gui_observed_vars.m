@@ -10,7 +10,7 @@ if(~isfield(model_settings, 'varobs'))
         model_settings.varobs = create_varobs_cell_array(evalin('base','options_.varobs'),evalin('base','M_.endo_names_tex'),evalin('base','M_.endo_names_long'),evalin('base','options_.varobs_id'));
         project_info.modified = 1;
     catch ME
-        warnStr = [sprintf('varobs were not specified in .mod file! \n\nYou can change .mod file or specify varobs here by selecting them out of complete list of endogenous variables.\n')];
+        warnStr = [sprintf('varobs were not specified in .mod file! \n\nYou can change .mod file or specify varobs here by selecting them out of complete list of observed variables.\n')];
         warndlg( warnStr,'DynareGUI Warning','modal');
         gui_tools.project_log_entry('Warning', 'varobs were not specified in .mod file!');
         model_settings.varobs = [];
@@ -83,6 +83,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                     options_.dataset.file = data_file;
                     %options_.dataset.series = [];
                     options_.dataset.firstobs = dates(first_obs);
+                    
                     %options_.dataset.lastobs = dates(first_obs)+ str2num(num_obs)-1;
                     options_.dataset.nobs = str2double(num_obs);
                     %options_.dataset.xls_sheet = 1;
@@ -182,7 +183,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             
             
             uicontrol(panel_id,'Style','text',...
-                'String','First observation:',...
+                'String','Sample starting date:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','characters','Position',[1 top-v_space width v_size] );

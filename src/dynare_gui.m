@@ -67,6 +67,7 @@ movegui(hObject,'center');
 %axis off; % Remove axis ticks and numbers
 %axis image; % Set aspect ratio to obtain square pixels
 global dynare_gui_root;
+global dynareroot;
 
 setappdata(0, 'bg_color', 'default');
 setappdata(0, 'special_color', 'white');
@@ -79,7 +80,7 @@ addpath([dynareroot '/missing/nanmean']);
 
 warning_config();
 
-evalin('base','global dynare_gui_ project_info model_settings dynare_gui_root');
+evalin('base','global dynare_gui_ project_info model_settings');
 evalin('base','global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_');
 
 evalin('base','dynare_gui_root = which(''dynare_gui'');');
@@ -422,9 +423,9 @@ function help_dynare_manual_Callback(hObject, eventdata, handles)
 % hObject    handle to help_dynare_manual (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global dynare_gui_root;
-open([dynare_gui_root, 'resources',filesep, 'dynare.html', filesep, 'index.html']);
-%open('dynare.pdf');
+global dynareroot;
+ind = strfind(dynareroot, [filesep,'matlab']);
+open([dynareroot(1:ind), 'doc', filesep, 'dynare.html', filesep, 'index.html']);
 end
 
 % --------------------------------------------------------------------
@@ -854,7 +855,7 @@ h28 = uicontrol(...
     'Max',get(0,'defaultuicontrolMax'),...
     'Min',get(0,'defaultuicontrolMin'),...
     'SliderStep',get(0,'defaultuicontrolSliderStep'),...
-    'String','Prototype v.0.5',...
+    'String','Prototype v.0.5.1',...
     'Style','text',...
     'Value',get(0,'defaultuicontrolValue'),...
     'Position',[71 13 30 2],...

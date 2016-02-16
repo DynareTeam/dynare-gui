@@ -496,7 +496,14 @@ top = 35;
         set(main_figure,'Units','pixels');
         pos = get(main_figure,'Position');
         set(main_figure,'Units','characters');
-        [jhandle,guihandle] = javacomponent(jObj.getComponent, [(pos(3)-300)/2,pos(4)*0.7,300,80], tabId);
+        [jhandle,guihandle] = javacomponent(jObj.getComponent, [(pos(3)-300)/2,pos(4)*0.6,300,80], tabId);
+        lineColor = java.awt.Color(0,0,0);  % =black
+        thickness = 1;  % pixels
+        roundedCorners = true;
+        newBorder = javax.swing.border.LineBorder(lineColor,thickness,roundedCorners);
+        jhandle.Border = newBorder;
+        jhandle.repaint;
+        
         set(main_figure, 'Visible','On');
         
         main_figure = getappdata(0, 'main_figure');

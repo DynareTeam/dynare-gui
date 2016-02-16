@@ -10,6 +10,7 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
+parameter_set = '';
 
 %set(tabId, 'OnShow', @showTab_Callback);
 do_not_check_all_results = 0;
@@ -356,6 +357,14 @@ top = 35;
         values = get(handles.parameterSet, 'String');
         options_.parameter_set=char(values( get(handles.parameterSet, 'Value')));
         
+        if(strcmp(parameter_set, options_.parameter_set))
+            plot_without_smoother = 1;
+        else
+            plot_without_smoother = 0;
+        end
+        
+            
+            
         quarter1 = get(handles.firstPeriodQuarter,'Value');
         year1=  get(handles.firstPeriodYear,'Value');
         first_period = (year1-1)*4 + quarter1- handles.firstPeriodQuarterDefault +1;
@@ -433,6 +442,7 @@ top = 35;
                 oo_ = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_);
             end
             
+            parameter_set = options_.parameter_set;
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             uiwait(msgbox('Shock decomposition command executed successfully!', 'DynareGUI','modal'));
             

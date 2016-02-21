@@ -25,10 +25,10 @@ try
     
     fclose(exp_file);
     
-    gui_tools.project_log_entry('Saving model snapshot: ',fullFileName);
+    gui_tools.project_log_entry('Saving model snapshot',fullFileName);
     uiwait(msgbox('Model export saved successfully!', 'DynareGUI','modal'));
 catch ME
-     errordlg('Error while doing model export.' ,'DynareGUI Error','modal');
+     gui_tools.show_error('Error while doing model export', ME, 'extended');
 end
 
     function export_model_settings(type, names, names_tex, names_long)

@@ -11,8 +11,7 @@ if(~isfield(model_settings, 'varobs'))
         project_info.modified = 1;
     catch ME
         warnStr = [sprintf('varobs were not specified in .mod file! \n\nYou can change .mod file or specify varobs here by selecting them out of complete list of observed variables.\n')];
-        warndlg( warnStr,'DynareGUI Warning','modal');
-        gui_tools.project_log_entry('Warning', 'varobs were not specified in .mod file!');
+        gui_tools.show_warning(warnStr, 'varobs were not specified in .mod file!');
         model_settings.varobs = [];
     end
 end
@@ -26,29 +25,29 @@ all_varobs = model_settings.all_varobs;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
-top = 35;
+
 handles = []; %use by nasted functions
 
 uicontrol(tabId,'Style','text',...
     'String','Observed variables & data file:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-    'Units','characters','Position',[1 top 50 2] );
+    'Units','normalized','Position',[0.01 0.92 1 0.05] ); 
 
 panel_id = uipanel( ...
-    'Parent', tabId, ...
-    'Tag', 'uipanelSettings', ...
-    'Units', 'characters', 'BackgroundColor', special_color,...
-    'Position', [2 top-30 176 30], ...
-    'Title', '', ...
-    'BorderType', 'none');
+    'Parent', tabId, 'Tag', 'uipanelSettings', ...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.82], ...
+    'BackgroundColor', special_color, ...
+    'Title', '', 'BorderType', 'none');
 
 create_panel_elements(panel_id);
 
-uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','characters','Position',[2 1 30 2], 'Callback',{@select_vars} );
-uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@remove_selected} );
-uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','characters','Position',[2+30+2+30+2  1 30 2], 'Callback',{@save_changes} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+30+2+30+2+30+2  1 30 2], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@save_changes} );
+uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@select_vars});
+uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@remove_selected});
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.49 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
+
+
 
     function save_changes(hObject,event, hTab)
          try
@@ -57,17 +56,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             num_obs = get(handles.num_obs,'String');
             data_file = get(handles.data_file,'String');
             
-            errosrStr = 'Error while saving observed variables and data file information';
-            
-            
             if(isempty(first_obs))
-                errordlg([errosrStr,': first observation is not specified!'] ,'DynareGUI Error','modal');
+                gui_tools.show_warning('Sample starting point is not specified!');
             elseif(isempty(frequency))
-                errordlg([errosrStr,': data frequency is not specified!'] ,'DynareGUI Error','modal');
+                gui_tools.show_warning('Data frequency is not specified!');
             elseif(isempty(num_obs))
-                errordlg([errosrStr,': number of observations is not specified!'] ,'DynareGUI Error','modal');
+                gui_tools.show_warning('Number of observations is not specified!');
             elseif(isempty(data_file))
-                errordlg([errosrStr,': data file is not specified!'] ,'DynareGUI Error','modal');
+                gui_tools.show_warning('Data file is not specified!');
             else
                 
                 project_info.first_obs = first_obs;
@@ -99,11 +95,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 data = varobs(:,1)';
                 options_.varobs = data;
                 msgbox('Changes saved successfully', 'DynareGUI');
+                
             end
          catch ME
-             errosrStr = [errosrStr,': ',ME.message];
-             errordlg(errosrStr,'DynareGUI Error','modal');
-             gui_tools.project_log_entry('Error', errosrStr);
+             gui_tools.show_error('Error while saving observed variables and data file information', ME, 'extended');
+             
          end
         
     end
@@ -123,7 +119,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         %base_field_name = 'variables';  
         base_field_name = 'all_varobs';  
         column_names = {'Endogenous variable','LATEX name ', 'Long name ', 'Set as observed variable '};
-
+        
+        if(~isfield(model_settings, 'all_varobs') || isempty(model_settings.all_varobs))
+            gui_tools.show_warning('Please define data file first!');
+            return;
+        end
+        
         h = gui_select_window(field_name, base_field_name, window_title, subtitle, column_names);
         uiwait(h);
         
@@ -151,105 +152,107 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     end
 
     function create_panel_elements(panel_id)
-        top = 27;
-        width = 30;
-        v_space = 2;
-        h_space = 5;
-        v_size = 1.5;
+         
+        top = 1;
+        dwidth = 0.2;
+        dheight = 0.08;
+        spc = 0.01;
+        fheight=0.05;
         
         try
- 
+            num = 1;
             uicontrol(panel_id,'Style','text',...
                 'String','Data file:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top width v_size] );
+                'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
             handles.data_file = uicontrol(panel_id,'Style','edit',...
                 'String', project_info.data_file, ...
                 'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top width*2 v_size] );
+                'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight]);
             
             uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width+h_space+width*2 top 1 v_size] );
+                'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc fheight]);
             
             
             handles.data_file_button = uicontrol(panel_id,'Style','pushbutton',...
                 'String', 'Select...',...
-                'Units','characters','Position',[1+ width+h_space+width*2+v_space top width/2 v_size] ,...
+                'Units','normalized','Position',[spc*4.3+dwidth*2 top-num*dheight dwidth/2 fheight],...
                 'Callback',{@select_file});
             
-            
+            num=num+1;
             uicontrol(panel_id,'Style','text',...
                 'String','Sample starting date:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space width v_size] );
+                'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
             handles.first_obs =  uicontrol(panel_id,'Style','edit',...
                 'String', project_info.first_obs, ...
                  'TooltipString','For example: 1990Y, 1990Q3, 1990M11,1990W49',...
                 'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top-v_space width v_size],...
+                'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
             
             uicontrol(panel_id,'Style','text',...
                 'String','* (in Dynare dates format)',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width*2+h_space top-v_space width v_size] );
+                'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight dwidth fheight]);
             
             
-            
+            num=num+1;
             uicontrol(panel_id,'Style','text',...
                 'String','Data frequency:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space*2 width v_size] );
+                'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
             
             handles.frequency = uicontrol(panel_id, 'Style', 'popup',...
                 'String', {'annual','quarterly','monthly','weekly'},...
                 'Value', project_info.freq,...
-                'Units','characters',  'Position',[width+h_space top-v_space*2 width v_size] ,...
+                'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
            
             
              uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width*2+h_space top-v_space*2 1 v_size] );
+                'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc fheight]);
             
+            num=num+1;
             uicontrol(panel_id,'Style','text',...
                 'String','Number of observations:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space*3 width v_size] );
+                'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
             handles.num_obs = uicontrol(panel_id,'Style','edit',...
                 'String', project_info.nobs,...
                 'HorizontalAlignment', 'left',...
-                'Units','characters','Position',[width+h_space top-v_space*3 width v_size] ,...
+                'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
             
              uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1+width*2+h_space top-v_space*3 1 v_size] );
+                'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc fheight]);
             
 
-            
+             num=num+1.5;
             
              uicontrol(panel_id,'Style','text',...
                 'String','Observed variables:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
-                'Units','characters','Position',[1 top-v_space*4.5 width v_size] );
+                'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
             
             
-            obs_variables(panel_id,varobs, width+h_space, top-v_space*4 - 15);
+            obs_variables(panel_id,varobs);
             
             
             
@@ -257,13 +260,10 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 'String','* = required field',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'FontAngle', 'italic', ...
-                'Units','characters','Position',[1 0 width v_size] );
+                'Units','normalized','Position',[spc*0.5 spc dwidth dheight/2]);%[1 0 width v_size] );
             
         catch ME
-            % TODO
-            errosrStr = [sprintf('Error in creating screen for observed variables:\n\n'), ME.message];
-            errordlg(errosrStr,'DynareGUI Error','modal');
-            gui_tools.project_log_entry('Error', errosrStr);
+            gui_tools.show_error('Error while displaying observed variables', ME, 'basic');
         end
     end
 
@@ -392,12 +392,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 set(handles.num_obs,'String', num_observables);
                 
             catch ME
-                errordlg('Data file is not valid! Please specify new data file.' ,'DynareGUI Error','modal');
+                gui_tools.show_error('Data file is not valid! Please specify new data file.', ME, 'basic');
             end
             
             
         catch ME
-            errordlg('Error while selecting data file!' ,'DynareGUI Error','modal');
+            gui_tools.show_error('Error while selecting data file', ME, 'basic');
         end
     end
 
@@ -414,17 +414,16 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     end
 
 
-    function obs_variables(panel_id,data, h_pos, v_pos)
+    function obs_variables(panel_id,data)
         column_names = {'Observed var.','LATEX name ', 'Long name ', 'Remove obs. var'};
         column_format = {'char','char','char', 'logical'};
         handles.obs_table = uitable(panel_id,'Data',data,...
-            'Units','characters',...
+            'Units','normalized','Position',[0.02 0.1 0.96 0.4],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false false false true ],...
             'ColumnWidth', {150, 150, 200, 120 }, ...
             'RowName',[],...
-            'Position',[h_pos, v_pos,125,15],...
             'CellEditCallback',@savedata);
         
               

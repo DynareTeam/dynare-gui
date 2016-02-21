@@ -25,16 +25,15 @@ uicontrol(tabId,'Style','text',...
     'String','Mod file:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-    'Units','characters','Position',[1 top 50 2] );
+    'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
 
-textBoxId = uicontrol(tabId, 'style','edit', 'Units','characters', 'Max',30,'Min',0,...
+textBoxId = uicontrol(tabId, 'style','edit', 'Max',30,'Min',0,...
     'String', status_msg ,...
-    'Position',[2 5 170 30], 'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
+    'Units','normalized','Position',[0.01 0.09 0.98 0.82], ...%'Units','characters','Position',[2 5 170 30], ...
+    'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
-uicontrol(tabId, 'Style','pushbutton','String','Change .mod file','Units','characters','Position',[2 1 30 2], 'Callback',{@change_file,tabId} );
-%uicontrol(tabId, 'Style','pushbutton','String','Solve the model','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
-
+uicontrol(tabId, 'Style','pushbutton','String','Change .mod file','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@change_file,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
 
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
@@ -129,14 +128,14 @@ end
                 fprintf(file_new, '%s',modFileText );
                 fclose(file_new);
                 uiwait(msgbox('.mod file changed successfully!', 'DynareGUI','modal'));
-            catch
-                 errordlg('Error while saving changed .mod file! Please change it manually or load the new file.','DynareGUI Error','modal');
+            catch ME
+                gui_tools.show_error('Error while saving new .mod file', ME, 'basic');
             end
             
         end
         gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_info.mod_file));
         
-        h = waitbar(0,'I am running .mod file... Please wait ...', 'Name','DynareGUI');
+        h = waitbar(0,'I am running .mod file... Please wait...', 'Name','DynareGUI');
         steps = 1500;
         status = 1;
         for step = 1:steps
@@ -165,37 +164,25 @@ end
             
             if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
                 
-                gui_tools.menu_options('estimation','On');
+                
                 if(project_info.model_type==1)
+                    gui_tools.menu_options('estimation','On');
                     gui_tools.menu_options('stohastic','On');
                 else
                     gui_tools.menu_options('deterministic','On');
                 end
             end
             
-            % TODO load varobs and estim_params_
             load_varobs();
             load_estim_params();
-            
-            
         else
-            errosrStr = [sprintf('Error in execution of .mod file:\n\n'), error.message];
-            errordlg(errosrStr,'DynareGUI Error','modal');
-            %uicontrol(hObject);
+            gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
         end
-        
-        %         if(~isempty(steadyExists)&& ~isempty(checkExists))
-        %         else
-        %             errorText = 'Invalid .mod file! Please provide .mod file with steady and check commands!';
-        %             errordlg(errorText ,'DynareGUI Error','modal');
-        %             uicontrol(hObject);
-        %         end
     end
 
     function status = specify_file(new_project)
         status = 0;
         
-        % TODO add option to select multiple .dyn files
         [fileName,pathName] = uigetfile({'*.mod';'*.dyn'},'Select Dynare MOD/DYN file');
         
         if(fileName ==0)
@@ -206,9 +193,6 @@ end
             old_mod_file =project_info.mod_file;
         end
         project_info.mod_file = fileName;
-        
-        %handles.modFileName = fileName;
-        %handles.modFilePathName = pathName;
         
         index1 = strfind(fileName,'.mod');
         index2 = strfind(fileName,'.dyn');
@@ -234,12 +218,11 @@ end
             
             [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
             if(status)
-                uiwait(msgbox('.mod file copied to project folder', 'DynareGUI','modal'));
+                uiwait(msgbox('.mod file is copied to project folder', 'DynareGUI','modal'));
             else
-                uiwait(errordlg(['Error while coping .mod file to project folder: ', message] ,'DynareGUI Error','modal'));
+                gui_tools.show_error(['Error while copying .mod file to project folder: ', message]);
             end
         elseif(new_project)
-            %uiwait(msgbox('.mod file is already in project folder.', 'DynareGUI','modal'));
             status = 1;
         elseif(strcmp(old_mod_file, fileName))
             uiwait(msgbox('.mod file has not been changed. It will be loaded again.', 'DynareGUI','modal'));
@@ -247,8 +230,6 @@ end
         else
             status = 1;
         end
-        % Update handles structure
-        %guidata(hObject, handles);
     end
 
 
@@ -257,7 +238,6 @@ end
        if (status)
            set(textBoxId,'String','Loading ...');
            gui_tabs.rename_tab(hTab, project_info.mod_file);
-           % TODO check if this is OK
            model_settings = struct(); 
            fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
            load_file(fullFileName, true);
@@ -278,15 +258,7 @@ end
             else
                 value = [];
             end
-%             for i=1:size(varobs,1)
-%                 %value(i,:) = varobs{i,1};
-%                 if(i==1)
-%                     value = varobs{i,1};
-%                 else
-%                     value = char(value, varobs{i,1});
-%                 end
-%             end
-            options_.varobs = value;
+           options_.varobs = value;
         end
     end
 

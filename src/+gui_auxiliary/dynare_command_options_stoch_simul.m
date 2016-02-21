@@ -3,7 +3,7 @@ function dynare_command_options_stoch_simul()
 % all options for command stoch_simul
 
 % There are 34 options of this command which are grouped in following
-% groups: simulation, irf, solver, HP filter, dr, output.
+% groups: simulation, irf, solver, dr, filter, and output.
 
 % Each command option has following four fields: name, default value (if any), type
 % INTEGER, DOUBLE, check_option,special) and description. Option of type

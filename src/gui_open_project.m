@@ -8,7 +8,6 @@ global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation
 [fileName,pathName] = uigetfile('*.dproj','Select Dynare GUI project file:');
 
 try
-    error_str = 'Error while opening project file';
     
     index = strfind(fileName,'.dproj');
     if(index)
@@ -54,7 +53,8 @@ try
         % TODO check if project name equals project name
         
         if(~strcmp([project_info.project_folder,filesep], pathName ))
-            warndlg(sprintf('Project has moved to different folder/path since last modification. New project folder has been set accordingly.!\n\nIf needed, please copy mode file and data file to the new location (new project folder).'),'DynareGUI Warning','modal');
+            warnStr = sprintf('Project has moved to different folder/path since last modification. New project folder has been set accordingly.!\n\nIf needed, please copy mode file and data file to the new location (new project folder).');
+            gui_tools.show_warning(warnStr);
             setappdata(0,'new_project_location',true);
             project_info.project_folder = pathName(1:length(pathName)-1);
         else
@@ -79,20 +79,23 @@ try
         
             if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
                 
-                gui_tools.menu_options('estimation','On');
+                
                 if(project_info.model_type==1)
+                    gui_tools.menu_options('estimation','On');
                     gui_tools.menu_options('stohastic','On');
+                    gui_tools.menu_options('output','On');
+                    
                 else
                     gui_tools.menu_options('deterministic','On');
                 end
-                gui_tools.menu_options('output','On');
+                
             end
         end
         project_info.modified = 0;
         gui_tools.project_log_entry('Project Open',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
     end
 catch ME
-    uiwait(errordlg( error_str,'DynareGUI Error','modal'));
+   gui_tools.show_error('Error while opening project file', ME, 'basic');
 end
 
 

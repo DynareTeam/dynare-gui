@@ -10,7 +10,7 @@ fileName = [project_name, '.log'];
 % end
 
 logFile = fopen(fileName, 'at');
-fprintf(logFile,'%s %s: %s\n',datestr(now), oid,data);
+fprintf(logFile,'%s %s: %s\n',datestr(now), oid, strtrim(data));
 fclose(logFile);
  
  

@@ -15,7 +15,7 @@ try
     gui_tools.project_log_entry('Loading model snapshot: ',fullFileName);
     uiwait(msgbox('Model snapshot loaded successfully!', 'DynareGUI','modal'));
 catch
-    errordlg('Error while loading model snapshot.' ,'DynareGUI Error','modal');
+    gui_tools.show_error('Error while loading model snapshot', ME, 'basic');
 end
 
 end

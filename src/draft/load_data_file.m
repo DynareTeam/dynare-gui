@@ -17,7 +17,7 @@ while i <= length(file_types) && ~valid_type
 end
 
 if(valid_type ==0)
-    errordlg('File format is not valid! Please specify new data file in one of following formats: .m, .mat, .xls or .csv.' ,'DynareGUI Error','modal');
+    gui_tools.show_error('File format is not valid! Please specify new data file in one of following formats: .m, .mat, .xls or .csv.', ME, 'basic');
     return;
 end
 
@@ -29,6 +29,7 @@ num_observables = [];
 try
     switch type
         case '.m'
+            %TODO fix this !!!
             %load_m_file();
             %eval(fileName);
 %             eval('fsdat_simul');
@@ -52,7 +53,8 @@ try
     setappdata(0, 'num_observables', num_observables);
     
 catch ME
-    errordlg('Data file is not valid! Please specify new data file.' ,'DynareGUI Error','modal');
+    gui_tools.show_error('Data file is not valid! Please specify new data file.', ME, 'basic');
+    
 end
 
 % function load_m_file()

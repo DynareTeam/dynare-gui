@@ -3,7 +3,7 @@ function dynare_command_options_estimation()
 % all options for command estimation
 
 % There are 70 options of this command which are grouped in following
-% groups: data, optimizer, solver, MH_options, filter, postprocessing, output.
+% groups: data, optimizer, solver, MH_options, filter, postprocessing, Particle_filter and output.
 
 % Each command option has following four fields: name, default value (if any), type
 % INTEGER, DOUBLE, check_option, special) and description. Option of type

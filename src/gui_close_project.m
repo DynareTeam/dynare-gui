@@ -6,7 +6,6 @@ global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation
 
 gui_tools.project_log_entry('Project Close',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
 
-% TODO check if project has been modified
 if(project_info.modified)
     answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
     if(strcmp(answer,'Yes'))

@@ -9,8 +9,7 @@ if(~isfield(model_settings, 'estim_params'))
         model_settings.estim_params = create_estim_params_cell_array(evalin('base','M_.param_names'),evalin('base','M_.exo_names'), evalin('base','estim_params_'));
     catch ME
         warnStr = [sprintf('Estimated parameters were not specified in .mod file! \n\nYou can change .mod file or specify them here by selecting them out of complete list of parameters and exogenous variables.\n')];
-        warndlg( warnStr,'DynareGUI Warning','modal');
-        gui_tools.project_log_entry('Warning', 'Estimated parameters were not specified in .mod file!');
+        gui_tools.show_warning(warnStr,'Estimated parameters were not specified in .mod file!' );
         model_settings.estim_params = [];
     end
 end
@@ -27,31 +26,28 @@ uicontrol(tabId,'Style','text',...
     'String','Estimated parameters & shocks:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-    'Units','characters','Position',[1 top 50 2] );
+    'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
 
 panel_id = uipanel( ...
     'Parent', tabId, ...
-    'Tag', 'uipanelSettings', ...
-    'Units', 'characters', 'BackgroundColor', special_color,...
-    'Position', [2 top-30 176 30], ...
-    'Title', '', ...
-    'BorderType', 'none');
+    'Tag', 'uipanelSettings', 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.82], ...%'Units', 'characters', 'Position', [2 top-30 176 30], ...
+    'Title', '', 'BorderType', 'none');
 
 create_panel_elements(panel_id);
 
-uicontrol(tabId, 'Style','pushbutton','String','Select parameters','Units','characters','Position',[2 1 30 2], 'Callback',{@select_params} );
-uicontrol(tabId, 'Style','pushbutton','String','Selects shocks','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@select_vars} );
-uicontrol(tabId, 'Style','pushbutton','String','Remove selected','Units','characters','Position',[2+30+2+30+2 1 30 2], 'Callback',{@remove_selected} );
-uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','characters','Position',[2+30+2+30+2+30+2  1 30 2], 'Callback',{@save_changes} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+30+2+30+2+30+2+30+2  1 30 2], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Select parameters','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@select_params} );
+uicontrol(tabId, 'Style','pushbutton','String','Select shocks','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@select_vars} );
+uicontrol(tabId, 'Style','pushbutton','String','Remove selected','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@remove_selected} );
+uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[0.49 0.02 .15 .05], 'Callback',{@save_changes} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.65 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
 
     function save_changes(hObject,event, hTab)
         
-        errosrStr = 'Error while saving estimated parameters & shocks';
         try
             field = priors_not_specified();
             if(~isempty(field))
-                errordlg([errosrStr,': prior shape is not specified for ', field] ,'DynareGUI Error','modal');
+                gui_tools.show_warning(['prior shape is not specified for ', field]);
             else
                 remove_selected();
                 model_settings.estim_params = estim_params;
@@ -88,9 +84,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
                 project_info.modified = 1;
             end
         catch ME
-            errosrStr = [errosrStr,': ',ME.message];
-            errordlg(errosrStr,'DynareGUI Error','modal');
-            gui_tools.project_log_entry('Error', errosrStr);
+            gui_tools.show_error('Error while saving estimated parameters & shocks', ME, 'extended');
         end
         
     end
@@ -190,13 +184,13 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
         end
         
         handles.estim_table = uitable(panel_id,'Data',data,...
-            'Units','characters',...
+            'Units','normalized',...%'Units','characters',...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false false true true true true true true ],...
             'ColumnWidth', {90, 120, 80, 80, 170,80,80,160 }, ...
             'RowName',[],...
-            'Position',[1, 1,175,28],...
+            'Position',[0.01,0.05,.98,0.9],...%'Position',[1, 1,175,28],...
             'CellEditCallback',@savedata);
         
               
@@ -215,8 +209,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
             elseif(c==6) %prior mean
                  [LB, UB] = gui_tools.prior_range_defaults(estim_params{r,c});
                  if(val<LB || val > UB)
-                    error_str = sprintf('Not valid prior mean value! Value must be in following interval:[%d,%d]', LB, UB);
-                    uiwait(errordlg( error_str,'DynareGUI Error','modal'));
+                    warn_str = sprintf('Not valid prior mean value! Value must be in following interval:[%d,%d]', LB, UB);
+                    gui_tools.show_warning(warn_str);
                     estim_params{r,c+1} = 0;
                  end
                  callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:9)];

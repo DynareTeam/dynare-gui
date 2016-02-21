@@ -19,34 +19,27 @@ top = 35;
 % --- PANELS -------------------------------------
 		handles.uipanelShocks = uipanel( ...
 			'Parent', tabId, ...
-			'Tag', 'uipanelShocks', ...
-			'Units', 'characters', 'BackgroundColor', special_color,...
-			'Position', [2 top-28 85 28], ...
+			'Tag', 'uipanelShocks','BackgroundColor', special_color,...
+			'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73],...
 			'Title', '', ...
 			'BorderType', 'none');
         
         uipanelShocks_CreateFcn;
         
         handles.uipanelVars = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', ...
-			'UserData', zeros(1,0), ...
-			'Units', 'characters', 'BackgroundColor', special_color, ...
-			'Position', [90 top-28 85 28], ...
-			'Title', '', ...
-			'BorderType', 'none');
+			'Parent', tabId, 'Tag', 'uipanelVars', ...
+			'UserData', zeros(1,0), 'BackgroundColor', special_color,...
+			'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
+			'Title', '', 'BorderType', 'none');
 			
-        
-        uipanelVars_CreateFcn;
-        
+        handles = gui_tabs.create_uipanel_endo_vars(handles);
+                
         handles.uipanelComm = uipanel( ...
             'Parent', tabId, ...
             'Tag', 'uipanelCommOptions', ...
-            'UserData', zeros(1,0), ...
-            'Units', 'characters', 'BackgroundColor', bg_color, ...
-            'Position', [2 3.5 172 3.5], ... %[90 3 85 3.5]
-            'Title', 'Current command options:');%, ...
-        %'BorderType', 'none');
+            'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
+            'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
+            'Title', 'Current command options:');
         
 
 
@@ -54,9 +47,8 @@ top = 35;
 		handles.text7 = uicontrol( ...
 			'Parent', tabId, ...
 			'Tag', 'text7', ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [90 top 75 1.5], ...
+			'Style', 'text', 'BackgroundColor', bg_color,...
+			'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
 			'FontWeight', 'bold', ...
 			'String', 'Select variables for which to plot simulated trajectory:', ...
 			'HorizontalAlignment', 'left');
@@ -64,22 +56,11 @@ top = 35;
 		handles.text8 = uicontrol( ...
 			'Parent', tabId, ...
 			'Tag', 'text8', ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [2 top 75 1.5], ...
+			'Style', 'text', 'BackgroundColor', bg_color,...
+			'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
 			'FontWeight', 'bold', ...
 			'String', 'Define shocks on exogenous variables:', ...
 			'HorizontalAlignment', 'left');	
-        
-%         handles.text9 = uicontrol( ...
-% 			'Parent', tabId, ...
-% 			'Tag', 'text9', ...
-% 			'Style', 'text', ...
-% 			'Units', 'characters', 'BackgroundColor', bg_color,...
-% 			'Position', [2 4.5 40 1.5], ...
-% 			'String', 'Display simulation results grouped by: ', ...
-% 			'HorizontalAlignment', 'left');
-        
         
         if(isfield(model_settings,'simul'))
             comm = getfield(model_settings,'simul');
@@ -91,9 +72,8 @@ top = 35;
         handles.simul = uicontrol( ...
 			'Parent', handles.uipanelComm, ...
 			'Tag', 'simul', ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [0 0 83 2], ...
+			'Style', 'text',  'BackgroundColor', bg_color,...
+			'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
 			'FontAngle', 'italic', ...
 			'String', comm_str, ...
             'TooltipString', comm_str, ...
@@ -105,8 +85,7 @@ top = 35;
 			'Parent', tabId, ...
 			'Tag', 'pussbuttonSimulation', ...
 			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [2 1 25 2], ...
+			'Units','normalized','Position',[0.01 0.02 .15 .05],...
 			'String', 'Simulation !', ...
 			'Callback', @pussbuttonSimulation_Callback);
 
@@ -114,8 +93,7 @@ top = 35;
 			'Parent', tabId, ...
 			'Tag', 'pussbuttonReset', ...
 			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [29 1 25 2], ...
+			'Units','normalized','Position',[0.17 0.02 .15 .05],...
 			'String', 'Reset', ...
 			'Callback', @pussbuttonReset_Callback);
         
@@ -123,17 +101,24 @@ top = 35;
 			'Parent', tabId, ...
 			'Tag', 'pussbuttonReset', ...
 			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [56 1 25 2], ...
+			'Units','normalized','Position',[0.33 0.02 .15 .05],...
 			'String', 'Close this tab', ...
 			'Callback',{@close_tab,tabId});
+        
+         handles.pussbuttonCloseAll = uicontrol( ...
+            'Parent', tabId, ...
+            'Tag', 'pussbuttonSimulation', ...
+            'Style', 'pushbutton', ...
+            'Units','normalized','Position',[0.49 0.02 .15 .05],...
+            'String', 'Close all output figures', ...
+            'Enable', 'off',...
+            'Callback', @pussbuttonCloseAll_Callback);
         
         handles.pushbuttonCommandDefinition = uicontrol( ...
 			'Parent', tabId, ...
 			'Tag', 'pushbuttonCommandDefinition', ...
 			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [90+55 1 30 2], ...
+			'Units','normalized','Position',[0.84 0.02 .15 .05],...
 			'String', 'Define command options ...', ...
 			'Callback', @pushbuttonCommandDefinition_Callback);
 
@@ -153,20 +138,19 @@ top = 35;
         %command shocks
         uicontrol( ...
 			'Parent', handles.shocks_panel, ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', special_color,...
-			'Position', [2 22 75 3], ...
+			'Style', 'text', 'BackgroundColor', special_color,...
+			'Units','normalized','Position',[0.02 0.85 0.96 0.1],...
 			'FontWeight', 'bold', ...
 			'String', 'Select exogenous variable (shock) for which you want to define temporary changes in the value. Shock will be added to the table below.', ...
 			'HorizontalAlignment', 'left');	
         
         shocks = model_settings.shocks;
-        list_shocks = uicontrol('Parent',handles.shocks_panel,'Style','popupmenu','Units', 'characters','Position',[2 20 50 1.5]);
+        list_shocks = uicontrol('Parent',handles.shocks_panel,'Style','popupmenu','Units','normalized','Position',[0.02 0.77 0.7 0.06]);
         list2 = shocks(:,4);
         set(list_shocks,'String',['Select varexo...'; list2]);
         set(list_shocks,'Callback', @pussbuttonValueChanged_Callback);
         
-        handles.pussbuttonAddValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units', 'characters','Position',[55 20 25 1.5],...
+        handles.pussbuttonAddValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.77 0.25 0.06],...
 			'String', 'Add variable ...', ...
             'TooltipString', 'Add variable as many times as number in periods in which you want to define temporary changes in the value',...
             'Enable', 'Off',...
@@ -178,17 +162,16 @@ top = 35;
         column_format = {'char','numeric','numeric', 'logical'};
         data = get_det_shocks();
         handles.shocks_table = uitable(handles.shocks_panel,'Data',data, ...
-            'Units','characters',...
+            'Units','normalized','Position',[0.02 0.10 0.96 0.6],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false true true true],...
-            'ColumnWidth', {120, 100, 100, 60}, ...
+            'ColumnWidth', {150, 90, 90, 60}, ...
             'RowName',[],...
-            'Position',[2,4,80,15],...
             'CellEditCallback',@savedata);
         
         
-         handles.pussbuttonRemoveValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units', 'characters','Position',[55 2 25 1.5],...
+         handles.pussbuttonRemoveValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.03 0.25 0.06],...
 			'String', 'Remove all selected', ...
             'Enable', 'Off',...
 			'Callback', @pussbuttonRemoveValues_Callback);
@@ -199,13 +182,12 @@ top = 35;
         column_format = {'char','numeric','numeric'};
         data = get_exo_steady_states();
         handles.endval_table = uitable(handles.endval_panel,'Data',data, ...
-            'Units','characters',...
+            'Units','normalized','Position',[0.02 0.10 0.96 0.8],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false true true],...
             'ColumnWidth', {190, 100, 100}, ...
-            'RowName',[],...
-            'Position',[2,4,80,20]);
+            'RowName',[]);
         
         function pussbuttonValueChanged_Callback(hObject,callbackdata)
             value = get(hObject, 'Value');
@@ -334,158 +316,159 @@ top = 35;
         end
     end
   
-    function uipanelVars_CreateFcn()
-        gui_vars = model_settings.variables;
-        numVars = size(gui_vars,1);
-        currentVar = 0;
-       
-        tubNum = 0;
-        maxDisplayed = 12;
-         
-        %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
-          %  'Position',[0 0 1 1]);
-         
-        %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
-        
-        handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
-        
-        
-        position = 1;
-        top_position = 25;
-        
-        ii=1;
-        while ii <= numVars
-            
-            isShown  = gui_vars{ii,5};
-            
-            if(~isShown)
-                ii = ii+1;
-                continue;
-            else
-                currentVar = currentVar + 1;
-            end
-            
-            
-            tabTitle = char(gui_vars(ii,1));
-            
-            tabIndex = checkIfExistsTab(handles.varsTabGroup,tabTitle);
-            if (tabIndex == 0)
-                
-                tubNum = tubNum +1;
-                new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle, 'UserData', tubNum);
-                %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
-                %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
-                varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-                currentPanel = varsPanel(tubNum);
-                
-                position(tubNum) = 1;
-                currenGroupedVar(tubNum) =1;
-                tabIndex = tubNum;
-                
-            else
-                %tabs = get(handles.varsTabGroup,'Children');
-                %new_tab =tabs(tabIndex);
-                currentPanel = varsPanel(tabIndex);
-            end
-            
-            if( position(tabIndex) > maxDisplayed) % Create slider
-                
-                are_shown = find(cell2mat(gui_vars(:,5)));
-                vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
-                num_vars_in_group = size(cell2mat(vars_in_group),1);
-                
-                sld = uicontrol('Style', 'slider',...
-                    'Parent', currentPanel, ...
-                    'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-                    'Units', 'characters','Position', [81 -0.2 3 26],...
-                    'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
-            end
-            
-            visible = 'on';
-            if(position(tabIndex)> maxDisplayed)
-                visible = 'off';
-            end
-            
-            handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-                'unit','characters',...
-                'position',[3 top_position-(2*position(tabIndex)) 60 2],...
-                'TooltipString', char(gui_vars(ii,2)),...
-                'string',char(gui_vars(ii,4)),...
-                'BackgroundColor', special_color,...
-                 'Visible', visible);
-             handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
-             currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
-            position(tabIndex) = position(tabIndex) + 1;
-            ii = ii+1;
-        end
-        handles.numVars= currentVar;
-        
-         % Show the first tab
-        %handles.varsTabGroup.SelectedChild = 1;
-        
-        
-        
-        
-        function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
-            
-            value = get(hObject, 'Value');
-            
-            value = floor(value);
-            
-            move = num_variables - maxDisplayed - value;
-            
-            for ii=1: num_variables
-                if(ii <= move || ii> move+maxDisplayed)
-                    visible = 'off';
-                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                else
-                    visible = 'on';
-                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                    set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
-                    
-                end
-                
-                
-            end
-        end
-        
-    end
-
-
-    function index = checkIfExistsTab(tabGroup,tabTitle)
-        tabs = get(tabGroup,'Children');
-        num = length(tabs);
-        index = 0;
-        %tab = [];
-        for i=1:num
-            hTab = tabs(i);
-            tit = get(hTab, 'Title');
-            if(strcmp(tit, tabTitle))
-                index = i;
-                %tab=hTab;
-                return;
-            end
-        end
-        
-%         index = 0;
-%         tabs = tabGroup.TabNames;
-%         if(~isempty(tabs))
-%             for i=1:size(tabs,2)
-%                 if(strcmp(char(tabs(i)), tabTitle))
-%                     index = i;
-%                     return;
+%     function uipanelVars_CreateFcn()
+%         gui_vars = model_settings.variables;
+%         numVars = size(gui_vars,1);
+%         currentVar = 0;
+%        
+%         tubNum = 0;
+%         maxDisplayed = 12;
+%          
+%         %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
+%           %  'Position',[0 0 1 1]);
+%          
+%         %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
+%         
+%         handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
+%         
+%         
+%         position = 1;
+%         top_position = 25;
+%         
+%         ii=1;
+%         while ii <= numVars
+%             
+%             isShown  = gui_vars{ii,5};
+%             
+%             if(~isShown)
+%                 ii = ii+1;
+%                 continue;
+%             else
+%                 currentVar = currentVar + 1;
+%             end
+%             
+%             
+%             tabTitle = char(gui_vars(ii,1));
+%             
+%             tabIndex = checkIfExistsTab(handles.varsTabGroup,tabTitle);
+%             if (tabIndex == 0)
+%                 
+%                 tubNum = tubNum +1;
+%                 new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle, 'UserData', tubNum);
+%                 %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
+%                 %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
+%                 varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
+%                 currentPanel = varsPanel(tubNum);
+%                 
+%                 position(tubNum) = 1;
+%                 currenGroupedVar(tubNum) =1;
+%                 tabIndex = tubNum;
+%                 
+%             else
+%                 %tabs = get(handles.varsTabGroup,'Children');
+%                 %new_tab =tabs(tabIndex);
+%                 currentPanel = varsPanel(tabIndex);
+%             end
+%             
+%             if( position(tabIndex) > maxDisplayed) % Create slider
+%                 
+%                 are_shown = find(cell2mat(gui_vars(:,5)));
+%                 vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
+%                 num_vars_in_group = size(cell2mat(vars_in_group),1);
+%                 
+%                 sld = uicontrol('Style', 'slider',...
+%                     'Parent', currentPanel, ...
+%                     'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
+%                     'Units', 'characters','Position', [81 -0.2 3 26],...
+%                     'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
+%             end
+%             
+%             visible = 'on';
+%             if(position(tabIndex)> maxDisplayed)
+%                 visible = 'off';
+%             end
+%             
+%             handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
+%                 'unit','characters',...
+%                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
+%                 'TooltipString', char(gui_vars(ii,2)),...
+%                 'string',char(gui_vars(ii,4)),...
+%                 'BackgroundColor', special_color,...
+%                  'Visible', visible);
+%              handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
+%              currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
+%             position(tabIndex) = position(tabIndex) + 1;
+%             ii = ii+1;
+%         end
+%         handles.numVars= currentVar;
+%         
+%          % Show the first tab
+%         %handles.varsTabGroup.SelectedChild = 1;
+%         
+%         
+%         
+%         
+%         function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
+%             
+%             value = get(hObject, 'Value');
+%             
+%             value = floor(value);
+%             
+%             move = num_variables - maxDisplayed - value;
+%             
+%             for ii=1: num_variables
+%                 if(ii <= move || ii> move+maxDisplayed)
+%                     visible = 'off';
+%                     set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+%                 else
+%                     visible = 'on';
+%                     set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+%                     set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
+%                     
 %                 end
+%                 
+%                 
 %             end
 %         end
 %         
-
-    end
+%     end
+% 
+% 
+%     function index = checkIfExistsTab(tabGroup,tabTitle)
+%         tabs = get(tabGroup,'Children');
+%         num = length(tabs);
+%         index = 0;
+%         %tab = [];
+%         for i=1:num
+%             hTab = tabs(i);
+%             tit = get(hTab, 'Title');
+%             if(strcmp(tit, tabTitle))
+%                 index = i;
+%                 %tab=hTab;
+%                 return;
+%             end
+%         end
+%         
+% %         index = 0;
+% %         tabs = tabGroup.TabNames;
+% %         if(~isempty(tabs))
+% %             for i=1:size(tabs,2)
+% %                 if(strcmp(char(tabs(i)), tabTitle))
+% %                     index = i;
+% %                     return;
+% %                 end
+% %             end
+% %         end
+% %         
+% 
+%     end
 
     function pussbuttonSimulation_Callback(hObject,evendata)
+        set(handles.pussbuttonCloseAll, 'Enable', 'off');
         
         comm_str = get(handles.simul, 'String');
         if(isempty(comm_str))
-            errordlg('Please define simul command first!' ,'Dynare GUI error','modal');
+            gui_tools.show_warning('Please define simul command first!');
             uicontrol(hObject);
             return;
         end
@@ -556,23 +539,16 @@ top = 35;
                 end
                 
                 %rplot(var_list_);
-                
+                set(handles.pussbuttonCloseAll, 'Enable', 'on');
                 uiwait(msgbox('Deterministic simulation executed successfully!', 'DynareGUI','modal'));
                 project_info.modified = 1;
             catch ME
-                errosrStr = [sprintf('Error in execution of simul command:\n\n'), ME.message];
-                errordlg(errosrStr,'DynareGUI Error','modal');
-                gui_tools.project_log_entry('Error', errosrStr);
+                gui_tools.show_error('Error in execution of simul command', ME, 'extended');
                 oo_ = old_oo;
             end
-            %options_ = old_options;
-            %oo_ = old_oo;
             
-%         elseif(~shockSelected)
-%             errordlg('Please select shocks!' ,'DynareGUI Error','modal');
-%             uicontrol(hObject);
         elseif(~variablesSelected)
-            errordlg('Please select variables!' ,'DynareGUI Error','modal');
+            gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
         end
     end
@@ -604,11 +580,9 @@ top = 35;
             
             set(handles.simul, 'String', comm_str);
             gui_tools.project_log_entry('Defined command simul',comm_str);
-            
-            %set(handles.estimation, 'String', getappdata(0,'estimation'));
-        catch
-            
-        end
+        catch ME
+            gui_tools.show_error('Error in defining simul command', ME, 'basic');
+         end
     end
 
     function value = shockSelected
@@ -656,6 +630,19 @@ top = 35;
             end
         end
         
+    end
+
+    %TODO  put this function into gui_tools
+    function pussbuttonCloseAll_Callback(hObject,evendata)
+        
+        main_figure = getappdata(0,'main_figure');
+        fh=findall(0,'type','figure');
+        for i=1:length(fh)
+            if(~(fh(i)==main_figure))
+                close(fh(i));
+            end
+        end
+        set(handles.pussbuttonCloseAll, 'Enable', 'off');
     end
 
     function close_tab(hObject,event, hTab)

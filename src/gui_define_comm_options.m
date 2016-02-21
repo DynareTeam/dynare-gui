@@ -436,13 +436,13 @@ handles.pussbuttonClose = uicontrol( ...
                     if(status)
                         uiwait(msgbox('File copied to project folder', 'DynareGUI','modal'));
                     else
-                        uiwait(errordlg(['Error while coping file to project folder: ', message] ,'DynareGUI Error','modal'));
+                        gui_tools.show_error(['Error while copying file to project folder: ', message]);
                     end
                 end
                 set(uicontrol, 'String', fileName);
                 
             catch ME
-                errordlg(['Error while selecting ',option_name, ' !'] ,'DynareGUI Error','modal');
+                gui_tools.show_error(['Error while selecting ',option_name], ME, 'basic');
             end
         end
         
@@ -477,10 +477,9 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                     
                     if(~status)
-                        errosrStr = sprintf('Not valid input! Please define option %s as %s',option_name, option_type );
-                        errordlg(errosrStr,'DynareGUI Error','modal');
+                        warnStr = sprintf('Not valid input! Please define option %s as %s',option_name, option_type );
+                        gui_tools.show_warning(warnStr);
                         set(hObject, 'String','');
-                       
                     end
                 case '(NAME, VALUE, ...)'
                    %TODO optim

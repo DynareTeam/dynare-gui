@@ -22,145 +22,132 @@ end
 v_size = 28; %30
 top = 35;
 % --- PANELS -------------------------------------
-         handles.uipanelConditions = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [2 top-v_size 85 v_size - 2 ], ...
-			'Title', '', ...
-			'BorderType', 'none');
-        
-        uipanelConditions_CreateFcn();
-        
-        handles.uipanelVars = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', ...
-			'Units', 'characters', 'BackgroundColor', special_color,...
-			'Position', [90 top-v_size 85 v_size], ...
-			'Title', '', ...
-			'BorderType', 'none');
-        
-        uipanelVars_CreateFcn;
+handles.uipanelConditions = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', bg_color,...
+    'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73], ...
+    'Title', '', ...
+    'BorderType', 'none');
 
-         handles.uipanelComm = uipanel( ...
-            'Parent', tabId, ...
-            'Tag', 'uipanelCommOptions', ...
-            'UserData', zeros(1,0), ...
-            'Units', 'characters', 'BackgroundColor', bg_color, ...
-            'Position', [2 3.5 172 3.5], ... %[90 3 85 3.5]
-            'Title', 'Current command options:');%, ...
-     
-	% --- STATIC TEXTS -------------------------------------
-	
-    uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'text7', ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [2 top 75 1.5], ...
-			'FontWeight', 'bold', ...
-			'String', 'Define conditions:', ...
-			'HorizontalAlignment', 'left');  
-    
-    uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'text7', ...
-			'Style', 'text', ...
-			'Units', 'characters', 'BackgroundColor', bg_color,...
-			'Position', [90 top 75 1.5], ...
-			'FontWeight', 'bold', ...
-			'String', 'Select endogenous variables for conditional forecast:', ...
-			'HorizontalAlignment', 'left'); 
-        
-        if(isfield(model_settings,'conditional_forecast'))
-            comm = getfield(model_settings,'conditional_forecast');
-            comm_str = gui_tools.command_string('conditional_forecast', comm);
-        else
-            comm_str = '';
-        end
-        
-        handles.conditional_forecast = uicontrol( ...
-            'Parent', handles.uipanelComm, ...
-            'Tag', 'stoch_simul', ...
-            'Style', 'text', ...
-            'Units', 'characters', 'BackgroundColor', bg_color,...
-            'Position', [0 0 171 2], ...
-            'FontAngle', 'italic', ...
-            'String', comm_str, ...
-            'TooltipString', comm_str, ...
-            'HorizontalAlignment', 'left');
-        
-        
-        % --- PUSHBUTTONS -------------------------------------
-        handles.pussbuttonCondForecast = uicontrol( ...
-            'Parent', tabId, ...
-			'Tag', 'pussbuttonCondForecast', ...
-			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [2 1 25 2], ...
-			'String', 'Conditional forecast !', ...
-			'Callback', @pussbuttonCondForecast_Callback);
+uipanelConditions_CreateFcn();
 
-		handles.pussbuttonReset = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [29 1 25 2], ...
-			'String', 'Reset', ...
-			'Callback', @pussbuttonReset_Callback);
-        
-        handles.pussbuttonCloseAll = uicontrol( ...
-            'Parent', tabId, ...
-            'Tag', 'pussbuttonSimulation', ...
-            'Style', 'pushbutton', ...
-            'Units', 'characters', ...
-            'Position', [56 1 25 2], ...
-            'String', 'Close all output figures', ...
-            'Enable', 'off',...
-            'Callback', @pussbuttonCloseAll_Callback);
-        
-        handles.pussbuttonClose = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-            'Units', 'characters', ...
-            'Position', [56+27 1 25 2], ...
-            'String', 'Close this tab', ...
-            'Callback',{@close_tab,tabId});
-        
-        handles.pushbuttonCommandDefinition = uicontrol( ...
-            'Parent', tabId, ...
-            'Tag', 'pushbuttonCommandDefinition', ...
-            'Style', 'pushbutton', ...
-            'Units', 'characters', ...
-            'Position', [90+55 1 30 2], ...
-            'String', 'Define command options ...', ...
-            'Callback', @pushbuttonCommandDefinition_Callback);
-        
-        handles.pushbuttonAddCond = uicontrol( ...
-            'Parent', tabId, ...
-            'Tag', 'pushbuttonAddCond', ...
-			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [48 33.5 19 1.5], ...
-			'String', 'Add condition', ...
-			'Callback', @pushbuttonAddCond_Callback);
+handles.uipanelVars = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
+    'Title', '', 'BorderType', 'none');
 
-		handles.pushbuttonDeleteCond = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pushbuttonDeleteCond', ...
-			'Style', 'pushbutton', ...
-			'Units', 'characters', ...
-			'Position', [68 33.5 19 1.5], ...
-			'String', 'Remove condition', ...
-			'Callback', @pushbuttonDeleteCond_Callback);
+%uipanelVars_CreateFcn;
+handles = gui_tabs.create_uipanel_endo_vars(handles);
 
-   
-    
-        
+handles.uipanelComm = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelCommOptions', ...
+    'UserData', zeros(1,0),'BackgroundColor', bg_color, ...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
+    'Title', 'Current command options:');%, ...
+
+% --- STATIC TEXTS -------------------------------------
+
+uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'text7', ...
+    'Style', 'text','BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Define conditions:', ...
+    'HorizontalAlignment', 'left');
+
+uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'text7', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Select endogenous variables for conditional forecast:', ...
+    'HorizontalAlignment', 'left');
+
+if(isfield(model_settings,'conditional_forecast'))
+    comm = getfield(model_settings,'conditional_forecast');
+    comm_str = gui_tools.command_string('conditional_forecast', comm);
+else
+    comm_str = '';
+end
+
+handles.conditional_forecast = uicontrol( ...
+    'Parent', handles.uipanelComm, ...
+    'Tag', 'stoch_simul', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
+    'FontAngle', 'italic', ...
+    'String', comm_str, ...
+    'TooltipString', comm_str, ...
+    'HorizontalAlignment', 'left');
+
+
+% --- PUSHBUTTONS -------------------------------------
+handles.pussbuttonCondForecast = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonCondForecast', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.01 0.02 .15 .05],...
+    'String', 'Conditional forecast !', ...
+    'Callback', @pussbuttonCondForecast_Callback);
+
+handles.pussbuttonReset = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.17 0.02 .15 .05],...
+    'String', 'Reset', ...
+    'Callback', @pussbuttonReset_Callback);
+
+handles.pussbuttonClose = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.33 0.02 .15 .05],...
+    'String', 'Close this tab', ...
+    'Callback',{@close_tab,tabId});
+
+handles.pussbuttonCloseAll = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.49 0.02 .15 .05],...
+    'String', 'Close all output figures', ...
+    'Enable', 'off',...
+    'Callback', @pussbuttonCloseAll_Callback);
+
+handles.pushbuttonCommandDefinition = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pushbuttonCommandDefinition', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.84 0.02 .15 .05],...
+    'String', 'Define command options ...', ...
+    'Callback', @pushbuttonCommandDefinition_Callback);
+
+handles.pushbuttonAddCond = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pushbuttonAddCond', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position', [0.265 0.92 0.11 0.04], ...
+    'String', 'Add condition', ...
+    'Callback', @pushbuttonAddCond_Callback);
+
+handles.pushbuttonDeleteCond = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pushbuttonDeleteCond', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position', [0.38 0.92 0.11 0.04], ...
+    'String', 'Remove condition', ...
+    'Callback', @pushbuttonDeleteCond_Callback);
+
+
+
+
     function uipanelConditions_CreateFcn()
-   
+        
         handles.tabConditionalPanel = uitabgroup(handles.uipanelConditions,'Position',[0 0 1 1]);
         
         handles.tubNum = 0;
@@ -186,44 +173,53 @@ top = 35;
         cf_vars= model_settings.variables;
         numVariables = length(cf_vars);
         
-        listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units', 'characters','Position',[2 21 80 1.5]);
-        %list = cf_vars; 
-        list = cf_vars(:,4);
+        listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.86 0.96 0.06]);
+        for ii=1: size(cf_vars,1)
+            list{ii,1} = cf_vars{ii,2};
+            if(~strcmp(cf_vars{ii,2}, cf_vars{ii,4}))
+                list{ii,1} = [cf_vars{ii,2},' (',  cf_vars{ii,4}, ')'];
+            end
+        end
         set(listBox,'String',['Select endogenous variable for constrained path...'; list]);
         set(listBox,'Callback',@popupmenu_Callback);
-
+        
         handles.ConVars(tubNum) = listBox;
         
         column_names = {'Period ','Forecasted value ','Enter new value ', 'Change (%) '};
         column_format = {'numeric','numeric','numeric','numeric'};
         handles.uit(tubNum) = uitable(tempPanel,...
-            'Units','characters',...
+            'Units','normalized','Position',[0.02 0.20 0.96 0.6],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false false true false],...
             'ColumnWidth', {'auto', 'auto', 'auto', 'auto'}, ...
             'RowName',[],...
-            'Position',[2,5,80,15],...
             'CellEditCallback',@savedata);
         
         %%%listBox.UserData = handles.uit(tubNum);
         
         shocks = model_settings.shocks;
-        listBox2 = uicontrol('Parent',tempPanel,'Style','popupmenu','Units', 'characters','Position',[2 2 80 1.5]);
-        list2 = shocks(:,4);
+        listBox2 = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.08 0.96 0.06]);
+        %list2 = shocks(:,4);
+        for ii=1: size(shocks,1)
+            list2{ii,1} = shocks{ii,2};
+            if(~strcmp(shocks{ii,2}, shocks{ii,4}))
+                list2{ii,1} = [shocks{ii,2},' (',  shocks{ii,4}, ')'];
+            end
+        end
         set(listBox2,'String',['Select controlled varexo...'; list2]);
         handles.ExoVars(tubNum) = listBox2;
-
-  
-     
+        
+        
+        
         function popupmenu_Callback(hObject,eventdata)
             val = get(hObject,'Value');
             
             selectedTab = handles.tabConditionalPanel.SelectedTab;
             selectedTubNum = selectedTab.UserData;
             if(val==1)
-               set(handles.uit(selectedTubNum), 'Data', []);
-               return; 
+                set(handles.uit(selectedTubNum), 'Data', []);
+                return;
             end
             
             %selectedVar = cf_vars(val-1);
@@ -233,19 +229,19 @@ top = 35;
                 value = eval (sprintf('oo_.MeanForecast.Mean.%s', selectedVar{1}));
                 %data = [(1:periods)', value(1:periods), value(1:periods), zeros(periods,1)];
                 for ii=1:periods
-                   data{ii,1} = ii;
-                   data{ii,2} = value(ii);
-                   data{ii,3} = '';
-                   data{ii,4} = '';
+                    data{ii,1} = ii;
+                    data{ii,2} = value(ii);
+                    data{ii,3} = '';
+                    data{ii,4} = '';
                 end
                 
             catch ME
                 %data = [(1:periods)', zeros(periods,1),zeros(periods,1),zeros(periods,1)];
                 for ii=1:periods
-                   data{ii,1} = ii;
-                   data{ii,2} = '';
-                   data{ii,3} = '';
-                   data{ii,4} = '';
+                    data{ii,1} = ii;
+                    data{ii,2} = '';
+                    data{ii,3} = '';
+                    data{ii,4} = '';
                 end
             end
             set(handles.uit(selectedTubNum), 'Data', data);
@@ -256,163 +252,22 @@ top = 35;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
             
-%             t_data=get(handles.uit(tubNum) ,'data');  % insted of this, it is possible to use handle(hObject).Data{r,c}
-%             t_data{r,c} = val; 
-%             if(val~= 0)
-%                 t_data{r,c+1}= ((val - t_data{r,c-1})/t_data{r,c-1})*100;
-%                 
-%             end
-%             set(handles.uit(tubNum),'data',t_data);
-
-            hObject.Data{r,c} = val; 
+            hObject.Data{r,c} = val;
             if(hObject.Data{r,c-1}~= 0)
                 hObject.Data{r,c+1}= ((val - hObject.Data{r,c-1})/hObject.Data{r,c-1})*100;
                 
             end
-            %set(handles.uit(tubNum),'data',t_data);
         end
         
-        
-    end
-        
-    function uipanelVars_CreateFcn()
-        gui_vars = model_settings.variables;
-        numVars = size(gui_vars,1);
-        currentVar = 0;
-       
-        tubNum = 0;
-        maxDisplayed = 12;
-         
-        %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
-          %  'Position',[0 0 1 1]);
-         
-        %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
-        handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
-        
-        position = 1;
-        top_position = v_size-3;
-        
-        ii=1;
-        while ii <= numVars
-            
-            isShown  = gui_vars{ii,5};
-            
-            if(~isShown)
-                ii = ii+1;
-                continue;
-            else
-                currentVar = currentVar + 1;
-            end
-            
-            
-            tabTitle = char(gui_vars(ii,1));
-            
-            tabIndex = checkIfExistsTab(handles.varsTabGroup,tabTitle);
-            if (tabIndex == 0)
-                
-                tubNum = tubNum +1;
-                %new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle);
-                %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
-                %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
-                new_tab = uitab(handles.varsTabGroup, 'Title',tabTitle );%, 'UserData', tubNum);
-                varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-                currentPanel = varsPanel(tubNum);
-                
-                position(tubNum) = 1;
-                currenGroupedVar(tubNum) =1;
-                tabIndex = tubNum;
-                
-            else
-                %tabs = get(handles.varsTabGroup,'Children');
-                %new_tab =tabs(tabIndex);
-                currentPanel = varsPanel(tabIndex);
-            end
-            
-            if( position(tabIndex) > maxDisplayed) % Create slider
-                
-                are_shown = find(cell2mat(gui_vars(:,5)));
-                vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
-                num_vars_in_group = size(cell2mat(vars_in_group),1);
-                
-                sld = uicontrol('Style', 'slider',...
-                    'Parent', currentPanel, ...
-                    'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-                    'Units', 'characters','Position', [81.1 0 3 26],...
-                    'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
-            end
-            
-            visible = 'on';
-            if(position(tabIndex)> maxDisplayed)
-                visible = 'off';
-            end
-            
-            handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-                'unit','characters',...
-                'position',[3 top_position-(2*position(tabIndex)) 60 2],...
-                'TooltipString', char(gui_vars(ii,2)),...
-                'string',char(gui_vars(ii,4)),...
-                'BackgroundColor', special_color,...
-                 'Visible', visible);
-             handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
-             currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
-            position(tabIndex) = position(tabIndex) + 1;
-            ii = ii+1;
-        end
-        handles.numVars= currentVar;
-        
-         % Show the first tab
-        %handles.varsTabGroup.SelectedChild = 1;
-        
-        
-        
-        
-        function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
-            
-            value = get(hObject, 'Value');
-            
-            value = floor(value);
-            
-            move = num_variables - maxDisplayed - value;
-            
-            for ii=1: num_variables
-                if(ii <= move || ii> move+maxDisplayed)
-                    visible = 'off';
-                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                else
-                    visible = 'on';
-                    set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                    set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
-                    
-                end
-                
-                
-            end
-        end
         
     end
 
-
-    function index = checkIfExistsTab(tabGroup,tabTitle)
-        tabs = get(tabGroup,'Children');
-        num = length(tabs);
-        index = 0;
-        %tab = [];
-        for i=1:num
-            hTab = tabs(i);
-            tit = get(hTab, 'Title');
-            if(strcmp(tit, tabTitle))
-                index = i;
-                %tab=hTab;
-                return;
-            end
-        end
-    end
 
     function pussbuttonCondForecast_Callback(hObject,evendata)
-   
+        
         comm_str = get(handles.conditional_forecast, 'String');
         if(isempty(comm_str))
-            errordlg('Please define conditional_forecast command!' ,'Dynare GUI error','modal');
+            gui_tools.show_warning('Please define conditional_forecast command!');
             uicontrol(hObject);
             return;
         end
@@ -421,24 +276,22 @@ top = 35;
         
         failCondition = conditionNotDefined();
         if(failCondition)
-            errordlg(sprintf('You must define conditions first: Cond %d is not defined correctly.', failCondition) ,'DynareGUI Error','modal');
+            gui_tools.show_warning(sprintf('You must define conditions first: Cond %d is not defined correctly.', failCondition));
             handles.tabConditionalPanel.SelectedTab = handles.htabPanel(failCondition);
-            %handles.tabConditionalPanel.Children(failCondition);
-            %uicontrol(hObject);
             return;
         end
         
         old_options = options_;
         options_.datafile = project_info.data_file;
         options_.nodisplay = 0;
-
+        
         if(~variablesSelected)
-            errordlg('Please select variables!' ,'DynareGUI Error','modal');
+            gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
             return;
         end
         gui_tools.project_log_entry('Doing cond. forecast','...');
-       
+        
         var_list_=[];
         
         num_selected = 0;
@@ -457,7 +310,7 @@ top = 35;
         constrained_vars_ = [];
         periods = figureOutNumOfPeriods();
         constrained_paths_ = zeros(handles.tubNum, periods);
-
+        
         for ii=1:handles.tubNum
             listbox = handles.ConVars(ii);
             val = get(listbox, 'Value');
@@ -509,7 +362,7 @@ top = 35;
         model_settings.constrained_paths_ = constrained_paths_;
         model_settings.constrained_vars_ = constrained_vars_;
         model_settings.varlist_.conditional_forecast = var_list_;
-
+        
         % computations take place here
         try
             imcforecast(constrained_paths_, constrained_vars_, options_cond_fcst_);
@@ -526,21 +379,18 @@ top = 35;
             
             
         catch ME
-            
-            errosrStr = [sprintf('Error in execution of conditional forecast command:\n\n'), ME.message];
-            errordlg(errosrStr,'DynareGUI Error','modal');
-            gui_tools.project_log_entry('Error', errosrStr);
+            gui_tools.show_error('Error in execution of conditional forecast command', ME, 'extended');
             uicontrol(hObject);
         end
         options_ = old_options;
     end
 
 
-    function pushbuttonAddCond_Callback(hObject,evendata) 
+    function pushbuttonAddCond_Callback(hObject,evendata)
         creteTab();
-	end
+    end
 
-	function pushbuttonDeleteCond_Callback(hObject,evendata) 
+    function pushbuttonDeleteCond_Callback(hObject,evendata)
         
         tubNum = handles.tubNum;
         if(tubNum >1)
@@ -555,7 +405,7 @@ top = 35;
             handles.uit(selected) = [];
             handles.ConVars(selected)= [];
             handles.ExoVars(selected)= [];
-             
+            
             delete(selectedTab);
             
             children = get(tabConditionalPanel, 'Children');
@@ -577,7 +427,7 @@ top = 35;
             set(handles.vars(ii),'Value',0);
             
         end
-       
+        
         periods = project_info.default_forecast_periods;
         for ii=1:handles.tubNum
             data = get(handles.uit(ii), 'Data');
@@ -622,8 +472,8 @@ top = 35;
         
     end
 
-   
-    %TODO  put this function into gui_tools
+
+%TODO  put this function into gui_tools
     function pussbuttonCloseAll_Callback(hObject,evendata)
         
         main_figure = getappdata(0,'main_figure');
@@ -676,12 +526,7 @@ top = 35;
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)
         
-        %h = gui_define_comm_stoch_simul();
-        
-        %old_comm = model_settings.conditional_forecast;
-        
         h = gui_define_comm_options(dynare_gui_.conditional_forecast,'conditional_forecast');
-        
         uiwait(h);
         
         try
@@ -695,8 +540,8 @@ top = 35;
             
             gui_tools.project_log_entry('Defined command conditional_forecast',comm_str);
             
-        catch
-            
+        catch ME
+            gui_tools.show_error('Error in defining conditional_forecast command', ME, 'basic');
         end
         
     end

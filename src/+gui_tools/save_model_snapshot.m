@@ -28,9 +28,9 @@ try
     %   save(fullFileName, 'oo_recursive_', '-append');
     % end
     
-    gui_tools.project_log_entry('Saving model snapshot: ',fullFileName);
+    gui_tools.project_log_entry('Saving model snapshot',fullFileName);
     uiwait(msgbox('Model snapshot saved successfully!', 'DynareGUI','modal'));
 catch
-     errordlg('Error while saving model snapshot.' ,'DynareGUI Error','modal');
+     gui_tools.show_error('Error while saving model snapshot', ME, 'basic');
 end
 end

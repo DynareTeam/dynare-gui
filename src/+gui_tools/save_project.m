@@ -51,16 +51,16 @@ gui_tools.project_log_entry('Saving project',project_data);
                    
     function save_structure(svalue, sname)
         try
-        if(~isempty(svalue))
-            %if(isstruct(svalue) && ~isempty(fieldnames(svalue)))
+            if(~isempty(svalue))
+                %if(isstruct(svalue) && ~isempty(fieldnames(svalue)))
                 save(fullFileName,sname, '-append');
                 if(isempty(project_structures))
                     project_structures = ['project_structures = ' sname];
                 else
                     project_structures = [project_structures, ', ', sname];
                 end
-            %end
-        end
+                %end
+            end
         catch
         end
     end

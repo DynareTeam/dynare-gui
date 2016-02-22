@@ -291,7 +291,7 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             return;
         end
         gui_tools.project_log_entry('Doing cond. forecast','...');
-        
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing cond. forecast... Please wait...', tabId);
         var_list_=[];
         
         num_selected = 0;
@@ -375,13 +375,18 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             plot_icforecast(var_list_, plot_periods, options_);
             
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
+            jObj.stop;
+            jObj.setBusyText('All done!');
             uiwait(msgbox('Conditional forecast command executed successfully!', 'DynareGUI','modal'));
-            
+            project_info.modified = 1;
             
         catch ME
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
             gui_tools.show_error('Error in execution of conditional forecast command', ME, 'extended');
             uicontrol(hObject);
         end
+        delete(guiObj);
         options_ = old_options;
     end
 

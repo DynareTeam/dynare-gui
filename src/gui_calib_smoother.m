@@ -115,11 +115,8 @@ handles.pussbuttonCloseAll = uicontrol( ...
     'Enable', 'off',...
     'Callback', @pussbuttonCloseAll_Callback);
 
-
-
-
     function uipanelResults_CreateFcn()
-   
+        
         top = 1;
         dwidth = 0.3;
         dheight = 0.08;
@@ -304,41 +301,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
         
         
         gui_tools.project_log_entry('Doing calibrated smoother ','...');
-        
-        model_name = project_info.model_name;
-        
-        try
-            % R2010a and newer
-            iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
-            iconsSizeEnums = javaMethod('values',iconsClassName);
-            SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
-            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'I am doing calibrated smoother ... Please wait ...');  % icon, label
-        catch
-            % R2009b and earlier
-            redColor   = java.awt.Color(1,0,0);
-            blackColor = java.awt.Color(0,0,0);
-            jObj = com.mathworks.widgets.BusyAffordance(redColor, blackColor);
-        end
-        jObj.setPaintsWhenStopped(true);  % default = false
-        jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
-        main_figure = getappdata(0, 'main_figure');
-        set(main_figure,'Units','pixels');
-        pos = get(main_figure,'Position');
-        set(main_figure,'Units','characters');
-        [jhandle,guihandle] = javacomponent(jObj.getComponent, [(pos(3)-300)/2,pos(4)*0.6,300,80], tabId);
-        lineColor = java.awt.Color(0,0,0);  % =black
-        thickness = 1;  % pixels
-        roundedCorners = true;
-        newBorder = javax.swing.border.LineBorder(lineColor,thickness,roundedCorners);
-        jhandle.Border = newBorder;
-        jhandle.repaint;
-        
-        set(main_figure, 'Visible','On');
-        
-        main_figure = getappdata(0, 'main_figure');
-        %[jhandle,guihandle] = javacomponent(jObj.getComponent, [500,450,250,80], main_figure);
-        jObj.start;
-        drawnow();
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing calibrated smoother... Please wait...', tabId);
         
         var_list_=[];
         
@@ -355,18 +318,24 @@ handles.pussbuttonCloseAll = uicontrol( ...
             end
         end
         
+        model_settings.varlist_.calib_smoother = var_list_;
         
         % computations take place here
         %status = 1;
         try
             %TODO Check with Dynare team/Ratto!!!
+            old_oo_ = oo_;
             gui_tools.clear_dynare_oo_structure();
+            
             
             %TODO Check with Dynare team/Ratto!!!
             options_.order = 1;
             options_.plot_priors = 0;
             
-            evaluate_smoother('calibration',var_list_);
+            %evaluate_smoother('calibration',var_list_);
+            options_.mode_computa = 0;
+            options_.smoother=1;
+            dynare_estimation(var_list_);
             
             jObj.stop;
             jObj.setBusyText('All done!');
@@ -383,9 +352,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
             gui_tools.show_error('Error in execution of calib_smoother command', ME, 'extended');
             uicontrol(hObject);
         end
-        delete(guihandle);
-        %options_ = old_options;
-        
+        delete(guiObj);
     end
 
     function pussbuttonReset_Callback(hObject,evendata)
@@ -430,19 +397,6 @@ handles.pussbuttonCloseAll = uicontrol( ...
         end
     end
 
-    function vars = getVariablesSelected
-        num=0;
-        for ii = 1:handles.numVars
-            if get(handles.vars(ii),'Value')
-                num=num+1;
-                varName = get(handles.vars(ii),'TooltipString');
-                vars(num) = cellstr(varName);
-                
-            end
-        end
-        
-    end
-
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
         
@@ -450,26 +404,11 @@ handles.pussbuttonCloseAll = uicontrol( ...
 
     function pussbuttonResults_Callback(hObject,evendata)
         h = gui_results('calib_smoother', dynare_gui_.calib_smoother_results);
-        
-        %uiwait(h);
-        
-        
     end
 
     function pussbuttonCloseAll_Callback(hObject,evendata)
-        
-        main_figure = getappdata(0,'main_figure');
-        fh=findall(0,'type','figure');
-        for i=1:length(fh)
-            if(~(fh(i)==main_figure))
-                close(fh(i));
-            end
-        end
+        gui_tools.close_all_figures();
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
     end
-
-
-
-
 
 end

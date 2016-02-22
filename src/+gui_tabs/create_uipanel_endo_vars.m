@@ -8,7 +8,7 @@ numVars = size(gui_vars,1);
 currentVar = 0;
 
 tubNum = 0;
-maxDisplayed = 12;
+
 
 handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
 
@@ -46,6 +46,14 @@ while ii <= numVars
         currentPanel = varsPanel(tabIndex);
     end
     
+       
+    currentPanel.Units = 'characters';
+    pos = currentPanel.Position;
+    currentPanel.Units = 'Normalized';
+    
+    
+    maxDisplayed = floor(pos(4)/2) - 3 ;
+    top_position = pos(4) - 6; 
     if( position(tabIndex) > maxDisplayed) % Create slider
         
         are_shown = find(cell2mat(gui_vars(:,5)));
@@ -67,12 +75,17 @@ while ii <= numVars
     if(~strcmp(var_name,char(gui_vars(ii,4)) ))
         var_name = [var_name, ' (',char(gui_vars(ii,4)) , ')'];
     end
+    
+    
     handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-        'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 0.9 .08],...%'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...
+        'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...% 'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 0.9 .08],...
         'TooltipString', char(gui_vars(ii,2)),...
         'string',var_name,...
         'BackgroundColor', special_color,...
         'Visible', visible);
+    
+     %handles.vars(currentVar).Units = 'Pixels';
+    
     handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
     currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
     position(tabIndex) = position(tabIndex) + 1;
@@ -96,8 +109,10 @@ new_handles = handles;
             else
                 visible = 'on';
                 set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                %set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
-                set(handles.grouped_vars(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
+                set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
+                
+                  
+                %%set(handles.grouped_vars(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
                  %'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 .94 .08],...%
                      
              %'position',[3 top_position-(2*position(tabIndex)) 60 2],.

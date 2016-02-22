@@ -433,42 +433,8 @@ top = 35;
         
         gui_tools.project_log_entry('Doing estimation','...');
         
-        model_name = project_info.model_name;
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
         
-       try
-            % R2010a and newer
-            iconsClassName = 'com.mathworks.widgets.BusyAffordance$AffordanceSize';
-            iconsSizeEnums = javaMethod('values',iconsClassName);
-            SIZE_32x32 = iconsSizeEnums(2);  % (1) = 16x16,  (2) = 32x32
-            jObj = com.mathworks.widgets.BusyAffordance(SIZE_32x32, 'I am doing estimation ... Please wait ...');  % icon, label
-        catch
-            % R2009b and earlier
-            redColor   = java.awt.Color(1,0,0);
-            blackColor = java.awt.Color(0,0,0);
-            jObj = com.mathworks.widgets.BusyAffordance(redColor, blackColor);
-        end
-        jObj.setPaintsWhenStopped(true);  % default = false
-        jObj.useWhiteDots(false);         % default = false (true is good for dark backgrounds)
-        main_figure = getappdata(0, 'main_figure');
-        set(main_figure,'Units','pixels');
-        pos = get(main_figure,'Position');
-        set(main_figure,'Units','characters');
-        [jhandle,guihandle] = javacomponent(jObj.getComponent, [(pos(3)-300)/2,pos(4)*0.6,300,80], tabId);
-        lineColor = java.awt.Color(0,0,0);  % =black
-        thickness = 1;  % pixels
-        roundedCorners = true;
-        newBorder = javax.swing.border.LineBorder(lineColor,thickness,roundedCorners);
-        jhandle.Border = newBorder;
-        jhandle.repaint;
-
-
-        set(main_figure, 'Visible','On');
-        
-        main_figure = getappdata(0, 'main_figure');
-        %[jhandle,guihandle] = javacomponent(jObj.getComponent, [500,450,250,80], main_figure);
-        jObj.start;
-        drawnow();
- 
         var_list_=[];
         
         num_selected = 0;
@@ -485,6 +451,7 @@ top = 35;
         end
         
         model_settings.varlist_.estimation = var_list_;
+        
         % computations take place here
         %status = 1;
         try
@@ -507,7 +474,7 @@ top = 35;
             gui_tools.show_error('Error in execution of estimation command', ME, 'extended');
             uicontrol(hObject);
         end
-        delete(guihandle);
+        delete(guiObj);
     end
 
 
@@ -530,12 +497,6 @@ top = 35;
          
         try
             new_comm = getappdata(0,'estimation');
-            if(~isempty(new_comm))
-                model_settings.estimation = new_comm;   
-            end
-             %new_comm = model_settings.user_options.estimation; 
-            %new_options_ = getappdata(0,'new_options_');
-            
             
             if(isfield(new_comm,'consider_all_endogenous'))
                 set_all_endogenous(new_comm.consider_all_endogenous);
@@ -552,6 +513,11 @@ top = 35;
                 new_comm = rmfield(new_comm,'consider_only_observed');
                 %new_options_ = rmfield(new_options_,'consider_only_observed');
             end
+            
+            if(~isempty(new_comm))
+                model_settings.estimation = new_comm;   
+            end
+            
             comm_str = gui_tools.command_string('estimation', new_comm);
             set(handles.estimation, 'String', comm_str);
             set(handles.estimation, 'TooltipString', comm_str);

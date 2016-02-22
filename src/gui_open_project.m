@@ -91,7 +91,7 @@ try
                 
             end
         end
-        project_info.modified = 0;
+        project_info.modified = 0; % TODO This is not necessary
         gui_tools.project_log_entry('Project Open',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
     end
 catch ME

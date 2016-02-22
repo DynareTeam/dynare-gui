@@ -261,13 +261,13 @@ handles = [];
         end
         
         if(shockSelected && variablesSelected)
-            old_options = options_;
-            % TODO check this - if we don't save oo_ consecutive calls to stoch_simul are not working
+            
+            % TODO check this - if we don't save oo_ (in case of errors)
+            % consecutive calls to stoch_simul are not working  
             old_oo = oo_;
             
             gui_tools.project_log_entry('Doing stochastic simulation','...');
-            model_name = project_info.model_name;
-            
+            [jObj, guiObj] = gui_tools.create_animated_screen('I am doing stochastic simulation... Please wait...', tabId);
             
             options_.irf_shocks=[];
             first_shock = 1;
@@ -317,15 +317,21 @@ handles = [];
             
 
            options_.nodisplay = 0;
+           model_settings.varlist_.stoch_simul = var_list_;
             try
                 info = stoch_simul(var_list_);
                 set(handles.pussbuttonCloseAll, 'Enable', 'on');
+                jObj.stop;
+                jObj.setBusyText('All done!');
                 uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
                 project_info.modified = 1;
             catch ME
+                jObj.stop;
+                jObj.setBusyText('Done with errors!');
                 gui_tools.show_error('Error in execution of stoch_simul command', ME, 'extended');
                 oo_ = old_oo;
             end
+            delete(guiObj);
             
         elseif(~shockSelected)
             gui_tools.show_warning('Please select shocks!');

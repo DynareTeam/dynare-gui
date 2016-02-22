@@ -413,6 +413,7 @@ handles.pussbuttonClose = uicontrol( ...
             current_option = current_option +1;
             
         end
+        
         function select_file(hObject,callbackdata, option_name, uicontrol)
             try
                 file_types = {'*.*'};

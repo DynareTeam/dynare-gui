@@ -17,117 +17,117 @@ handles = [];
 
 top = 35;
 % --- PANELS -------------------------------------
-		handles.uipanelShocks = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelShocks','BackgroundColor', special_color,...
-			'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73],...
-			'Title', '', ...
-			'BorderType', 'none');
-        
-        uipanelShocks_CreateFcn;
-        
-        handles.uipanelVars = uipanel( ...
-			'Parent', tabId, 'Tag', 'uipanelVars', ...
-			'UserData', zeros(1,0), 'BackgroundColor', special_color,...
-			'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
-			'Title', '', 'BorderType', 'none');
-			
-        handles = gui_tabs.create_uipanel_endo_vars(handles);
-                
-        handles.uipanelComm = uipanel( ...
-            'Parent', tabId, ...
-            'Tag', 'uipanelCommOptions', ...
-            'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
-            'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
-            'Title', 'Current command options:');
-        
+handles.uipanelShocks = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelShocks','BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73],...
+    'Title', '', ...
+    'BorderType', 'none');
+
+uipanelShocks_CreateFcn;
+
+handles.uipanelVars = uipanel( ...
+    'Parent', tabId, 'Tag', 'uipanelVars', ...
+    'UserData', zeros(1,0), 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
+    'Title', '', 'BorderType', 'none');
+
+handles = gui_tabs.create_uipanel_endo_vars(handles);
+
+handles.uipanelComm = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelCommOptions', ...
+    'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
+    'Title', 'Current command options:');
 
 
-	% --- STATIC TEXTS -------------------------------------
-		handles.text7 = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'text7', ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
-			'FontWeight', 'bold', ...
-			'String', 'Select variables for which to plot simulated trajectory:', ...
-			'HorizontalAlignment', 'left');
 
-		handles.text8 = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'text8', ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
-			'FontWeight', 'bold', ...
-			'String', 'Define shocks on exogenous variables:', ...
-			'HorizontalAlignment', 'left');	
-        
-        if(isfield(model_settings,'simul'))
-            comm = getfield(model_settings,'simul');
-            comm_str = gui_tools.command_string('simul', comm);
-        else
-            comm_str = '';
-        end
-        
-        handles.simul = uicontrol( ...
-			'Parent', handles.uipanelComm, ...
-			'Tag', 'simul', ...
-			'Style', 'text',  'BackgroundColor', bg_color,...
-			'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
-			'FontAngle', 'italic', ...
-			'String', comm_str, ...
-            'TooltipString', comm_str, ...
-			'HorizontalAlignment', 'left');
+% --- STATIC TEXTS -------------------------------------
+handles.text7 = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'text7', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Select variables for which to plot simulated trajectory:', ...
+    'HorizontalAlignment', 'left');
+
+handles.text8 = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'text8', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Define shocks on exogenous variables:', ...
+    'HorizontalAlignment', 'left');
+
+if(isfield(model_settings,'simul'))
+    comm = getfield(model_settings,'simul');
+    comm_str = gui_tools.command_string('simul', comm);
+else
+    comm_str = '';
+end
+
+handles.simul = uicontrol( ...
+    'Parent', handles.uipanelComm, ...
+    'Tag', 'simul', ...
+    'Style', 'text',  'BackgroundColor', bg_color,...
+    'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
+    'FontAngle', 'italic', ...
+    'String', comm_str, ...
+    'TooltipString', comm_str, ...
+    'HorizontalAlignment', 'left');
 
 
-        % --- PUSHBUTTONS -------------------------------------
-		handles.pussbuttonSimulation = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonSimulation', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.01 0.02 .15 .05],...
-			'String', 'Simulation !', ...
-			'Callback', @pussbuttonSimulation_Callback);
+% --- PUSHBUTTONS -------------------------------------
+handles.pussbuttonSimulation = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.01 0.02 .15 .05],...
+    'String', 'Simulation !', ...
+    'Callback', @pussbuttonSimulation_Callback);
 
-		handles.pussbuttonReset = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.17 0.02 .15 .05],...
-			'String', 'Reset', ...
-			'Callback', @pussbuttonReset_Callback);
-        
-        handles.pussbuttonClose = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.33 0.02 .15 .05],...
-			'String', 'Close this tab', ...
-			'Callback',{@close_tab,tabId});
-        
-         handles.pussbuttonCloseAll = uicontrol( ...
-            'Parent', tabId, ...
-            'Tag', 'pussbuttonSimulation', ...
-            'Style', 'pushbutton', ...
-            'Units','normalized','Position',[0.49 0.02 .15 .05],...
-            'String', 'Close all output figures', ...
-            'Enable', 'off',...
-            'Callback', @pussbuttonCloseAll_Callback);
-        
-        handles.pushbuttonCommandDefinition = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pushbuttonCommandDefinition', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.84 0.02 .15 .05],...
-			'String', 'Define command options ...', ...
-			'Callback', @pushbuttonCommandDefinition_Callback);
+handles.pussbuttonReset = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.17 0.02 .15 .05],...
+    'String', 'Reset', ...
+    'Callback', @pussbuttonReset_Callback);
+
+handles.pussbuttonClose = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.33 0.02 .15 .05],...
+    'String', 'Close this tab', ...
+    'Callback',{@close_tab,tabId});
+
+handles.pussbuttonCloseAll = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.49 0.02 .15 .05],...
+    'String', 'Close all output figures', ...
+    'Enable', 'off',...
+    'Callback', @pussbuttonCloseAll_Callback);
+
+handles.pushbuttonCommandDefinition = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pushbuttonCommandDefinition', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[0.84 0.02 .15 .05],...
+    'String', 'Define command options ...', ...
+    'Callback', @pushbuttonCommandDefinition_Callback);
 
     function uipanelShocks_CreateFcn()
         gui_shocks = model_settings.shocks;
         numShocks = size(gui_shocks,1);
         position = 1;
-        top_position = 25;      
- 
+        top_position = 25;
+        
         handles.shocksTabGroup = uitabgroup(handles.uipanelShocks,'Position',[0 0 1 1]);
         
         handles.shocks_tab = uitab(handles.shocksTabGroup, 'Title','Temporary shocks' , 'UserData', 1);
@@ -137,12 +137,12 @@ top = 35;
         
         %command shocks
         uicontrol( ...
-			'Parent', handles.shocks_panel, ...
-			'Style', 'text', 'BackgroundColor', special_color,...
-			'Units','normalized','Position',[0.02 0.85 0.96 0.1],...
-			'FontWeight', 'bold', ...
-			'String', 'Select exogenous variable (shock) for which you want to define temporary changes in the value. Shock will be added to the table below.', ...
-			'HorizontalAlignment', 'left');	
+            'Parent', handles.shocks_panel, ...
+            'Style', 'text', 'BackgroundColor', special_color,...
+            'Units','normalized','Position',[0.02 0.85 0.96 0.1],...
+            'FontWeight', 'bold', ...
+            'String', 'Select exogenous variable (shock) for which you want to define temporary changes in the value. Shock will be added to the table below.', ...
+            'HorizontalAlignment', 'left');
         
         shocks = model_settings.shocks;
         list_shocks = uicontrol('Parent',handles.shocks_panel,'Style','popupmenu','Units','normalized','Position',[0.02 0.77 0.7 0.06]);
@@ -151,10 +151,10 @@ top = 35;
         set(list_shocks,'Callback', @pussbuttonValueChanged_Callback);
         
         handles.pussbuttonAddValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.77 0.25 0.06],...
-			'String', 'Add variable ...', ...
+            'String', 'Add variable ...', ...
             'TooltipString', 'Add variable as many times as number in periods in which you want to define temporary changes in the value',...
             'Enable', 'Off',...
-			'Callback', @pussbuttonAddValue_Callback);
+            'Callback', @pussbuttonAddValue_Callback);
         
         %shocks_data = cell(0,4);
         %shocks_data_items = 0;
@@ -171,13 +171,13 @@ top = 35;
             'CellEditCallback',@savedata);
         
         
-         handles.pussbuttonRemoveValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.03 0.25 0.06],...
-			'String', 'Remove all selected', ...
+        handles.pussbuttonRemoveValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.03 0.25 0.06],...
+            'String', 'Remove all selected', ...
             'Enable', 'Off',...
-			'Callback', @pussbuttonRemoveValues_Callback);
- 
+            'Callback', @pussbuttonRemoveValues_Callback);
         
-        %initval and endval 
+        
+        %initval and endval
         column_names = {'Shock ','Initval ','Endval '};
         column_format = {'char','numeric','numeric'};
         data = get_exo_steady_states();
@@ -230,11 +230,11 @@ top = 35;
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-           
+            
             if(c == 4) %remove
-               if(val)
+                if(val)
                     set(handles.pussbuttonRemoveValue,'Enable','On');
-               end
+                end
             end
         end
         
@@ -246,18 +246,18 @@ top = 35;
     function data = get_det_shocks()
         data = cell(0,4);
         if(isfield(M_,'det_shocks') && ~isempty(M_.det_shocks))
-           num = size(M_.det_shocks);
-           for i=1:num
-               data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id);
-               data{i,2} = M_.det_shocks(i).periods;
-               data{i,3} = M_.det_shocks(i).value;
-               data{i,4} = false;
-           end
+            num = size(M_.det_shocks);
+            for i=1:num
+                data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id);
+                data{i,2} = M_.det_shocks(i).periods;
+                data{i,3} = M_.det_shocks(i).value;
+                data{i,4} = false;
+            end
             
         end
     end
 
-    
+
 
     function set_det_shocks()
         data = get(handles.shocks_table, 'Data');
@@ -282,7 +282,7 @@ top = 35;
             data{i,1} = M_.exo_names(i,:);
             data{i,2} = oo_.exo_steady_state(i);
             if(~isempty(ex0_))
-                data{i,3} =  data{i,2}; 
+                data{i,3} =  data{i,2};
                 data{i,2} = ex0_(i);
             end
         end
@@ -315,153 +315,7 @@ top = 35;
             end
         end
     end
-  
-%     function uipanelVars_CreateFcn()
-%         gui_vars = model_settings.variables;
-%         numVars = size(gui_vars,1);
-%         currentVar = 0;
-%        
-%         tubNum = 0;
-%         maxDisplayed = 12;
-%          
-%         %%handles.varsTabGroup = uitabgroup(handles.uipanelVars,'BackgroundColor', special_color,...
-%           %  'Position',[0 0 1 1]);
-%          
-%         %handles.varsTabGroup = uiextras.TabPanel( 'Parent',  handles.uipanelVars,  'Padding', 2);
-%         
-%         handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
-%         
-%         
-%         position = 1;
-%         top_position = 25;
-%         
-%         ii=1;
-%         while ii <= numVars
-%             
-%             isShown  = gui_vars{ii,5};
-%             
-%             if(~isShown)
-%                 ii = ii+1;
-%                 continue;
-%             else
-%                 currentVar = currentVar + 1;
-%             end
-%             
-%             
-%             tabTitle = char(gui_vars(ii,1));
-%             
-%             tabIndex = checkIfExistsTab(handles.varsTabGroup,tabTitle);
-%             if (tabIndex == 0)
-%                 
-%                 tubNum = tubNum +1;
-%                 new_tab = uitab(handles.varsTabGroup, 'Title', tabTitle, 'UserData', tubNum);
-%                 %new_tab = uiextras.Panel( 'Parent', handles.varsTabGroup, 'Padding', 2);
-%                 %handles.varsTabGroup.TabNames(tubNum) = cellstr(tabTitle);
-%                 varsPanel(tubNum) = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-%                 currentPanel = varsPanel(tubNum);
-%                 
-%                 position(tubNum) = 1;
-%                 currenGroupedVar(tubNum) =1;
-%                 tabIndex = tubNum;
-%                 
-%             else
-%                 %tabs = get(handles.varsTabGroup,'Children');
-%                 %new_tab =tabs(tabIndex);
-%                 currentPanel = varsPanel(tabIndex);
-%             end
-%             
-%             if( position(tabIndex) > maxDisplayed) % Create slider
-%                 
-%                 are_shown = find(cell2mat(gui_vars(:,5)));
-%                 vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
-%                 num_vars_in_group = size(cell2mat(vars_in_group),1);
-%                 
-%                 sld = uicontrol('Style', 'slider',...
-%                     'Parent', currentPanel, ...
-%                     'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-%                     'Units', 'characters','Position', [81 -0.2 3 26],...
-%                     'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
-%             end
-%             
-%             visible = 'on';
-%             if(position(tabIndex)> maxDisplayed)
-%                 visible = 'off';
-%             end
-%             
-%             handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-%                 'unit','characters',...
-%                 'position',[3 top_position-(2*position(tabIndex)) 60 2],...
-%                 'TooltipString', char(gui_vars(ii,2)),...
-%                 'string',char(gui_vars(ii,4)),...
-%                 'BackgroundColor', special_color,...
-%                  'Visible', visible);
-%              handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
-%              currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
-%             position(tabIndex) = position(tabIndex) + 1;
-%             ii = ii+1;
-%         end
-%         handles.numVars= currentVar;
-%         
-%          % Show the first tab
-%         %handles.varsTabGroup.SelectedChild = 1;
-%         
-%         
-%         
-%         
-%         function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
-%             
-%             value = get(hObject, 'Value');
-%             
-%             value = floor(value);
-%             
-%             move = num_variables - maxDisplayed - value;
-%             
-%             for ii=1: num_variables
-%                 if(ii <= move || ii> move+maxDisplayed)
-%                     visible = 'off';
-%                     set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-%                 else
-%                     visible = 'on';
-%                     set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-%                     set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]); 
-%                     
-%                 end
-%                 
-%                 
-%             end
-%         end
-%         
-%     end
-% 
-% 
-%     function index = checkIfExistsTab(tabGroup,tabTitle)
-%         tabs = get(tabGroup,'Children');
-%         num = length(tabs);
-%         index = 0;
-%         %tab = [];
-%         for i=1:num
-%             hTab = tabs(i);
-%             tit = get(hTab, 'Title');
-%             if(strcmp(tit, tabTitle))
-%                 index = i;
-%                 %tab=hTab;
-%                 return;
-%             end
-%         end
-%         
-% %         index = 0;
-% %         tabs = tabGroup.TabNames;
-% %         if(~isempty(tabs))
-% %             for i=1:size(tabs,2)
-% %                 if(strcmp(char(tabs(i)), tabTitle))
-% %                     index = i;
-% %                     return;
-% %                 end
-% %             end
-% %         end
-% %         
-% 
-%     end
+
 
     function pussbuttonSimulation_Callback(hObject,evendata)
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
@@ -473,40 +327,12 @@ top = 35;
             return;
         end
         if(variablesSelected)
-            % TODO check this - if we don't save oo_ consecutive calls to simul are not working
+            % TODO check this - if we don't save oo_ (in case of errors)
+            % consecutive calls to simul are not working
             old_oo = oo_;
             
             gui_tools.project_log_entry('Doing deterministic simulation','...');
-             
-%             options_.irf_shocks=[];
-%             first_shock = 1;
-%             for ii = 1:handles.numShocks
-%                 if get(handles.shocks(ii),'Value')
-%                     shockName = get(handles.shocks(ii),'TooltipString');
-%                     if(first_shock==1)
-%                         first_shock = 0;
-%                         options_.irf_shocks = shockName;
-%                     else
-%                         options_.irf_shocks = char(options_.irf_shocks, shockName);
-%                     end
-%                 end
-%             end
-            
-%             var_list_=[];
-%             first_var = 1;
-%             for ii = 1:handles.numVars
-%                 if get(handles.vars(ii),'Value')
-%                     varName = get(handles.vars(ii),'TooltipString');
-%                     if(first_var==1)
-%                         first_var = 0;
-%                         var_list_ = varName;
-%                     else
-%                         var_list_ = char(var_list_, varName);
-%                     end
-%                     
-%                 end
-%             end
-            
+            [jObj, guiObj] = gui_tools.create_animated_screen('I am doing deterministic simulation... Please wait...', tabId);
             
             user_options = model_settings.simul;
             
@@ -524,10 +350,24 @@ top = 35;
                 end
             end
             
-        
-           options_.nodisplay = 0;
+            var_list_=[];
+            first_var = 1;
+            for ii = 1:handles.numVars
+                if get(handles.vars(ii),'Value')
+                    varName = get(handles.vars(ii),'TooltipString');
+                    if(first_var==1)
+                        first_var = 0;
+                        var_list_ = varName;
+                    else
+                        var_list_ = char(var_list_, varName);
+                    end
+                    
+                end
+            end
+            
+            options_.nodisplay = 0;
+            model_settings.varlist_.simul = var_list_;
             try
-                
                 set_det_shocks();
                 set_exo_steady_states();
                 
@@ -535,17 +375,21 @@ top = 35;
                 perfect_foresight_solver;
                 vars = getVariablesSelected;
                 for ii=1: size(vars,2)
-                    rplot(vars{ii});   
+                    rplot(vars{ii});
                 end
                 
-                %rplot(var_list_);
                 set(handles.pussbuttonCloseAll, 'Enable', 'on');
+                jObj.stop;
+                jObj.setBusyText('All done!');
                 uiwait(msgbox('Deterministic simulation executed successfully!', 'DynareGUI','modal'));
                 project_info.modified = 1;
             catch ME
+                jObj.stop;
+                jObj.setBusyText('Done with errors!');
                 gui_tools.show_error('Error in execution of simul command', ME, 'extended');
                 oo_ = old_oo;
             end
+            delete(guiObj);
             
         elseif(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
@@ -582,7 +426,7 @@ top = 35;
             gui_tools.project_log_entry('Defined command simul',comm_str);
         catch ME
             gui_tools.show_error('Error in defining simul command', ME, 'basic');
-         end
+        end
     end
 
     function value = shockSelected

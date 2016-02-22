@@ -50,7 +50,7 @@ end
     
 
     function export_estimated_params()
-        if(exist('estim_params_', 'var') && ~isempty(estim_params_))
+        if(exist('estim_params_', 'var') && ~isempty(estim_params_) && ~isempty(fields(estim_params_)))
             fprintf(exp_file, '/* estimated_params definition */\n');
             fprintf(exp_file, 'estimated_params;\n');
             params = estim_params_.param_vals;
@@ -88,13 +88,13 @@ end
         
         if(isfield(model_settings, 'simul') && ~isempty(model_settings.simul))
             fprintf(exp_file, '/* simul command (deterministic simulation)  */\n');
-            fprintf(exp_file, '%s', gui_tools.command_string('simul', model_settings.simul ));
+            fprintf(exp_file, '%s %s', gui_tools.command_string('simul', model_settings.simul ), get_varlist('simul'));
             fprintf(exp_file, ';\n\n');
         end
         
         if(isfield(model_settings, 'stoch_simul') && ~isempty(model_settings.stoch_simul))
             fprintf(exp_file, '/* stoch_simul command (stochastic simulation) */\n');
-            fprintf(exp_file, '%s', gui_tools.command_string('stoch_simul', model_settings.stoch_simul ));
+            fprintf(exp_file, '%s %s', gui_tools.command_string('stoch_simul', model_settings.stoch_simul ), get_varlist('stoch_simul'));
             fprintf(exp_file, ';\n\n');
         end
         
@@ -114,13 +114,13 @@ end
             end
             
             fprintf(exp_file, '/* calib_smoother command */\n');
-            fprintf(exp_file, '%s', gui_tools.command_string('calib_smoother', comm));
+            fprintf(exp_file, '%s %s', gui_tools.command_string('calib_smoother', comm), get_varlist('calib_smoother'));
             fprintf(exp_file, ';\n\n');
         end
         
         if(isfield(model_settings, 'estimation') && ~isempty(model_settings.estimation))
             comm = model_settings.estimation;
-            varlist_ = model_settings.varlist_.estimation;
+            %varlist_ = model_settings.varlist_.estimation;
             if(project_info.new_data_format )
                 if(isfield(options_, 'dataset') && ~isempty(options_.dataset))
                     if(~isempty(options_.dataset.file))
@@ -141,7 +141,7 @@ end
             end
             
             fprintf(exp_file, '/* estimation command */\n');
-            fprintf(exp_file, '%s %s', gui_tools.command_string('estimation', comm ), cell2string(varlist_));
+            fprintf(exp_file, '%s %s', gui_tools.command_string('estimation', comm ), get_varlist('estimation'));
             fprintf(exp_file, ';\n\n');
         end
         
@@ -193,13 +193,24 @@ end
         
     end
 
+    function str = get_varlist(comm_name)
+       str = '';
+       
+       if(~isfield(model_settings.varlist_, comm_name))
+           return;
+       end
+       varlist_ =  getfield(model_settings.varlist_, comm_name);
+       str = cell2string(varlist_); 
+    end
+
+
     function str = cell2string(cvalue)
         str = '';
         for i=1: size(cvalue,1)
             if(i==1)
-                str = cvalue(i,:);
+                str = strtrim(cvalue(i,:));
             else
-                str = [str,', ',cvalue(i,:)];
+                str = [str,', ',strtrim(cvalue(i,:))];
             end
         end
         

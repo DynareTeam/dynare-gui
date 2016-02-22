@@ -19,7 +19,7 @@ end
 %close all openned tabs
 gui_tabs.close_all();
 
-% TODO clear workspace
+% TODO clear workspace. Maybe reset all structures?
 % evalin('base','clear M_;');
 % evalin('base','clear oo_;');
 % evalin('base','clear options_;');

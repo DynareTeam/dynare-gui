@@ -51,7 +51,9 @@ top = 35;
             'Units','normalized','Position',[0.01 0.02 .15 .05],...
 			'String', 'Shock decomposition !', ...
 			'Callback', @pussbuttonShockDecomposition_Callback);
-
+        
+        
+        
 		handles.pussbuttonReset = uicontrol( ...
 			'Parent', tabId, ...
 			'Tag', 'pussbuttonReset', ...
@@ -76,7 +78,10 @@ top = 35;
 			'String', 'Close this tab', ...
 			'Callback',{@close_tab,tabId});
         
-   
+        handles.pussbuttonShockDecomposition.Units = 'Pixels';
+        handles.pussbuttonCloseAll.Units = 'Pixels';
+        handles.pussbuttonReset.Units = 'Pixels';
+        handles.pussbuttonClose.Units = 'Pixels';
     
         
     function uipanelResults_CreateFcn()
@@ -236,6 +241,7 @@ top = 35;
             return;
         end
         gui_tools.project_log_entry('Doing shock decomposition','...');
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing shock decomposition... Please wait...', tabId);
        
         var_list_=[];
         
@@ -282,56 +288,104 @@ top = 35;
             
             parameter_set = options_.parameter_set;
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
+            jObj.stop;
+            jObj.setBusyText('All done!');
             uiwait(msgbox('Shock decomposition command executed successfully!', 'DynareGUI','modal'));
-            
+            project_info.modified = 1;
             
         catch ME
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
             gui_tools.show_error('Error in execution of shock decomposition command', ME, 'extended');
             uicontrol(hObject);
         end
+        delete(guiObj);
         options_ = old_options;
     end
 
     function [ex_names, leg] = get_shock_groups(shock_grouping)
         shocks = model_settings.shocks();
         num_shocks = size(shocks,1);
-  
-        if(shock_grouping)
-            ex_names = cell(0,num_shocks);
-            leg = cell(0,1);
-            num_groups = 0;
-            for(i=1:num_shocks)
-                gname = shocks{i,1};
-                sname = shocks{i,2};
-                if(num_groups==0)
-                    num_groups = 1;
+        
+        ex_names = cell(0,num_shocks);
+        leg = cell(0,1);
+        num_groups = 0;
+        for(i=1:num_shocks)
+            gname = shocks{i,1};
+            sname = shocks{i,2};
+            isShown = shocks{i,6};
+            if(~isShown) %All hidden shocks will be part of Others group
+                continue;
+            end
+            if(~shock_grouping)
+                gname = sname;
+            end
+            if(num_groups==0)
+                num_groups = 1;
+                leg{num_groups,1} = gname;
+                ex_names{num_groups,1} = sname;
+            else
+                ind = find(ismember(char(leg),gname,'rows'));
+                if(~isempty(ind))
+                    j = 1; %2
+                    empty_spot = 0;
+                    while ~empty_spot && j <= num_shocks
+                        if(isempty(ex_names{ind,j}))
+                            empty_spot = 1;
+                            ex_names{ind,j} = sname;
+                        end
+                        j=j+1;
+                    end
+                else
+                    num_groups = num_groups +1;
                     leg{num_groups,1} = gname;
                     ex_names{num_groups,1} = sname;
-                else
-                    ind = find(ismember(char(leg),gname,'rows'));
-                    if(~isempty(ind))
-                        j = 1; %2
-                        empty_spot = 0;
-                        while ~empty_spot && j <= num_shocks
-                            if(isempty(ex_names{ind,j}))
-                                empty_spot = 1;
-                                ex_names{ind,j} = sname;
-                            end
-                            j=j+1;
-                        end
-                    else
-                        num_groups = num_groups +1;
-                        leg{num_groups,1} = gname;
-                        ex_names{num_groups,1} = sname;
-                    end
                 end
             end
-        else %no shock grouping
-            ex_names = shocks(:,2);
-            leg = ex_names;
-            num_groups = num_shocks;
         end
         leg{num_groups+1,1} = 'Others';
+
+  
+%         if(shock_grouping)
+%             ex_names = cell(0,num_shocks);
+%             leg = cell(0,1);
+%             num_groups = 0;
+%             for(i=1:num_shocks)
+%                 gname = shocks{i,1};
+%                 sname = shocks{i,2};
+%                 isHidden = shocks{i,6};
+%                 if(isHidden)
+%                     continue;
+%                 end
+%                 if(num_groups==0)
+%                     num_groups = 1;
+%                     leg{num_groups,1} = gname;
+%                     ex_names{num_groups,1} = sname;
+%                 else
+%                     ind = find(ismember(char(leg),gname,'rows'));
+%                     if(~isempty(ind))
+%                         j = 1; %2
+%                         empty_spot = 0;
+%                         while ~empty_spot && j <= num_shocks
+%                             if(isempty(ex_names{ind,j}))
+%                                 empty_spot = 1;
+%                                 ex_names{ind,j} = sname;
+%                             end
+%                             j=j+1;
+%                         end
+%                     else
+%                         num_groups = num_groups +1;
+%                         leg{num_groups,1} = gname;
+%                         ex_names{num_groups,1} = sname;
+%                     end
+%                 end
+%             end
+%         else %no shock grouping
+%             ex_names = shocks(:,2);
+%             leg = ex_names;
+%             num_groups = num_shocks;
+%         end
+%         leg{num_groups+1,1} = 'Others';
     end
 
     function pussbuttonReset_Callback(hObject,evendata)

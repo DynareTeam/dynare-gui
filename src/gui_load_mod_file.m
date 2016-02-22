@@ -135,30 +135,15 @@ end
         end
         gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_info.mod_file));
         
-        h = waitbar(0,'I am running .mod file... Please wait...', 'Name','DynareGUI');
-        steps = 1500;
-        status = 1;
-        for step = 1:steps
-            if step == 800
-                
-                try
-                    eval(sprintf('dynare %s noclearall',project_info.mod_file));
-                    project_info.modified = 1;
-                catch ME
-                    status = 0;
-                    error = ME;
-                    
-                end
-                
-            end
-            % computations take place here
-            waitbar(step / steps)
-        end
-        delete(h);
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod file... Please wait...', tabId);
         
-        if(status)
-            
+        try
+            eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
+            jObj.stop;
+            jObj.setBusyText('All done!');
             uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
+            project_info.modified = 1;
+
             %enable menu options
             gui_tools.menu_options('model','On');
             
@@ -175,9 +160,13 @@ end
             
             load_varobs();
             load_estim_params();
-        else
+        catch ME
+            
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
             gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
         end
+        delete(guiObj);
     end
 
     function status = specify_file(new_project)

@@ -103,7 +103,7 @@ handles.pussbuttonResults = uicontrol( ...
     'Style', 'pushbutton', ...
     'Units','normalized','Position',[0.49 0.02 .15 .05],...
     'String', 'Browse results...', ...
-    'Enable', 'off',...
+    'Enable', 'Off',...
     'Callback', @pussbuttonResults_Callback);
 
 handles.pussbuttonCloseAll = uicontrol( ...
@@ -236,7 +236,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
         set(handles.pussbuttonResults, 'Enable', 'off');
         
-        user_options = model_settings.forecast;
+       % user_options = model_settings.forecast;
         
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
@@ -244,19 +244,19 @@ handles.pussbuttonCloseAll = uicontrol( ...
             return;
         end
         
-        if(~isempty(user_options))
-            
-            names = fieldnames(user_options);
-            for ii=1: size(names,1)
-                value = getfield(user_options, names{ii});
-                
-                if(isempty(value))
-                    gui_auxiliary.set_command_option(names{ii}, 1, 'check_option');
-                else
-                    gui_auxiliary.set_command_option(names{ii}, value, '');
-                end
-            end
-        end
+%         if(~isempty(user_options))
+%             
+%             names = fieldnames(user_options);
+%             for ii=1: size(names,1)
+%                 value = getfield(user_options, names{ii});
+%                 
+%                 if(isempty(value))
+%                     gui_auxiliary.set_command_option(names{ii}, 1, 'check_option');
+%                 else
+%                     gui_auxiliary.set_command_option(names{ii}, value, '');
+%                 end
+%             end
+%         end
         
         
         gui_tools.project_log_entry('Doing forecast ','...');

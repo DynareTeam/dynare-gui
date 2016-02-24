@@ -32,8 +32,10 @@ textBoxId = uicontrol(tabId, 'style','edit', 'Max',30,'Min',0,...
     'Units','normalized','Position',[0.01 0.09 0.98 0.82], ...%'Units','characters','Position',[2 5 170 30], ...
     'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
-uicontrol(tabId, 'Style','pushbutton','String','Change .mod file','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@change_file,tabId} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Reload .mod file','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@reload_file,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Change .mod file','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@change_file,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Define command options ...','Units','normalized','Position',[0.84 0.02 .15 .05], 'Callback',{@pushbuttonCommandDefinition_Callback,tabId} , 'Enable', 'Off');
 
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
@@ -49,21 +51,30 @@ end
 
 
 fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
+modFileText = '';
 
-if(~new_project)
-    answer = questdlg('Do you want to run .mod file with Dynare? It will change all Dynare structures (oo_, M_, options_, etc) and your project?','DynareGUI','Yes','No','No');
-        if(strcmp(answer,'Yes'))
-            load_file(fullFileName, true);
-        else (strcmp(answer,'Cancel'))
-           load_file(fullFileName, false);
-        end
-else
-    load_file(fullFileName, true);
+read_file();
+
+if(new_project)
+    load_file();
 end
 
+% if(~new_project)
+%     answer = questdlg({'Do you want to run .mod file with Dynare?'; '';...
+%         'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
+%         'Dynare_GUI','Yes','No','No');
+%     if(strcmp(answer,'Yes'))
+%         load_file(fullFileName, true);
+%     else (strcmp(answer,'Cancel'))
+%         load_file(fullFileName, false);
+%     end
+% else
+%     load_file(fullFileName, true);
+% end
 
 
-    function load_file(fullFileName,run_dynare)
+
+    function read_file()
         fileId = fopen(fullFileName,'rt');
         
         if fileId~=-1 %if the file doesn't exist ignore the reading code
@@ -73,14 +84,14 @@ end
             
             fclose(fileId);
         else
-            
+            %TODO file doesn't exist
             return;
             
         end
+    end
 
-        if(~run_dynare)
-            return;
-        end
+    function load_file()
+        
         
         % First we check if .mod file has steady and check commands
         steadyExists = regexp(modFileText, 'steady[(;]{1}');
@@ -105,7 +116,7 @@ end
             
             uiwait(msgbox(msgText, 'DynareGUI','modal'));
             set(textBoxId,'String',modFileText);
-             
+            
             %fwrite(fileId, modFileText, 'char');
             %fprintf(fileId, '%s', modFileText);
         end
@@ -143,12 +154,23 @@ end
             jObj.setBusyText('All done!');
             uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
             project_info.modified = 1;
-
+            
+            % close other tabs
+            gui_tabs.close_all_except_this(tabId);
+          
             %enable menu options
             gui_tools.menu_options('model','On');
             
             if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
                 
+                  % reset model structures
+                  if(isfield(model_settings, 'estim_params'))
+                      model_settings = rmfield(model_settings, 'estim_params');
+                  end
+                  
+                  if(isfield(model_settings, 'varobs'))
+                      model_settings = rmfield(model_settings, 'varobs');
+                  end
                 
                 if(project_info.model_type==1)
                     gui_tools.menu_options('estimation','On');
@@ -156,10 +178,13 @@ end
                 else
                     gui_tools.menu_options('deterministic','On');
                 end
+            else
+                gui_tools.menu_options('estimation','Off');
+                gui_tools.menu_options('stohastic','Off');
+                gui_tools.menu_options('deterministic','Off');
             end
             
-            load_varobs();
-            load_estim_params();
+
         catch ME
             
             jObj.stop;
@@ -215,23 +240,26 @@ end
             status = 1;
         elseif(strcmp(old_mod_file, fileName))
             uiwait(msgbox('.mod file has not been changed. It will be loaded again.', 'DynareGUI','modal'));
-            status = 1;
+            status = -1;
         else
-            status = 1;
+            status = 1; % TODO ???
         end
     end
 
 
     function change_file(hObject,event, hTab)
-       status = specify_file(false);
-       if (status)
-           set(textBoxId,'String','Loading ...');
-           gui_tabs.rename_tab(hTab, project_info.mod_file);
-           model_settings = struct(); 
-           fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
-           load_file(fullFileName, true);
-  
-       end
+        status = specify_file(false);
+        if (status~=0)
+            set(textBoxId,'String','Loading ...');
+            gui_tabs.rename_tab(hTab, project_info.mod_file);
+            fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
+            modFileText = '';
+            read_file();
+            if(status ~= -1)
+                model_settings = struct();
+            end
+            load_file();            
+        end
     end
 
     function close_tab(hObject,event, hTab)
@@ -239,49 +267,68 @@ end
         
     end
 
-    function load_varobs()
-        if(isfield(model_settings, 'varobs'))
-            varobs = model_settings.varobs;
-            if(~isempty(varobs))
-                value = varobs(:,1)';
-            else
-                value = [];
-            end
-           options_.varobs = value;
+    function reload_file(hObject,event, hTab)
+        answer = questdlg({'Do you want to run .mod file with Dynare?'; '';...
+            'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
+            'Dynare_GUI','Yes','No','No');
+        if(strcmp(answer,'Yes'))
+            load_file();
         end
     end
 
-    function load_estim_params()
-        
-        if(isfield(model_settings, 'estim_params'))
-            estim_params = model_settings.estim_params;
-            
-            % save in dynare structure estim_params_
-            estim_params_.param_vals  = [];
-            estim_params_.var_exo = [];
-            num_p = 0;
-            for i=1:size(estim_params,1)
-                if(strcmp(estim_params{i,1},'param'))
-                    num_p = num_p +1;
-                end
-                data_(i,1) =  estim_params{i,2};
-                data_(i,2) =  NaN;
-                data_(i,3) =  estim_params{i,4};
-                data_(i,4) =  estim_params{i,5};
-                [str,num] = gui_tools.prior_shape(estim_params{i,6});
-                data_(i,5) =  num;
-                data_(i,6) =  estim_params{i,7};
-                data_(i,7) =  estim_params{i,8};
-                
-            end
-            data_(:,8:10) = NaN;
-            if(num_p>0)
-                estim_params_.param_vals  = data_(1:num_p,:);
-            end
-            if(num_p<size(estim_params,1))
-                estim_params_.var_exo  = data_(num_p+1:end,:);
-            end
-        end
-    end
+%     function load_varobs()
+%         if(isfield(model_settings, 'varobs'))
+%             varobs = model_settings.varobs;
+%             if(~isempty(varobs))
+%                 value = varobs(:,1)';
+%             else
+%                 value = [];
+%             end
+%             options_.varobs = value;
+%         end
+%     end
+% 
+%     function load_estim_params()
+%         
+%         if(isfield(model_settings, 'estim_params'))
+%             
+%             model_settings = rmfield(model_settings, 'estim_params');
+%         end
+%         
+%         %
+%         %
+%         %             estim_params = model_settings.estim_params;
+%         %
+%         %             % save in dynare structure estim_params_
+%         %             estim_params_.param_vals  = [];
+%         %             estim_params_.var_exo = [];
+%         %             num_p = 0;
+%         %             for i=1:size(estim_params,1)
+%         %                 if(strcmp(estim_params{i,1},'param'))
+%         %                     num_p = num_p +1;
+%         %                 end
+%         %                  data_(i,1) =  estim_params{i,2};
+%         %                     data_(i,2) =  estim_params{i,4};
+%         %                     data_(i,3) =  estim_params{i,5};
+%         %                     data_(i,4) =  estim_params{i,6};
+%         %                     [str,num] = gui_tools.prior_shape(estim_params{i,7});
+%         %                     data_(i,5) =  num;
+%         %                     data_(i,6) =  estim_params{i,8};
+%         %                     data_(i,7) =  estim_params{i,9};
+%         %                     data_(i,8) =  estim_params{i,10};
+%         %                     data_(i,9) =  estim_params{i,11};
+%         %                     data_(i,10) =  estim_params{i,12};
+%         %
+%         %
+%         %             end
+%         %
+%         %             if(num_p>0)
+%         %                 estim_params_.param_vals  = data_(1:num_p,:);
+%         %             end
+%         %             if(num_p<size(estim_params,1))
+%         %                 estim_params_.var_exo  = data_(num_p+1:end,:);
+%         %             end
+%         %         end
+%     end
 end
 

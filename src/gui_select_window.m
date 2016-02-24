@@ -137,13 +137,15 @@ handles.pussbuttonClose = uicontrol( ...
                 selected_(:,3)= selected_(:,1);
                 selected_(:,1)= {'param'}
                 selected_(:,2)= {0}; %id
-                %selected_(:,4)= {-inf};
-                %selected_(:,5)= {inf};
-                selected_(:,4)= {''};
-                selected_(:,5)= {''};
-                selected_(:,6)= {''};
-                selected_(:,7:8)= {0};
-                selected_(:,9)= {false};
+                selected_(:,4)= {NaN};
+                selected_(:,5)= {-inf};
+                selected_(:,6)= {inf};
+                selected_(:,7)= {''};
+                selected_(:,8:12)= {NaN};
+                %selected_(:,5)= {''};
+                %selected_(:,6)= {''};
+                %selected_(:,7:8)= {0};
+                selected_(:,13)= {false};
                 
                 n = size(selected_items,1);
                 %copy estim_param vlaues if parameter was not changes
@@ -192,11 +194,19 @@ handles.pussbuttonClose = uicontrol( ...
                 selected_(:,3)= selected_(:,1);
                 selected_(:,1)= {'var_exo'}
                 selected_(:,2)= {0}; %id
-                selected_(:,4)= {-inf};
-                selected_(:,5)= {inf};
-                selected_(:,6)= {''};
-                selected_(:,7:8)= {0};
-                selected_(:,9)= {false};
+                
+                selected_(:,4)= {NaN};
+                selected_(:,5)= {-inf};
+                selected_(:,6)= {inf};
+                selected_(:,7)= {''};
+                selected_(:,8:12)= {NaN};
+                selected_(:,13)= {false};
+                
+%                 selected_(:,4)= {-inf};
+%                 selected_(:,5)= {inf};
+%                 selected_(:,6)= {''};
+%                 selected_(:,7:8)= {0};
+%                 selected_(:,9)= {false};
                 
                 n = size(selected_items,1);
                 i=1;

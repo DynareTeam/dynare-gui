@@ -62,6 +62,17 @@ top = 35;
            comm = getfield(model_settings,'estimation');
            comm_str = gui_tools.command_string('estimation', comm);
            check_all_result_option();
+           if(isfield(comm,'consider_all_endogenous'))
+               set_all_endogenous(comm.consider_all_endogenous);
+           end
+           
+           if(isfield(comm,'consider_only_observed'))
+               if(comm.consider_only_observed)
+                   select_only_observed();
+               end
+           end
+           
+           
        else
             comm_str = '';
             model_settings.estimation = struct();
@@ -456,7 +467,7 @@ top = 35;
         %status = 1;
         try
             %TODO Check with Dynare team/Ratto!!!
-            gui_tools.clear_dynare_oo_structure();
+            %gui_tools.clear_dynare_oo_structure();
             
             oo_recursive_ = dynare_estimation(var_list_); 
             jObj.stop;
@@ -500,7 +511,7 @@ top = 35;
             
             if(isfield(new_comm,'consider_all_endogenous'))
                 set_all_endogenous(new_comm.consider_all_endogenous);
-                new_comm = rmfield(new_comm,'consider_all_endogenous');
+                %new_comm = rmfield(new_comm,'consider_all_endogenous');
                 %new_options_ = rmfield(new_options_,'consider_all_endogenous');
             %else
                 %set_all_endogenous(0);
@@ -510,7 +521,7 @@ top = 35;
                 if(new_comm.consider_only_observed)
                     select_only_observed();
                 end
-                new_comm = rmfield(new_comm,'consider_only_observed');
+                %new_comm = rmfield(new_comm,'consider_only_observed');
                 %new_options_ = rmfield(new_options_,'consider_only_observed');
             end
             

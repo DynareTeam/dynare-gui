@@ -406,7 +406,14 @@ tabId = addTab(hObject, 'Cond. forecast ', handles);
 gui_cond_forecast(tabId);
 end
 
-
+% --------------------------------------------------------------------
+function output_forecast_Callback(hObject, eventdata, handles)
+% hObject    handle to output_conditional_forecast (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tabId = addTab(hObject, 'Forecast ', handles);
+gui_forecast(tabId);
+end
 
 % --------------------------------------------------------------------
 function help_Callback(hObject, eventdata, handles)
@@ -979,6 +986,18 @@ h33 = uimenu(...
     'Label','Conditional forecast',...
     'Tag','output_conditional_forecast',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
+
+appdata = [];
+appdata.lastValidTag = 'output_forecast';
+
+h331 = uimenu(...
+    'Parent',h31,...
+    'Enable','off',...
+    'Callback',@(hObject,eventdata)dynare_gui('output_forecast_Callback',hObject,eventdata,guidata(hObject)),...
+    'Label','Forecast',...
+    'Tag','output_forecast',...
+    'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
+
 
 appdata = [];
 appdata.lastValidTag = 'help';

@@ -37,6 +37,7 @@ switch oid
     case 'output'
         set(handles.output_shocks_decomposition, 'Enable', status);
         set(handles.output_conditional_forecast, 'Enable', status);
+        set(handles.output_forecast, 'Enable', status);
         
 end
 

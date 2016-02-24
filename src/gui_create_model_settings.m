@@ -54,16 +54,22 @@ end
             cellArray{i,4} = deblank(data_long(i,:));
             
             cellArray{i,5} = get_param_by_name(name);
-            cellArray{i,6} = ''; %estimated value
-            
+            if(project_info.model_type==1) %stohastic model
+                cellArray{i,6} = ''; %estimated value
+                cellArray{i,7} = ''; %STD
+                next = 8;
+            else
+                next = 6;
+            end
+
             index = strfind(name, 'AUX');
             if(isempty(index))
-                cellArray{i,7} = true;
-                cellArray{i,8} = true;
+                cellArray{i,next} = true;
+                cellArray{i,next+1} = true;
             else
                 cellArray{i,1} = 'AUX';
-                cellArray{i,7} = false;
-                cellArray{i,8} = false;
+                cellArray{i,next} = false;
+                cellArray{i,next+1} = false;
             end
             
         end
@@ -82,20 +88,25 @@ end
             cellArray{i,3} = deblank(data_tex(i,:));
             cellArray{i,4} = deblank(data_long(i,:));
             
-            % TODO stderr for stohastic case or initval for deterministic case - read values from dynare structures
+            %stderr for stohastic case or initval for deterministic case - read values from dynare structures
             if(project_info.model_type==1) %stohastic model
                 cellArray{i,5} = sqrt(M_.Sigma_e(i,i)); %stderror
+                cellArray{i,6} = ''; %estimated value
+                cellArray{i,7} = ''; %STD
+                next = 8;
             else %deterministic model
                 cellArray{i,5} =  ex0_(i); %oo_.exo_steady_state(i); %initval
+                next = 6;
             end
+           
             index = strfind(name, 'AUX');
             if(isempty(index))
-                cellArray{i,6} = true;
-                cellArray{i,7} = true;
+                cellArray{i,next} = true;
+                cellArray{i,next+1} = true;
             else
                 cellArray{i,1} = 'AUX';
-                cellArray{i,6} = false;
-                cellArray{i,7} = false;
+                cellArray{i,next} = false;
+                cellArray{i,next+1} = false;
             end
             
         end

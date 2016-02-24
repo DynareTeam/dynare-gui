@@ -80,6 +80,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             model_settings.variables = current_settings.variables;
             model_settings.params = current_settings.params;
             model_settings.shocks_corr = current_settings.shocks_corr;
+            
+            %save current values
             for ii=1:M_.exo_nbr
                 if(project_info.model_type==1)
                     M_.Sigma_e(ii,ii) = (current_settings.shocks{ii,5})^2;
@@ -88,9 +90,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 end
             end
             
-            % TODO ???????
-            for ii=1:M_.exo_nbr
-                
+            for ii=1:M_.param_nbr
+                M_.params(ii) = current_settings.params{ii,5};
                 
             end
             
@@ -104,15 +105,42 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
 
     function gui_shocks(tabId, data, data_corr)
         if(project_info.model_type == 1) %stohastic  case
+            has_estim_values = 1;      
+            if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'shocks_std'))
+                estimated_values = oo_.posterior_mean.shocks_std;
+                std_values = oo_.posterior_std_at_mean.shocks_std;
+                column_name = 'Estimated value (posterior mean) ';
+            elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'shocks_std'))
+                estimated_values = oo_.posterior_mode.shocks_std;
+                std_values = oo_.posterior_std_at_mode.shocks_std;
+                column_name = 'Estimated value (posterior mode) ';
+            else
+                has_estim_values = 0;
+                column_name = 'Estimated value ';
+            end
             
-            column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'stderr ', 'Show/Hide ', 'Show/Hide group '};
-            column_format = {'char','char','char','char','numeric' , 'logical', 'logical'};
+            for i = 1:size(data,1)
+                data{i,5} =  sqrt(M_.Sigma_e(i,i)); %stderror
+                if(has_estim_values)
+                    try
+                        estim_value = getfield(estimated_values,data{i,2});
+                        data{i,6} = estim_value;
+                        std_value = getfield(std_values,data{i,2});
+                        data{i,7} = std_value;
+                    catch ME
+                        gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
+                    end
+                end
+            end
+            
+            column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name, 'STD ', 'Show/Hide ', 'Show/Hide group '};
+            column_format = {'char','char','char','char','numeric' , 'numeric','numeric','logical', 'logical'};
             uit = uitable(tabId,'Data',data,...
                 'Units','normalized',...% 'Units','characters',...normalized
                 'ColumnName', column_names,...
                 'ColumnFormat', column_format,...
-                'ColumnEditable', [true false true true true true true],...
-                'ColumnWidth', {'auto', 'auto', 'auto', 200,'auto','auto','auto'}, ...
+                'ColumnEditable', [true false true true true false false true true],...
+                'ColumnWidth', {'auto', 'auto', 'auto', 200,'auto','auto','auto','auto', 'auto'}, ...
                 'RowName',[],...
                 'Position',[0.01,0.55,.98, 0.4],...
                 'CellEditCallback',@savedata);
@@ -173,7 +201,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                hObject.Data{r,c} = val;
             end
             current_settings.shocks{r,c} = val;
-            c_show_hide_group = 7;
+            if(project_info.model_type == 1)
+                c_show_hide_group = 9;
+            else
+                c_show_hide_group = 7;
+            end
             
             if(c == c_show_hide_group) %show/hide group
                 t_data=get(uit,'data');  
@@ -239,17 +271,29 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function gui_params(tabId, data)
-        
-        % TODO add estimated values after estimation command
-        % what should be displayed if this structure is not present !!!!
-        
-        %TODO
-        %hide estimated value for deterministic models ???
+        has_estim_values = 1;
         if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'parameters'))
-            for i = 1:size(data,1)
+            estimated_values = oo_.posterior_mean.parameters;
+            std_values = oo_.posterior_std_at_mean.parameters;
+            column_name = 'Estimated value (posterior mean) ';
+        elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'parameters'))
+            estimated_values = oo_.posterior_mode.parameters;
+            std_values = oo_.posterior_std_at_mode.parameters;
+            column_name = 'Estimated value (posterior mode) ';
+        else
+            has_estim_values = 0;
+            column_name = 'Estimated value ';
+        end
+        
+        for i = 1:size(data,1)
+            
+            data{i,5} = get_param_by_name(data{i,2});
+            if(has_estim_values)
                 try
-                    estim_value = getfield(oo_.posterior_mean.parameters,data{i,2})
+                    estim_value = getfield(estimated_values,data{i,2});
                     data{i,6} = estim_value;
+                    std_value = getfield(std_values,data{i,2});
+                    data{i,7} = std_value;
                 catch ME
                     gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
                 end
@@ -257,14 +301,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         end
         
         
-        column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Calibrated value ', 'Estimated value ' , 'Show/Hide ','Show/Hide group '};
-        column_format = {'char','char','char','char','char','char','logical','logical'};
+        column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name , 'STD ', 'Show/Hide ','Show/Hide group '};
+        column_format = {'char','char','char','char','numeric','numeric','numeric','logical','logical'};
         uit = uitable(tabId,'Data',data,...
             'Units','normalized',...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
-            'ColumnEditable', [true false true true true false true true],...
-            'ColumnWidth', {'auto', 'auto', 'auto', 150,'auto','auto','auto','auto'}, ...
+            'ColumnEditable', [true false true true true false false true true],...
+            'ColumnWidth', {'auto', 'auto', 'auto', 150,'auto','auto','auto','auto','auto'}, ...
             'RowName',[],...
             'Position',[0.01,0.05,.98,0.9],...
             'CellEditCallback',@savedata);
@@ -274,9 +318,17 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
+            if(c==5)
+               val = str2double(val); 
+               hObject.Data{r,c} = val;
+            end
             current_settings.params{r,c} = val;
+            if(project_info.model_type == 1)
+                c_show_hide_group = 9;
+            else
+                c_show_hide_group = 7;
+            end
             
-            c_show_hide_group = 8;
             
             if(c == c_show_hide_group) %show/hide group
                 t_data=get(uit,'data');  % insted of this, it is possible to use handle(hObject).Data{r,c}

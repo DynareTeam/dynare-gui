@@ -1,4 +1,4 @@
-function out = shock_decomp_smooth_q_test(xparam1, T0, ex_names_, leg, vname, no_initial_effect, texvname, nfrcst, init_names_, file_name)
+function out = shock_decomp_smooth_q_test(xparam1, T0, ex_names_, leg, vname, no_initial_effect, texvname, nfrcst, init_names_, file_name, t_0, t_1)
 
 global oo_ M_ options_
 persistent flag_init
@@ -127,6 +127,7 @@ inn=inn(oo_.dr.inv_order_var,:);
 deco=deco(oo_.dr.inv_order_var,:,:);
 
 Ti = 0:(options_.first_obs+options_.nobs-1);
+%Ti = 0:(t_1 - t_0 +1);
 Ti = Ti/4; 
 % % % if ~isempty(T0)
 % % %     TT = T0.double(1)+ Ti; 
@@ -156,10 +157,14 @@ if nargin<2 || isempty(T0),
 else
     t1decomp = max([1,find(TT==T0.double)]);
 end
-
+t1decomp = t_0;
 
 % kpoint = t1decomp:options_.nobs;
-kpoint = t1decomp:gend;
+%kpoint = t1decomp:gend;
+
+kpoint = t1decomp:t_1;
+
+
 % kpoint3 = kpoint4-1;
 % kpoint2 = kpoint4-2;
 % kpoint1 = kpoint4-3;

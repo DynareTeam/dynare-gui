@@ -192,6 +192,11 @@ top = 35;
     function pussbuttonShockDecomposition_Callback(hObject,evendata)
    
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        if(~isfield(model_settings, 'estimation'))
+            gui_tools.show_warning('Please run estimation before shock decomposition!');
+            return;
+            
+        end
         user_options = model_settings.estimation;
         old_options = options_;
         options_.datafile = project_info.data_file;
@@ -278,7 +283,7 @@ top = 35;
                 %d = project_info.first_obs_date(1) + first_period -1;
                 d = project_info.first_obs_date(1);
                 [ex_names, leg] = get_shock_groups(shock_grouping);
-                gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0);
+                gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0,[],[], first_period, last_period);
             
             else
                 options_.model_settings.shocks = model_settings.shocks;

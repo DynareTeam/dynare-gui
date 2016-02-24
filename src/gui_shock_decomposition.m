@@ -16,6 +16,18 @@ parameter_set = '';
 do_not_check_all_results = 0;
 v_size = 30; %28
 top = 35;
+
+first_period = project_info.first_obs_date;
+if(~isnan(options_.first_obs))
+    first_period = first_period+options_.first_obs-1;
+end
+last_period = project_info.last_obs_date;
+if(~isnan(options_.nobs))
+    last_period = first_period+options_.nobs-1;
+end
+        
+        
+        
 % --- PANELS -------------------------------------
         handles.uipanelVars = uipanel( ...
 			'Parent', tabId, ...
@@ -213,16 +225,16 @@ top = 35;
             
         quarter1 = get(handles.firstPeriodQuarter,'Value');
         year1=  get(handles.firstPeriodYear,'Value');
-        first_period = (year1-1)*4 + quarter1- handles.firstPeriodQuarterDefault +1;
+        T0 = (year1-1)*4 + quarter1- handles.firstPeriodQuarterDefault +1;
         
         quarter2 = get(handles.lastPeriodQuarter,'Value');
         year2=  get(handles.lastPeriodYear,'Value');
-        last_period = (year2-1)*4 + quarter2- handles.firstPeriodQuarterDefault +1;
+        T1 = (year2-1)*4 + quarter2- handles.firstPeriodQuarterDefault +1;
         
-        if(last_period > first_period && last_period <= str2double(project_info.nobs))
-            options_.initial_date.first = first_period;
-            options_.initial_date.last = last_period;
-        elseif(last_period<=first_period)
+        if(T1 > T0 && T1 <= str2double(project_info.nobs))
+            options_.initial_date.first = T0;
+            options_.initial_date.last = T1;
+        elseif(T1<=T0)
             gui_tools.show_warning('The last historical observation to be displayed must be after the first historical observation.');
             uicontrol(hObject);
             return;
@@ -279,11 +291,11 @@ top = 35;
         try
             if(~dynare_default)
                 
-                options_.first_obs = 1;
-                %d = project_info.first_obs_date(1) + first_period -1;
+                %options_.first_obs = 1;
                 d = project_info.first_obs_date(1);
+                %d= first_period(1);
                 [ex_names, leg] = get_shock_groups(shock_grouping);
-                gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0,[],[], first_period, last_period);
+                gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0,[],[], T0, T1);
             
             else
                 options_.model_settings.shocks = model_settings.shocks;
@@ -318,7 +330,7 @@ top = 35;
         for(i=1:num_shocks)
             gname = shocks{i,1};
             sname = shocks{i,2};
-            isShown = shocks{i,6};
+            isShown = shocks{i,8};
             if(~isShown) %All hidden shocks will be part of Others group
                 continue;
             end
@@ -350,47 +362,6 @@ top = 35;
         end
         leg{num_groups+1,1} = 'Others';
 
-  
-%         if(shock_grouping)
-%             ex_names = cell(0,num_shocks);
-%             leg = cell(0,1);
-%             num_groups = 0;
-%             for(i=1:num_shocks)
-%                 gname = shocks{i,1};
-%                 sname = shocks{i,2};
-%                 isHidden = shocks{i,6};
-%                 if(isHidden)
-%                     continue;
-%                 end
-%                 if(num_groups==0)
-%                     num_groups = 1;
-%                     leg{num_groups,1} = gname;
-%                     ex_names{num_groups,1} = sname;
-%                 else
-%                     ind = find(ismember(char(leg),gname,'rows'));
-%                     if(~isempty(ind))
-%                         j = 1; %2
-%                         empty_spot = 0;
-%                         while ~empty_spot && j <= num_shocks
-%                             if(isempty(ex_names{ind,j}))
-%                                 empty_spot = 1;
-%                                 ex_names{ind,j} = sname;
-%                             end
-%                             j=j+1;
-%                         end
-%                     else
-%                         num_groups = num_groups +1;
-%                         leg{num_groups,1} = gname;
-%                         ex_names{num_groups,1} = sname;
-%                     end
-%                 end
-%             end
-%         else %no shock grouping
-%             ex_names = shocks(:,2);
-%             leg = ex_names;
-%             num_groups = num_shocks;
-%         end
-%         leg{num_groups+1,1} = 'Others';
     end
 
     function pussbuttonReset_Callback(hObject,evendata)
@@ -464,9 +435,8 @@ top = 35;
             set(hObject,'BackgroundColor','white');
         end
         set(hObject, 'String', {'Q1','Q2', 'Q3', 'Q4'});
-        
-        a = project_info.first_obs_date;
-        handles.firstPeriodQuarterDefault = a.time(2);
+
+        handles.firstPeriodQuarterDefault = first_period.time(2);
         set(hObject,'Value', handles.firstPeriodQuarterDefault);
     end
 
@@ -474,10 +444,9 @@ top = 35;
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
-        a = project_info.first_obs_date;
-        b = project_info.last_obs_date;
+       
         ii=1;
-        for y= a.time(1):b.time(1)
+        for y= first_period.time(1):last_period.time(1)
             years_str{ii} = num2str(y);
             ii=ii+1;
         end
@@ -492,9 +461,7 @@ top = 35;
             set(hObject,'BackgroundColor','white');
         end
         set(hObject, 'String', {'Q1','Q2', 'Q3', 'Q4'});
-        b = project_info.last_obs_date;
-        
-        handles.lastPeriodQuarterDefault = b.time(2);
+        handles.lastPeriodQuarterDefault = last_period.time(2);
         set(hObject,'Value', handles.lastPeriodQuarterDefault);
     end
 
@@ -502,10 +469,8 @@ top = 35;
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
-        a = project_info.first_obs_date;
-        b = project_info.last_obs_date;
         ii=1;
-        for y= a.time(1):b.time(1)
+        for y= first_period.time(1):last_period.time(1)
             years_str{ii} = num2str(y);
             ii=ii+1;
         end

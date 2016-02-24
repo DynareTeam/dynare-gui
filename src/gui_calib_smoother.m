@@ -333,7 +333,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
             options_.plot_priors = 0;
             
             %evaluate_smoother('calibration',var_list_);
-            options_.mode_computa = 0;
+            options_.mode_compute = 0;
             options_.smoother=1;
             dynare_estimation(var_list_);
             

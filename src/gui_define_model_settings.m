@@ -128,7 +128,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                         std_value = getfield(std_values,data{i,2});
                         data{i,7} = std_value;
                     catch ME
-                        gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
+                        %gui_tools.show_error('Error while displaying shocks std estimated values',ME, 'basic');
                     end
                 end
             end
@@ -295,7 +295,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                     std_value = getfield(std_values,data{i,2});
                     data{i,7} = std_value;
                 catch ME
-                    gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
+                    %gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
                 end
             end
         end

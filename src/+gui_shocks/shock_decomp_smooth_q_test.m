@@ -399,7 +399,7 @@ for j=1:length(vname),
         if i==size(ex_names_,1)+2;
             title('Initial condition')
         else
-            title(leg0{i}),
+            title(leg0{i},'interpreter','none'),
         end
         axis tight;
         a=axis;

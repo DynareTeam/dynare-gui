@@ -88,8 +88,8 @@ setappdata(0, 'main_figure', hObject);
 
 dynareroot = dynare_config;
 %TODO check with Dynare team/Ratto!!!
-addpath([dynareroot '/missing/stats']);
-addpath([dynareroot '/missing/nanmean']);
+% addpath([dynareroot '/missing/stats']);
+% addpath([dynareroot '/missing/nanmean']);
 
 warning_config();
 

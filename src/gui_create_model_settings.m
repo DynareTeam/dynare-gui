@@ -23,21 +23,23 @@ end
         n = size(data,1);
         
         for i = 1:n
-            cellArray{i,1} = 'All';
+            
             %cellArray{i,2} = cellstr(char(data(i,:)));
             name = deblank(data(i,:));
-            cellArray{i,2} = name;
-            cellArray{i,3} = deblank(data_tex(i,:));
-            cellArray{i,4} = deblank(data_long(i,:));
+            cellArray{i,1} = name;
+            cellArray{i,2} = deblank(data_tex(i,:));
+            cellArray{i,3} = deblank(data_long(i,:));
+            cellArray{i,5} = 'All';
             index = strfind(name, 'AUX');
             if(isempty(index))
-                cellArray{i,5} = true;
+                cellArray{i,4} = true;
                 cellArray{i,6} = true;
             else
-                cellArray{i,1} = 'AUX';
-                cellArray{i,5} = false;
+                cellArray{i,4} = false;
+                cellArray{i,5} = 'AUX';
                 cellArray{i,6} = false;
             end
+             cellArray{i,7} = '';
             
         end
     end
@@ -47,29 +49,31 @@ end
         n = size(data,1);
         
         for i = 1:n
-            cellArray{i,1} = 'All';
             name = deblank(data(i,:));
-            cellArray{i,2} = name;
-            cellArray{i,3} = deblank(data_tex(i,:));
-            cellArray{i,4} = deblank(data_long(i,:));
+            cellArray{i,1} = name;
+            cellArray{i,2} = deblank(data_tex(i,:));
+            cellArray{i,3} = deblank(data_long(i,:));
             
-            cellArray{i,5} = get_param_by_name(name);
+            cellArray{i,4} = get_param_by_name(name);
             if(project_info.model_type==1) %stohastic model
-                cellArray{i,6} = ''; %estimated value
-                cellArray{i,7} = ''; %STD
-                next = 8;
+                cellArray{i,5} = ''; %estimated value
+                cellArray{i,6} = ''; %STD
+                next = 7;
             else
-                next = 6;
+                next = 5;
             end
 
             index = strfind(name, 'AUX');
             if(isempty(index))
                 cellArray{i,next} = true;
-                cellArray{i,next+1} = true;
+                cellArray{i,next+1} = 'All';
+                cellArray{i,next+2} = true;
+                cellArray{i,next+3} = '';
             else
-                cellArray{i,1} = 'AUX';
                 cellArray{i,next} = false;
-                cellArray{i,next+1} = false;
+                cellArray{i,next+1} = 'AUX';
+                cellArray{i,next+2} = false;
+                cellArray{i,next+3} = '';
             end
             
         end
@@ -81,32 +85,34 @@ end
         n = size(data,1);
         
         for i = 1:n
-            cellArray{i,1} = 'All';
-            %cellArray{i,2} = cellstr(char(data(i,:)));
+            
             name = deblank(data(i,:));
-            cellArray{i,2} = name;
-            cellArray{i,3} = deblank(data_tex(i,:));
-            cellArray{i,4} = deblank(data_long(i,:));
+            cellArray{i,1} = name;
+            cellArray{i,2} = deblank(data_tex(i,:));
+            cellArray{i,3} = deblank(data_long(i,:));
             
             %stderr for stohastic case or initval for deterministic case - read values from dynare structures
             if(project_info.model_type==1) %stohastic model
-                cellArray{i,5} = sqrt(M_.Sigma_e(i,i)); %stderror
-                cellArray{i,6} = ''; %estimated value
-                cellArray{i,7} = ''; %STD
-                next = 8;
+                cellArray{i,4} = sqrt(M_.Sigma_e(i,i)); %stderror
+                cellArray{i,5} = ''; %estimated value
+                cellArray{i,6} = ''; %STD
+                next = 7;
             else %deterministic model
-                cellArray{i,5} =  ex0_(i); %oo_.exo_steady_state(i); %initval
-                next = 6;
+                cellArray{i,4} =  ex0_(i); %oo_.exo_steady_state(i); %initval
+                next = 5;
             end
            
             index = strfind(name, 'AUX');
             if(isempty(index))
                 cellArray{i,next} = true;
-                cellArray{i,next+1} = true;
+                cellArray{i,next+1} = 'All';
+                cellArray{i,next+2} = true;
+                cellArray{i,next+3} = '';
             else
-                cellArray{i,1} = 'AUX';
                 cellArray{i,next} = false;
-                cellArray{i,next+1} = false;
+                cellArray{i,next+1} = 'AUX';
+                cellArray{i,next+2} = false;
+                cellArray{i,next+3} = '';
             end
             
         end

@@ -27,11 +27,12 @@ end
 
 [tabId,created] = gui_tabs.add_tab(hObject,  'Model settings');
 
-uicontrol(tabId,'Style','text',...
+title_id = uicontrol(tabId,'Style','text',...
     'String','Define model settings in tabs below:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
     'Units','normalized','Position',[0.01 0.92 1 0.05] );
+
 
 current_settings.shocks =  model_settings.shocks;
 current_settings.variables = model_settings.variables;
@@ -60,8 +61,8 @@ tabsPanel(3) = uipanel('Parent', shocks_tab,'BackgroundColor', 'white', 'BorderT
 % Show the first tab
 gui_variables(tabsPanel(1), current_settings.variables);
 
-uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','characters','Position',[2 1 30 2], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
 
     function selection_changed(hObject,event)
         tabNum = event.NewValue.UserData;
@@ -84,14 +85,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             %save current values
             for ii=1:M_.exo_nbr
                 if(project_info.model_type==1)
-                    M_.Sigma_e(ii,ii) = (current_settings.shocks{ii,5})^2;
+                    M_.Sigma_e(ii,ii) = (current_settings.shocks{ii,4})^2;
                 else
-                    ex0_(ii) = str2double(current_settings.shocks{ii,5});
+                    ex0_(ii) = str2double(current_settings.shocks{ii,4});
                 end
             end
             
             for ii=1:M_.param_nbr
-                M_.params(ii) = current_settings.params{ii,5};
+                M_.params(ii) = current_settings.params{ii,4};
                 
             end
             
@@ -120,27 +121,27 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             end
             
             for i = 1:size(data,1)
-                data{i,5} =  sqrt(M_.Sigma_e(i,i)); %stderror
+                data{i,4} =  sqrt(M_.Sigma_e(i,i)); %stderror
                 if(has_estim_values)
                     try
-                        estim_value = getfield(estimated_values,data{i,2});
-                        data{i,6} = estim_value;
-                        std_value = getfield(std_values,data{i,2});
-                        data{i,7} = std_value;
+                        estim_value = getfield(estimated_values,data{i,1});
+                        data{i,5} = estim_value;
+                        std_value = getfield(std_values,data{i,1});
+                        data{i,6} = std_value;
                     catch ME
                         %gui_tools.show_error('Error while displaying shocks std estimated values',ME, 'basic');
                     end
                 end
             end
             
-            column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name, 'STD ', 'Show/Hide ', 'Show/Hide group '};
-            column_format = {'char','char','char','char','numeric' , 'numeric','numeric','logical', 'logical'};
+            column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name, 'STD ', 'Show/Hide ', 'Group (tab) name ','Show/Hide group ', 'Rename group '};
+            column_format = {'char','char','char','numeric' , 'numeric','numeric','logical', 'char','logical','char'};
             uit = uitable(tabId,'Data',data,...
                 'Units','normalized',...% 'Units','characters',...normalized
                 'ColumnName', column_names,...
                 'ColumnFormat', column_format,...
-                'ColumnEditable', [true false true true true false false true true],...
-                'ColumnWidth', {'auto', 'auto', 'auto', 200,'auto','auto','auto','auto', 'auto'}, ...
+                'ColumnEditable', [ false true true true false false true true true true],...
+                'ColumnWidth', {'auto', 'auto', 150,'auto','auto','auto','auto', 'auto', 'auto', 'auto'}, ...
                 'RowName',[],...
                 'Position',[0.01,0.55,.98, 0.4],...
                 'CellEditCallback',@savedata);
@@ -177,14 +178,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 end
             end
             
-            column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'initval ', 'Show/Hide ', 'Show/Hide group '};
-            column_format = {'char','char','char','char','numeric' , 'logical', 'logical'};
+            column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'initval ', 'Show/Hide ', 'Group (tab) name ','Show/Hide group ', 'Rename group '};
+            column_format = {'char','char','char','numeric' , 'logical', 'char','logical','char'};
             uit = uitable(tabId,'Data',data,...
                 'Units','normalized',...
                 'ColumnName', column_names,...
                 'ColumnFormat', column_format,...
-                'ColumnEditable', [true false true true true true true],...
-                'ColumnWidth', {'auto', 'auto', 'auto', 200,'auto','auto','auto'}, ...
+                'ColumnEditable', [false true true true true true true true],...
+                'ColumnWidth', {'auto', 'auto', 150, 'auto','auto','auto','auto', 'auto'}, ...
                 'RowName',[],...
                 'Position',[0.01,0.05,.98,0.9],...
                 'CellEditCallback',@savedata);
@@ -196,27 +197,41 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-            if(c==5)
+            if(c==4)
                val = str2double(val); 
                hObject.Data{r,c} = val;
             end
             current_settings.shocks{r,c} = val;
             if(project_info.model_type == 1)
+                c_group_name = 8;
                 c_show_hide_group = 9;
+                c_rename_group = 10;
             else
+                c_group_name = 6;
                 c_show_hide_group = 7;
+                c_rename_group = 8;
+                
             end
             
-            if(c == c_show_hide_group) %show/hide group
+            if(c == c_show_hide_group || c == c_rename_group)
                 t_data=get(uit,'data');  
+                group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
-                    if(strcmp(t_data{i,1},t_data{r,1}))
-                        t_data{i,c}= val;
-                        t_data{i,c-1}= val;
-                        current_settings.shocks{i,c} = val;
-                        current_settings.shocks{i,c-1} = val;
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        if(c == c_show_hide_group)
+                            t_data{i,c}= val;
+                            t_data{i,c-2}= val;
+                            current_settings.shocks{i,c} = val;
+                            current_settings.shocks{i,c-2} = val;
+                        else
+                            t_data{i,c_group_name}= val;
+                            current_settings.shocks{i,c_group_name} = val;
+                        end
+                        
                     end
                 end
+                t_data{r,c_rename_group} = '';
+                current_settings.shocks{r,c_rename_group} = '';
                 set(uit,'data',t_data);
             end
         end
@@ -231,14 +246,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function gui_variables(tabId, data)
-        column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Show/Hide ', 'Show/Hide group '};
-        column_format = {'char','char','char','char', 'logical', 'logical'};
+        column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Show/Hide ', 'Group (tab) name ','Show/Hide group ', 'Rename group '};
+        column_format = {'char','char','char', 'logical', 'char','logical','char'};
         uit = uitable(tabId,'Data',data,...
             'Units','normalized',...% 'Units','characters',...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
-            'ColumnEditable', [true false true true true true],...
-            'ColumnWidth', {100, 150, 150, 200,120,120}, ...
+            'ColumnEditable', [ false true true true true true true],...
+            'ColumnWidth', {'auto','auto',150,'auto','auto','auto','auto'}, ...
             'RowName',[],...
             'Position',[0.01,0.05,.98,0.9],...%'Position',[1,1,170,24],...
             'CellEditCallback',@savedata);
@@ -250,19 +265,28 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
             current_settings.variables{r,c} = val;
+            c_group_name = 5;
             c_show_hide_group = 6;
+            c_rename_group = 7;
             
-            
-            if(c == c_show_hide_group) %show/hide group
-                t_data=get(uit,'data');  % insted of this, it is possible to use handle(hObject).Data{r,c}
+            if(c == c_show_hide_group || c == c_rename_group) 
+                t_data=get(uit,'data'); 
+                group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
-                    if(strcmp(t_data{i,1},t_data{r,1}))
-                        t_data{i,c}= val;
-                        t_data{i,c-1}= val;
-                        current_settings.variables{i,c} = val;
-                        current_settings.variables{i,c-1} = val;
-                    end
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        if(c == c_show_hide_group)                        
+                            t_data{i,c}= val;
+                            t_data{i,c-2}= val;
+                            current_settings.variables{i,c} = val;
+                            current_settings.variables{i,c-2} = val;
+                        else
+                            t_data{i,c_group_name}= val;
+                            current_settings.variables{i,c_group_name} = val;
+                        end
+                   end
                 end
+                t_data{r,c_rename_group} = '';
+                current_settings.variables{r,c_rename_group} = '';
                 set(uit,'data',t_data);
             end
             
@@ -287,13 +311,13 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         
         for i = 1:size(data,1)
             
-            data{i,5} = get_param_by_name(data{i,2});
+            data{i,4} = get_param_by_name(data{i,1});
             if(has_estim_values)
                 try
-                    estim_value = getfield(estimated_values,data{i,2});
-                    data{i,6} = estim_value;
-                    std_value = getfield(std_values,data{i,2});
-                    data{i,7} = std_value;
+                    estim_value = getfield(estimated_values,data{i,1});
+                    data{i,5} = estim_value;
+                    std_value = getfield(std_values,data{i,1});
+                    data{i,6} = std_value;
                 catch ME
                     %gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
                 end
@@ -301,14 +325,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         end
         
         
-        column_names = {'Group (tab) name ','Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name , 'STD ', 'Show/Hide ','Show/Hide group '};
-        column_format = {'char','char','char','char','numeric','numeric','numeric','logical','logical'};
+        column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name , 'STD ', 'Show/Hide ','Group (tab) name ','Show/Hide group ', 'Rename group '};
+        column_format = {'char','char','char','numeric','numeric','numeric','logical','char','logical','char'};
         uit = uitable(tabId,'Data',data,...
             'Units','normalized',...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
-            'ColumnEditable', [true false true true true false false true true],...
-            'ColumnWidth', {'auto', 'auto', 'auto', 150,'auto','auto','auto','auto','auto'}, ...
+            'ColumnEditable', [ false true true true false false true true true true],...
+            'ColumnWidth', {'auto', 'auto', 150, 'auto','auto','auto','auto','auto','auto','auto'}, ...
             'RowName',[],...
             'Position',[0.01,0.05,.98,0.9],...
             'CellEditCallback',@savedata);
@@ -318,28 +342,40 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
-            if(c==5)
+            if(c==4)
                val = str2double(val); 
                hObject.Data{r,c} = val;
             end
             current_settings.params{r,c} = val;
             if(project_info.model_type == 1)
+                c_group_name = 8;
                 c_show_hide_group = 9;
+                c_rename_group = 10;
             else
+                c_group_name = 6;
                 c_show_hide_group = 7;
+                c_rename_group = 8;
             end
             
             
-            if(c == c_show_hide_group) %show/hide group
-                t_data=get(uit,'data');  % insted of this, it is possible to use handle(hObject).Data{r,c}
+            if(c == c_show_hide_group || c == c_rename_group) 
+                t_data=get(uit,'data'); 
+                group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
-                    if(strcmp(t_data{i,1},t_data{r,1}))
-                        t_data{i,c}= val;
-                        t_data{i,c-1}= val;
-                        current_settings.params{i,c} = val;
-                        current_settings.params{i,c-1} = val;
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        if(c == c_show_hide_group)                        
+                            t_data{i,c}= val;
+                            t_data{i,c-2}= val;
+                            current_settings.params{i,c} = val;
+                            current_settings.params{i,c-2} = val;
+                        else
+                            t_data{i,c_group_name}= val;
+                            current_settings.params{i,c_group_name} = val;
+                        end
                     end
                 end
+                t_data{r,c_rename_group} = '';
+                current_settings.params{r,c_rename_group} = '';
                 set(uit,'data',t_data);
             end
             

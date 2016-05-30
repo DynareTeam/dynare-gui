@@ -27,6 +27,16 @@ end
 
 [tabId,created] = gui_tabs.add_tab(hObject,  'Model settings');
 
+h_test_size = uicontrol(...
+    'Parent',tabId,...
+    'Units','normalized',...
+    'String','x',...
+    'Style','text');
+default_char_size = get(h_test_size,'extent');
+set(h_test_size, 'Visible', 'Off');
+c_width = default_char_size(3);
+c_height = default_char_size(4);
+
 title_id = uicontrol(tabId,'Style','text',...
     'String','Define model settings in tabs below:',...
     'FontWeight', 'bold', ...
@@ -61,8 +71,8 @@ tabsPanel(3) = uipanel('Parent', shocks_tab,'BackgroundColor', 'white', 'BorderT
 % Show the first tab
 gui_variables(tabsPanel(1), current_settings.variables);
 
-uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','characters','Position',[2 1 30 2], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[34 1 30 2], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','normalized','Position',[0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.02+c_width*15 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@close_tab,tabId} );
 
     function selection_changed(hObject,event)
         tabNum = event.NewValue.UserData;

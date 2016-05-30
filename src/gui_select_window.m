@@ -14,7 +14,7 @@ set(fHandle, 'Visible', 'on');
 
 base_items = eval(sprintf('model_settings.%s',base_field_name)); 
 
-base_items = base_items(:,2:4);
+base_items = base_items(:,1:3);
 
 selected_items = getappdata(0,field_name);
 

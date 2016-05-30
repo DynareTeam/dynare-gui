@@ -175,9 +175,9 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         
         listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.86 0.96 0.06]);
         for ii=1: size(cf_vars,1)
-            list{ii,1} = cf_vars{ii,2};
-            if(~strcmp(cf_vars{ii,2}, cf_vars{ii,4}))
-                list{ii,1} = [cf_vars{ii,2},' (',  cf_vars{ii,4}, ')'];
+            list{ii,1} = cf_vars{ii,1};
+            if(~strcmp(cf_vars{ii,1}, cf_vars{ii,3}))
+                list{ii,1} = [cf_vars{ii,1},' (',  cf_vars{ii,3}, ')'];
             end
         end
         set(listBox,'String',['Select endogenous variable for constrained path...'; list]);
@@ -202,9 +202,9 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         listBox2 = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.08 0.96 0.06]);
         %list2 = shocks(:,4);
         for ii=1: size(shocks,1)
-            list2{ii,1} = shocks{ii,2};
-            if(~strcmp(shocks{ii,2}, shocks{ii,4}))
-                list2{ii,1} = [shocks{ii,2},' (',  shocks{ii,4}, ')'];
+            list2{ii,1} = shocks{ii,1};
+            if(~strcmp(shocks{ii,1}, shocks{ii,3}))
+                list2{ii,1} = [shocks{ii,1},' (',  shocks{ii,3}, ')'];
             end
         end
         set(listBox2,'String',['Select controlled varexo...'; list2]);

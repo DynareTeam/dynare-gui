@@ -7,6 +7,16 @@ special_color = char(getappdata(0,'special_color'));
 top = 35;
 handles = []; %use by nasted functions
 
+h_test_size = uicontrol(...
+    'Parent',tabId,...
+    'Units','normalized',...
+    'String','x',...
+    'Style','text');
+default_char_size = get(h_test_size,'extent');
+set(h_test_size, 'Visible', 'Off');
+c_width = default_char_size(3);
+c_height = default_char_size(4);
+
 uicontrol(tabId,'Style','text',...
     'String','Project properties:',...
     'FontWeight', 'bold', ...
@@ -27,9 +37,9 @@ else
     project_properties(panel_id, 'Off');
 end
 
-uicontrol(tabId, 'Style','pushbutton','String','Save project','Units','characters','Position',[2 1 30 2], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Reset form','Units','characters','Position',[2+30+2 1 30 2], 'Callback',{@reset_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','characters','Position',[2+60+4 1 30 2], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save project','Units','normalized','Position',[0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Reset form','Units','normalized','Position',[0.02+c_width*15 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@reset_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.03+c_width*30 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@close_tab,tabId} );
 
     function save_settings(hObject,event)
         try
@@ -135,16 +145,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','charact
     end
 
     function project_properties(panel_id, modifiable)
-        h_test_size = uicontrol(...
-            'Parent',panel_id,...
-            'Units','normalized',...
-            'String','x',...
-            'Style','text');
-        default_char_size = get(h_test_size,'extent');
-        set(h_test_size, 'Visible', 'Off');
-        c_width = default_char_size(3);
-        c_height = default_char_size(4);
-       
+
         top = 1;
         dwidth = c_width *15;
         dheight = c_height *2.2;

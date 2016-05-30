@@ -4,17 +4,23 @@ global project_info;
 global model_settings;
 global options_;
 global estim_params_;
+global dynare_gui_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
+
+handles = [];
+
 top = 35;
 new_project = false;
-
+mod_file_specified = false;
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
     tab_title = '.mod file';
     status_msg = 'Please specify .mod/.dyn file ...';
+
 else
+    mod_file_specified = true;
     tab_title = project_info.mod_file;
     status_msg = 'Loading...';
 end
@@ -29,24 +35,72 @@ uicontrol(tabId,'Style','text',...
 
 textBoxId = uicontrol(tabId, 'style','edit', 'Max',30,'Min',0,...
     'String', status_msg ,...
-    'Units','normalized','Position',[0.01 0.09 0.98 0.82], ...%'Units','characters','Position',[2 5 170 30], ...
+    'Units','normalized','Position',[0.01 0.20 0.98 0.71], ...%'Units','characters','Position',[2 5 170 30], ...
     'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
-uicontrol(tabId, 'Style','pushbutton','String','Reload .mod file','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@reload_file,tabId} );
-uicontrol(tabId, 'Style','pushbutton','String','Change .mod file','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@change_file,tabId} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
-uicontrol(tabId, 'Style','pushbutton','String','Define command options ...','Units','normalized','Position',[0.84 0.02 .15 .05], 'Callback',{@pushbuttonCommandDefinition_Callback,tabId} , 'Enable', 'Off');
+h_test_size = uicontrol(...
+    'Parent',tabId,...
+    'Units','normalized',...
+    'String','x',...
+    'Style','text');
+default_char_size = get(h_test_size,'extent');
+set(h_test_size, 'Visible', 'Off');
+c_width = default_char_size(3);
+c_height = default_char_size(4);
+
+if(mod_file_specified)
+    if(~isfield(model_settings,'dynare'))
+        project_info.dynare_command = struct();
+    end
+    comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
+else
+    comm_str = '';
+    project_info.dynare_command = struct();
+end
+
+
+ handles.uipanelComm = uipanel( ...
+			'Parent', tabId, ...
+			'Tag', 'uipanelCommOptions', ...
+			'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
+			'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
+			'Title', 'Current command options:');%, ...
+			%'BorderType', 'none');
+
+handles.dynare = uicontrol( ...
+			'Parent', handles.uipanelComm, ...
+			'Style', 'text', 'BackgroundColor', bg_color,...
+			'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
+			'FontAngle', 'italic', ...
+			'String', comm_str, ...
+            'TooltipString', comm_str, ...
+			'HorizontalAlignment', 'left');
+            
+            
+       
+handles.runModFile = uicontrol(tabId, 'Style','pushbutton','String','Run .mod file','Units','normalized','Position',[0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@run_file,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Specify .mod file','Units','normalized','Position',[0.02+c_width*15 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@change_file,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.03+c_width*30 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Define command options ...','Units','normalized','Position',[1-c_width*15-0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',@pushbuttonCommandDefinition_Callback);
 
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
+    handles.runModFile.Enable = 'Off';
     new_project = true;
     msgText = 'Please specify .mod/.dyn file for your project. If you have multiple .dyn files or file includes, please specify main file only and copy manually additional files to project folder.';
     uiwait(msgbox(msgText, 'DynareGUI','modal'));
     status = specify_file(new_project);
     if(status == 0)
         return;
+    else
+        handles.runModFile.Enable = 'On';
+        gui_tabs.rename_tab(tabId, project_info.mod_file);
+        comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
+        
+        set(handles.dynare, 'String', comm_str);
+        set(handles.dynare, 'TooltipString', comm_str);
     end
-    gui_tabs.rename_tab(tabId, project_info.mod_file);
+    
 end
 
 
@@ -145,53 +199,8 @@ end
             
         end
         gui_tools.project_log_entry('Loading .mod file',sprintf('mod_file=%s',project_info.mod_file));
+      
         
-        [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod file... Please wait...', tabId);
-        
-        try
-            eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
-            jObj.stop;
-            jObj.setBusyText('All done!');
-            uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
-            project_info.modified = 1;
-            
-            % close other tabs
-            gui_tabs.close_all_except_this(tabId);
-          
-            %enable menu options
-            gui_tools.menu_options('model','On');
-            
-            if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
-                
-                  % reset model structures
-                  if(isfield(model_settings, 'estim_params'))
-                      model_settings = rmfield(model_settings, 'estim_params');
-                  end
-                  
-                  if(isfield(model_settings, 'varobs'))
-                      model_settings = rmfield(model_settings, 'varobs');
-                  end
-                
-                if(project_info.model_type==1)
-                    gui_tools.menu_options('estimation','On');
-                    gui_tools.menu_options('stohastic','On');
-                else
-                    gui_tools.menu_options('deterministic','On');
-                end
-            else
-                gui_tools.menu_options('estimation','Off');
-                gui_tools.menu_options('stohastic','Off');
-                gui_tools.menu_options('deterministic','Off');
-            end
-            
-
-        catch ME
-            
-            jObj.stop;
-            jObj.setBusyText('Done with errors!');
-            gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
-        end
-        delete(guiObj);
     end
 
     function status = specify_file(new_project)
@@ -239,7 +248,7 @@ end
         elseif(new_project)
             status = 1;
         elseif(strcmp(old_mod_file, fileName))
-            uiwait(msgbox('.mod file has not been changed. It will be loaded again.', 'DynareGUI','modal'));
+            uiwait(msgbox('.mod file has not been changed.', 'DynareGUI','modal'));
             status = -1;
         else
             status = 1; % TODO ???
@@ -248,8 +257,17 @@ end
 
 
     function change_file(hObject,event, hTab)
-        status = specify_file(false);
+        answer = questdlg({'Do you want to specify/change .mod file for this project?'; '';...
+            'If yes, please run it with Dynare command afterwords.'},...
+            'Dynare_GUI','Yes','No','No');
+        if(strcmp(answer,'No'))
+            return;
+        end
+        
+        status = specify_file(new_project);
+        
         if (status~=0)
+            handles.runModFile.Enable = 'On';
             set(textBoxId,'String','Loading ...');
             gui_tabs.rename_tab(hTab, project_info.mod_file);
             fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
@@ -258,7 +276,21 @@ end
             if(status ~= -1)
                 model_settings = struct();
             end
-            load_file();            
+            load_file();
+            comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
+            
+            set(handles.dynare, 'String', comm_str);
+            set(handles.dynare, 'TooltipString', comm_str);
+            project_info.mod_file_runned = false;
+            %disable menu options
+            gui_tools.menu_options('model_special','Off');
+            gui_tools.menu_options('estimation','Off');
+            gui_tools.menu_options('stohastic','Off');
+            gui_tools.menu_options('deterministic','Off');
+            gui_tools.menu_options('output','Off');
+             % close other tabs
+            gui_tabs.close_all_except_this(tabId);
+            
         end
     end
 
@@ -267,68 +299,91 @@ end
         
     end
 
-    function reload_file(hObject,event, hTab)
-        answer = questdlg({'Do you want to run .mod file with Dynare?'; '';...
-            'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
-            'Dynare_GUI','Yes','No','No');
-        if(strcmp(answer,'Yes'))
-            load_file();
+    function run_file(hObject,event, hTab)
+        if(project_info.mod_file_runned)
+            
+            answer = questdlg({'Do you want to run .mod file with Dynare?'; '';...
+                'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
+                'Dynare_GUI','Yes','No','No');
+            if(strcmp(answer,'No'))
+                return;
+            end
         end
+        
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod file... Please wait...', tabId);
+        
+        try
+            %eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
+            
+            dynare_comm_str = sprintf ('%s noclearall -DGUI',comm_str);
+            eval(dynare_comm_str);
+            
+            jObj.stop;
+            jObj.setBusyText('All done!');
+            uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
+            project_info.modified = 1;
+            
+            %enable menu options
+            gui_tools.menu_options('model','On');
+            
+            if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
+                
+                % reset model structures
+                if(isfield(model_settings, 'estim_params'))
+                    model_settings = rmfield(model_settings, 'estim_params');
+                end
+                
+                if(isfield(model_settings, 'varobs'))
+                    model_settings = rmfield(model_settings, 'varobs');
+                end
+                
+                if(project_info.model_type==1)
+                    gui_tools.menu_options('estimation','On');
+                    gui_tools.menu_options('stohastic','On');
+                else
+                    gui_tools.menu_options('deterministic','On');
+                end
+            else
+                gui_tools.menu_options('estimation','Off');
+                gui_tools.menu_options('stohastic','Off');
+                gui_tools.menu_options('deterministic','Off');
+            end
+            project_info.mod_file_runned  = true;
+            gui_tools.project_log_entry('Running .mod file',sprintf('mod_file=%s',project_info.mod_file));
+            
+        catch ME
+            
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
+            gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
+        end
+        delete(guiObj);
+        
+        
     end
 
-%     function load_varobs()
-%         if(isfield(model_settings, 'varobs'))
-%             varobs = model_settings.varobs;
-%             if(~isempty(varobs))
-%                 value = varobs(:,1)';
-%             else
-%                 value = [];
-%             end
-%             options_.varobs = value;
-%         end
-%     end
-% 
-%     function load_estim_params()
-%         
-%         if(isfield(model_settings, 'estim_params'))
-%             
-%             model_settings = rmfield(model_settings, 'estim_params');
-%         end
-%         
-%         %
-%         %
-%         %             estim_params = model_settings.estim_params;
-%         %
-%         %             % save in dynare structure estim_params_
-%         %             estim_params_.param_vals  = [];
-%         %             estim_params_.var_exo = [];
-%         %             num_p = 0;
-%         %             for i=1:size(estim_params,1)
-%         %                 if(strcmp(estim_params{i,1},'param'))
-%         %                     num_p = num_p +1;
-%         %                 end
-%         %                  data_(i,1) =  estim_params{i,2};
-%         %                     data_(i,2) =  estim_params{i,4};
-%         %                     data_(i,3) =  estim_params{i,5};
-%         %                     data_(i,4) =  estim_params{i,6};
-%         %                     [str,num] = gui_tools.prior_shape(estim_params{i,7});
-%         %                     data_(i,5) =  num;
-%         %                     data_(i,6) =  estim_params{i,8};
-%         %                     data_(i,7) =  estim_params{i,9};
-%         %                     data_(i,8) =  estim_params{i,10};
-%         %                     data_(i,9) =  estim_params{i,11};
-%         %                     data_(i,10) =  estim_params{i,12};
-%         %
-%         %
-%         %             end
-%         %
-%         %             if(num_p>0)
-%         %                 estim_params_.param_vals  = data_(1:num_p,:);
-%         %             end
-%         %             if(num_p<size(estim_params,1))
-%         %                 estim_params_.var_exo  = data_(num_p+1:end,:);
-%         %             end
-%         %         end
-%     end
+    function pushbuttonCommandDefinition_Callback(hObject,evendata)
+        
+        h = gui_define_comm_options(dynare_gui_.dynare,'dynare');
+        
+        uiwait(h);
+        
+        try
+            new_comm = getappdata(0,'dynare');
+            if(~isempty(new_comm))
+                project_info.dynare_command = new_comm;
+                comm_str = gui_tools.command_string('dynare', new_comm);
+                set(handles.dynare, 'String', comm_str);
+                set(handles.dynare, 'TooltipString', comm_str);
+                gui_tools.project_log_entry('Defined command dynare',comm_str);
+            end
+            
+
+        catch ME
+            gui_tools.show_error('Error in defining dynare command', ME, 'basic');
+        end
+        
+    end
+
 end
 

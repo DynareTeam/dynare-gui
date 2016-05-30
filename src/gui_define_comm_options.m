@@ -600,7 +600,7 @@ handles.pussbuttonClose = uicontrol( ...
                         if(~isempty(user_value) && ~strcmp(user_value,current_value))
                             new_user_options = setfield(new_user_options,comm_option,user_value);
                         end
-                    
+                        
                     else%we save it as a string
                         new_user_options = setfield(new_user_options,comm_option,value);
                         

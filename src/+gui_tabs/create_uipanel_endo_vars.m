@@ -18,7 +18,7 @@ top_position = 25;
 ii=1;
 while ii <= numVars
     
-    isShown  = gui_vars{ii,5};
+    isShown  = gui_vars{ii,4};
     
     if(~isShown)
         ii = ii+1;
@@ -28,7 +28,7 @@ while ii <= numVars
     end
     
     
-    tabTitle = char(gui_vars(ii,1));
+    tabTitle = char(gui_vars(ii,5));
     
     tabIndex = checkIfExistsTab(handles.varsTabGroup,tabTitle);
     if (tabIndex == 0)
@@ -56,8 +56,8 @@ while ii <= numVars
     top_position = pos(4) - 6; 
     if( position(tabIndex) > maxDisplayed) % Create slider
         
-        are_shown = find(cell2mat(gui_vars(:,5)));
-        vars_in_group = strfind(gui_vars(are_shown,1),tabTitle);
+        are_shown = find(cell2mat(gui_vars(:,4)));
+        vars_in_group = strfind(gui_vars(are_shown,5),tabTitle);
         num_vars_in_group = size(cell2mat(vars_in_group),1);
         
         sld = uicontrol('Style', 'slider',...
@@ -71,15 +71,15 @@ while ii <= numVars
     if(position(tabIndex)> maxDisplayed)
         visible = 'off';
     end
-    var_name = char(gui_vars(ii,2));
-    if(~strcmp(var_name,char(gui_vars(ii,4)) ))
-        var_name = [var_name, ' (',char(gui_vars(ii,4)) , ')'];
+    var_name = char(gui_vars(ii,1));
+    if(~strcmp(var_name,char(gui_vars(ii,3)) ))
+        var_name = [var_name, ' (',char(gui_vars(ii,3)) , ')'];
     end
     
     
     handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
         'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...% 'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 0.9 .08],...
-        'TooltipString', char(gui_vars(ii,2)),...
+        'TooltipString', char(gui_vars(ii,1)),...
         'string',var_name,...
         'BackgroundColor', special_color,...
         'Visible', visible);

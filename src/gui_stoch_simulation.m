@@ -146,7 +146,7 @@ handles = [];
         
         ii=1;
         while ii <= numShocks
-            isShown  = gui_shocks{ii,6};
+            isShown  = gui_shocks{ii,7};
             
             if(~isShown)
                 ii = ii+1;
@@ -154,7 +154,7 @@ handles = [];
             else
                 currentShock = currentShock +1;
             end
-            tabTitle = char(gui_shocks(ii,1));
+            tabTitle = char(gui_shocks(ii,8));
             
             tabIndex = checkIfExistsTab(handles.shocksTabGroup,tabTitle);
             if (tabIndex == 0)
@@ -176,8 +176,8 @@ handles = [];
             
             if( position(tabIndex) > maxDisplayed) % Create slider
                 
-                are_shown = find(cell2mat(gui_shocks(:,6)));
-                shocks_in_group = strfind(gui_shocks(are_shown,1),tabTitle);
+                are_shown = find(cell2mat(gui_shocks(:,7)));
+                shocks_in_group = strfind(gui_shocks(are_shown,8),tabTitle);
                 num_shocks_in_group = size(cell2mat(shocks_in_group),1);
                 
                 sld = uicontrol('Style', 'slider',...
@@ -195,8 +195,8 @@ handles = [];
             handles.shocks(currentShock) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
                 'Units','normalized',...
                 'Position',[0.03 0.98-position(tabIndex)*0.08 0.9 .08],...%'position',[3 top_position-(2*position(tabIndex)) 60 2],...
-                'TooltipString', char(gui_shocks(ii,2)),...
-                'string',char(gui_shocks(ii,4)),...
+                'TooltipString', char(gui_shocks(ii,1)),...
+                'string',char(gui_shocks(ii,3)),...
                 'BackgroundColor', special_color,...
                  'Visible', visible);
              handles.grouped_shocks(tabIndex, currenGroupedShock(tabIndex))= handles.shocks(currentShock);

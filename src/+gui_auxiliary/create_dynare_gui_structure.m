@@ -3,6 +3,7 @@ function create_dynare_gui_structure()
 
 global dynare_gui_;
 dynare_gui_ = struct();
+gui_auxiliary.dynare_command_options_dynare();
 gui_auxiliary.dynare_command_options_stoch_simul();
 gui_auxiliary.dynare_command_options_simul();
 gui_auxiliary.dynare_command_options_estimation();

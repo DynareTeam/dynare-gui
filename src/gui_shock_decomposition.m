@@ -20,6 +20,8 @@ top = 35;
 first_period = project_info.first_obs_date;
 if(~isnan(options_.first_obs))
     first_period = first_period+options_.first_obs-1;
+else
+    options_.first_obs = 1;
 end
 last_period = project_info.last_obs_date;
 if(~isnan(options_.nobs))
@@ -328,9 +330,9 @@ end
         leg = cell(0,1);
         num_groups = 0;
         for(i=1:num_shocks)
-            gname = shocks{i,1};
-            sname = shocks{i,2};
-            isShown = shocks{i,8};
+            gname = shocks{i,8};
+            sname = shocks{i,1};
+            isShown = shocks{i,7};
             if(~isShown) %All hidden shocks will be part of Others group
                 continue;
             end

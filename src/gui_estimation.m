@@ -96,6 +96,7 @@ top = 35;
 			'Style', 'pushbutton', ...
 			'Units','normalized','Position',[0.01 0.02 .15 .05],...
 			'String', 'Estimation !', ...
+            'Interruptible','on',...
 			'Callback', @pussbuttonEstimation_Callback);
 
 		handles.pussbuttonReset = uicontrol( ...
@@ -129,7 +130,7 @@ top = 35;
 			'Style', 'pushbutton', ...
 			'Units','normalized','Position',[0.65 0.02 .15 .05],...
 			'String', 'Close all output figures', ...
-            'Enable', 'off',...
+            'Enable', 'Off',...
 			'Callback', @pussbuttonCloseAll_Callback);
         
         handles.pushbuttonCommandDefinition = uicontrol( ...
@@ -381,46 +382,8 @@ top = 35;
         
         user_options = model_settings.estimation;
         old_options = options_;
-        
-%         if(~isempty(user_options))
-%             
-%             names = fieldnames(user_options);
-%             for ii=1: size(names,1)
-%                 value = getfield(user_options, names{ii});
-%                 if(isempty(value))
-%                     options_ = setfield(options_, names{ii}, 1); %flags
-%                 else
-%                     options_ = setfield(options_, names{ii}, value);
-%                 end
-%             end
-%         end
-        
-%         if(~isempty(new_options_))
-%             
-%             names = fieldnames(new_options_);
-%             for ii=1: size(names,1)
-%                 value = getfield(new_options_, names{ii});
-%                 %options_path = 'options_';
-%                 options_path = ['options_.',names{ii}];
-%                 while(isstruct(value))
-%                     %current_value = 
-%                     sub_fields = fieldnames(value);
-%                     options_path = [options_path, '.',sub_fields{1}];
-%                     value = getfield(value, sub_fields{1});
-%                 end
-%                 
-%                 if(strcmp(names{ii},'graph_format'))
-%                    value = strsplit(value,','); 
-%                 end
-%                 
-%                 eval(sprintf('%s= value;',options_path ));
-%                 %options_ = setfield(options_, names{ii}, value);
-%                 
-%             end
-%         end
-        
-        
-        %options_.load_mh_file = 0;
+                
+
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
@@ -444,7 +407,6 @@ top = 35;
         
         gui_tools.project_log_entry('Doing estimation','...');
         
-        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
         
         var_list_=[];
         
@@ -463,6 +425,10 @@ top = 35;
         
         model_settings.varlist_.estimation = var_list_;
         
+        %[jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
+        [jObj, guiObj, guiStop, guiOK, fHandle] = gui_tools.run_dynare_command('I am doing estimation... Please wait...', tabId);
+            
+        
         % computations take place here
         %status = 1;
         try
@@ -470,9 +436,13 @@ top = 35;
             %gui_tools.clear_dynare_oo_structure();
             
             oo_recursive_ = dynare_estimation(var_list_); 
+            
             jObj.stop;
-            jObj.setBusyText('All done!');
-            uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
+            set(guiStop, 'Enable', 'off');
+            set(guiOK, 'Enable', 'on');
+            %jObj.setBusyText('All done!');
+            jObj.setBusyText('Estimation executed successfully!!');
+            %uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
             %enable menu options
             gui_tools.menu_options('output','On');
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
@@ -485,7 +455,8 @@ top = 35;
             gui_tools.show_error('Error in execution of estimation command', ME, 'extended');
             uicontrol(hObject);
         end
-        delete(guiObj);
+        figure(fHandle); 
+        %delete(guiObj);
     end
 
 
@@ -597,7 +568,7 @@ top = 35;
     end
 
     function pussbuttonCloseAll_Callback(hObject,evendata)
-        
+ 
         main_figure = getappdata(0,'main_figure');
         fh=findall(0,'type','figure');
         for i=1:length(fh)

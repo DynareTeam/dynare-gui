@@ -103,7 +103,7 @@ handles.pussbuttonResults = uicontrol( ...
     'Style', 'pushbutton', ...
     'Units','normalized','Position',[0.49 0.02 .15 .05],...
     'String', 'Browse results...', ...
-    'Enable', 'Off',...
+    'Enable', 'On',...
     'Callback', @pussbuttonResults_Callback);
 
 handles.pussbuttonCloseAll = uicontrol( ...
@@ -296,13 +296,15 @@ handles.pussbuttonCloseAll = uicontrol( ...
             options_smoother2histval.period = str2num(handles.histval.String);
             smoother2histval(options_smoother2histval);
             
+            %options_.nomoments = 1;
+            %info = stoch_simul(var_list_);
+            
             info = dyn_forecast(var_list_,M_,options_,oo_,'simul');
             
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Forecast executed successfully!', 'DynareGUI','modal'));
-            %enable menu options
-            gui_tools.menu_options('output','On');
+            
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             set(handles.pussbuttonResults, 'Enable', 'on');
             project_info.modified = 1;

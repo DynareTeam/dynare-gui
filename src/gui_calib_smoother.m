@@ -5,6 +5,7 @@ global dynare_gui_;
 global options_ ;
 global model_settings;
 global oo_;
+global estim_params_;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
@@ -276,6 +277,20 @@ handles.pussbuttonCloseAll = uicontrol( ...
         
         set(handles.pussbuttonCloseAll, 'Enable', 'off');
         set(handles.pussbuttonResults, 'Enable', 'off');
+        if(isempty(options_.datafile))
+            gui_tools.show_warning('Please define datafile first: go to following option of GUI menu "Estimation -> Oberved variables & data file"');
+            return;
+        end
+        
+        estimated_model = 0; 
+        if exist('estim_params_', 'var') == 1
+           gui_tools.show_warning('Estimated parameters are defined but they will not be used. Smoother will be run on te current value of parameters!');
+           estimated_model = 1;
+           save_estim_params = estim_params_;
+           estim_params_ = [];
+           clear priordens;
+           
+        end
         
         user_options = model_settings.calib_smoother;
         
@@ -335,16 +350,21 @@ handles.pussbuttonCloseAll = uicontrol( ...
             %evaluate_smoother('calibration',var_list_);
             options_.mode_compute = 0;
             options_.smoother=1;
+            options_.graph_format = 'eps,fig';
+            
+            options_.datafile = project_info.data_file;
+            
+            options_.order = 1;
             dynare_estimation(var_list_);
             
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Calibrated smoother executed successfully!', 'DynareGUI','modal'));
-            %enable menu options
-            gui_tools.menu_options('output','On');
+            
             set(handles.pussbuttonCloseAll, 'Enable', 'on');
             set(handles.pussbuttonResults, 'Enable', 'on');
             project_info.modified = 1;
+            
             
         catch ME
             jObj.stop;
@@ -353,6 +373,10 @@ handles.pussbuttonCloseAll = uicontrol( ...
             uicontrol(hObject);
         end
         delete(guiObj);
+        
+        if(estimated_model)
+           estim_params_ = save_estim_params; 
+        end
     end
 
     function pussbuttonReset_Callback(hObject,evendata)

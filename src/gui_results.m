@@ -115,7 +115,8 @@ handles.pussbuttonCloseAll = uicontrol( ...
             num = 0;
             
             main_dir = [project_info.project_folder, '\'];
-            output_dir = [project_info.project_folder, '\',project_info.model_name,'\Output'];
+            %output_dir = [project_info.project_folder, '\',project_info.model_name,'\Output'];
+            output_dir = [project_info.project_folder, '\',project_info.model_name];
             
             results = comm_results;%dynare_gui_.est_results;
             
@@ -127,11 +128,17 @@ handles.pussbuttonCloseAll = uicontrol( ...
                 group = getfield(results, group_name);
                 numResults = size(group,1);
                 for j=1:numResults
-                    checkReqExp = regexp(group{j,5}, '/Output/{1}');
-                    if(~isempty(checkReqExp))
-                        f_dir = output_dir;
-                    else
+%                     checkReqExp = regexp(group{j,5}, '/Output/{1}');
+%                     if(~isempty(checkReqExp))
+%                         f_dir = output_dir;
+%                     else
+%                         f_dir = main_dir;
+%                     end
+                    
+                    if(isempty(group{j,5}))
                         f_dir = main_dir;
+                    else
+                        f_dir = [output_dir,group{j,5}];
                     end
                     
                     f_node = createDynareFigureNodes(group{j,1}, group{j,6},f_dir );

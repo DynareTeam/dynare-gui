@@ -21,6 +21,7 @@ for ii = 1:num_options
     
     value = eval(sprintf('comm.%s',names{ii}));
     option_type = gui_tools.get_option_type(comm_name, names{ii});
+    option = '';
     
     if(isempty(value))
         option = sprintf('%s',names{ii});
@@ -48,11 +49,16 @@ for ii = 1:num_options
             option = sprintf('%s=%s',names{ii},value);
         end
     end
-    if(first_option || strcmp(comm_name, 'dynare') )
-        comm_str = strcat(comm_str, sprintf(' %s ', option));
-        first_option = 0;
-    else
-        comm_str = strcat(comm_str, sprintf(', %s ',option));
+    
+    if(~isempty(option))
+        if(first_option || strcmp(comm_name, 'dynare') )
+            
+            comm_str = strcat(comm_str, sprintf(' %s ', option));
+            first_option = 0;
+            
+        else
+            comm_str = strcat(comm_str, sprintf(', %s ',option));
+        end
     end
 end
 

@@ -251,7 +251,8 @@ handles = [];
 
     function pussbuttonSimulation_Callback(hObject,evendata)
         
-         set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        set(handles.pussbuttonResults, 'Enable', 'off');
     
         comm_str = get(handles.stoch_simul, 'String');
         if(isempty(comm_str))
@@ -267,7 +268,10 @@ handles = [];
             old_oo = oo_;
             
             gui_tools.project_log_entry('Doing stochastic simulation','...');
-            [jObj, guiObj] = gui_tools.create_animated_screen('I am doing stochastic simulation... Please wait...', tabId);
+            %[jObj, guiObj] = gui_tools.create_animated_screen('I am doing stochastic simulation... Please wait...', tabId);
+            
+            
+            
             
             options_.irf_shocks=[];
             first_shock = 1;
@@ -318,12 +322,21 @@ handles = [];
 
            options_.nodisplay = 0;
            model_settings.varlist_.stoch_simul = var_list_;
+          [jObj, guiObj, guiStop, guiOK, fHandle] = gui_tools.run_dynare_command('I am doing stochastic simulation... Please wait...', tabId);
+            
             try
                 info = stoch_simul(var_list_);
-                set(handles.pussbuttonCloseAll, 'Enable', 'on');
                 jObj.stop;
-                jObj.setBusyText('All done!');
-                uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
+                set(guiStop, 'Enable', 'off');
+                set(guiOK, 'Enable', 'on');
+                
+                %jObj.setBusyText('All done!');
+                jObj.setBusyText('Stochastic simulation executed successfully!');
+                %uiwait(msgbox('Stochastic simulation executed successfully!', 'DynareGUI','modal'));
+                %enable menu options
+                gui_tools.menu_options('output','On');
+                set(handles.pussbuttonCloseAll, 'Enable', 'on');
+                set(handles.pussbuttonResults, 'Enable', 'on');
                 project_info.modified = 1;
             catch ME
                 jObj.stop;
@@ -331,7 +344,9 @@ handles = [];
                 gui_tools.show_error('Error in execution of stoch_simul command', ME, 'extended');
                 oo_ = old_oo;
             end
-            delete(guiObj);
+            
+            figure(fHandle); 
+            %delete(guiObj);
             
         elseif(~shockSelected)
             gui_tools.show_warning('Please select shocks!');
@@ -420,7 +435,7 @@ handles = [];
     end
 
     function pussbuttonResults_Callback(hObject,evendata)
-        h = gui_results('stoch_smulation', dynare_gui_.stoch_smulation_results);
+        h = gui_results('stoch_smulation', dynare_gui_.stoch_simulation_results);
     end
 
     %TODO  put this function into gui_tools

@@ -1,4 +1,34 @@
 function gui_project(tabId, oid)
+% function gui_project(tabId, oid)
+% interface for the project related functionalities (New, Open, Save and
+% Save As)
+%
+% INPUTS
+%   tabId:      GUI tab element which displays the interface
+%   oid:        operation identifier (New, Open, Save or Save As)
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 
@@ -7,15 +37,7 @@ special_color = char(getappdata(0,'special_color'));
 top = 35;
 handles = []; %use by nasted functions
 
-h_test_size = uicontrol(...
-    'Parent',tabId,...
-    'Units','normalized',...
-    'String','x',...
-    'Style','text');
-default_char_size = get(h_test_size,'extent');
-set(h_test_size, 'Visible', 'Off');
-c_width = default_char_size(3);
-c_height = default_char_size(4);
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
 uicontrol(tabId,'Style','text',...
     'String','Project properties:',...
@@ -37,9 +59,9 @@ else
     project_properties(panel_id, 'Off');
 end
 
-uicontrol(tabId, 'Style','pushbutton','String','Save project','Units','normalized','Position',[0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Reset form','Units','normalized','Position',[0.02+c_width*15 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@reset_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.03+c_width*30 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save project','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Reset form','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@reset_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function save_settings(hObject,event)
         try
@@ -145,12 +167,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function project_properties(panel_id, modifiable)
-
+        
         top = 1;
-        dwidth = c_width *15;
-        dheight = c_height *2.2;
-        spc = c_width;
-
+        dwidth = gui_size.default_width;
+        dheight = gui_size.default_height;
+        spc = gui_size.c_width;
+        
         try
             num = 1;
             uicontrol(panel_id,'Style','text',...
@@ -169,7 +191,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc dheight/2]);
             
-           
+            
             num=num+1;
             uicontrol(panel_id,'Style','text',...
                 'String','Project folder:',...
@@ -187,13 +209,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','normalized','Position',[spc*3.3+dwidth*4 top-num*dheight spc dheight/2]);
             
-            
-            %if(strcmp(modifiable,'On'))
+
             handles.project_folder_button = uicontrol(panel_id,'Style','pushbutton',...
                 'String', 'Select...',...
                 'Units','normalized','Position',[spc*5+dwidth*4 top-num*dheight dwidth/2 dheight/2],...
                 'Callback',{@select_folder});
-            %end
             
             num=num+1;
             uicontrol(panel_id,'Style','text',...

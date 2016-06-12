@@ -1,4 +1,32 @@
 function gui_open_project(hObject)
+% function gui_open_project(hObject)
+% opens Dynare_GUI project file
+%
+% INPUTS
+%   hObject:    handle of main application window
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global model_settings;
@@ -22,35 +50,6 @@ try
             assignin('base', flds{i}, var_i);
             eval( sprintf(' %s = data.%s;', flds{i}, flds{i}));
         end
-        
-        
-%         project_info = data.project_info;
-%         if(isfield(data, 'model_settings'))
-%             model_settings = data.model_settings;
-%             
-%         end
-%         
-%         if(isfield(data, 'options_'))
-%             options_ = data.options_;
-%             
-%         end
-%         
-%         if(isfield(data, 'M_'))
-%             M_ = data.M_;
-%             
-%         end
-%         
-%         if(isfield(data, 'oo_'))
-%             oo_ = data.oo_;
-%             
-%         end
-%         
-%         if(isfield(data, 'estim_params_'))
-%             estim_params_ = data.estim_params_;
-%             
-%         end
-
-        % TODO check if project name equals project name
         
         if(~strcmp([project_info.project_folder,filesep], pathName ))
             warnStr = sprintf('Project has moved to different folder/path since last modification. New project folder has been set accordingly.!\n\nIf needed, please copy mode file and data file to the new location (new project folder).');
@@ -91,7 +90,7 @@ try
                 
             end
         end
-        project_info.modified = 0; % TODO This is not necessary
+        project_info.modified = 0; 
         gui_tools.project_log_entry('Project Open',sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder));
     end
 catch ME

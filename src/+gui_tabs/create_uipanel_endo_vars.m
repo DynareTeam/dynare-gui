@@ -1,4 +1,33 @@
 function new_handles = create_uipanel_endo_vars(handles)
+% function new_handles = create_uipanel_endo_vars(handles)
+% creates uitabgroup with endogenous variables 
+%
+% INPUTS
+%   handles: handles of all GUI elements on current tab inside which
+%   uitabgroup is created
+%
+% OUTPUTS
+%   new_handles: updated handles of all GUI elements on current tab 
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global model_settings;
 special_color = char(getappdata(0,'special_color'));
@@ -8,7 +37,6 @@ numVars = size(gui_vars,1);
 currentVar = 0;
 
 tubNum = 0;
-
 
 handles.varsTabGroup = uitabgroup(handles.uipanelVars,'Position',[0 0 1 1]);
 
@@ -26,7 +54,6 @@ while ii <= numVars
     else
         currentVar = currentVar + 1;
     end
-    
     
     tabTitle = char(gui_vars(ii,5));
     
@@ -46,14 +73,12 @@ while ii <= numVars
         currentPanel = varsPanel(tabIndex);
     end
     
-       
     currentPanel.Units = 'characters';
     pos = currentPanel.Position;
     currentPanel.Units = 'Normalized';
     
-    
     maxDisplayed = floor(pos(4)/2) - 3 ;
-    top_position = pos(4) - 6; 
+    top_position = pos(4) - 6;
     if( position(tabIndex) > maxDisplayed) % Create slider
         
         are_shown = find(cell2mat(gui_vars(:,4)));
@@ -78,19 +103,18 @@ while ii <= numVars
     
     
     handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-        'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...% 'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 0.9 .08],...
+        'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...
         'TooltipString', char(gui_vars(ii,1)),...
         'string',var_name,...
         'BackgroundColor', special_color,...
         'Visible', visible);
-    
-     %handles.vars(currentVar).Units = 'Pixels';
     
     handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
     currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
     position(tabIndex) = position(tabIndex) + 1;
     ii = ii+1;
 end
+
 handles.numVars= currentVar;
 new_handles = handles;
 
@@ -110,16 +134,7 @@ new_handles = handles;
                 visible = 'on';
                 set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
                 set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
-                
-                  
-                %%set(handles.grouped_vars(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
-                 %'Units','normalized','Position',[0.03 0.98 - position(tabIndex)*0.08 .94 .08],...%
-                     
-             %'position',[3 top_position-(2*position(tabIndex)) 60 2],.
-                
             end
-            
-            
         end
     end
 
@@ -127,13 +142,11 @@ new_handles = handles;
         tabs = get(tabGroup,'Children');
         num = length(tabs);
         index = 0;
-        %tab = [];
         for i=1:num
             hTab = tabs(i);
             tit = get(hTab, 'Title');
             if(strcmp(tit, tabTitle))
                 index = i;
-                %tab=hTab;
                 return;
             end
         end

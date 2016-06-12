@@ -1,4 +1,33 @@
 function gui_define_model_settings(hObject)
+% function gui_define_model_settings(hObject)
+% interface for defining model settings
+%
+% INPUTS
+%   hObject:    handle of main application window
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
+
 global project_info;
 global model_settings;
 global oo_ M_ ex0_;
@@ -6,13 +35,11 @@ global oo_ M_ ex0_;
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
-model_name = project_info.model_name;
-
 if (isempty(model_settings) || isempty(fieldnames(model_settings)))
     uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
-    status = gui_create_model_settings(model_name);
+    status = gui_create_model_settings();
     if(status)
-      if(project_info.model_type==1)
+        if(project_info.model_type==1)
             gui_tools.menu_options('estimation','On');
             gui_tools.menu_options('stohastic','On');
         else
@@ -27,15 +54,7 @@ end
 
 [tabId,created] = gui_tabs.add_tab(hObject,  'Model settings');
 
-h_test_size = uicontrol(...
-    'Parent',tabId,...
-    'Units','normalized',...
-    'String','x',...
-    'Style','text');
-default_char_size = get(h_test_size,'extent');
-set(h_test_size, 'Visible', 'Off');
-c_width = default_char_size(3);
-c_height = default_char_size(4);
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
 title_id = uicontrol(tabId,'Style','text',...
     'String','Define model settings in tabs below:',...
@@ -71,8 +90,8 @@ tabsPanel(3) = uipanel('Parent', shocks_tab,'BackgroundColor', 'white', 'BorderT
 % Show the first tab
 gui_variables(tabsPanel(1), current_settings.variables);
 
-uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','normalized','Position',[0.01 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.02+c_width*15 c_height*.5 c_width*15 c_height*1.3], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save settings','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function selection_changed(hObject,event)
         tabNum = event.NewValue.UserData;
@@ -116,12 +135,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
 
     function gui_shocks(tabId, data, data_corr)
         if(project_info.model_type == 1) %stohastic  case
-            has_estim_values = 1;      
-            if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'shocks_std'))
+            has_estim_values = 1;
+            if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'shocks_std') && isfield(oo_, 'posterior_std_at_mean')&& isfield(oo_.posterior_std_at_mean, 'shocks_std') )
                 estimated_values = oo_.posterior_mean.shocks_std;
                 std_values = oo_.posterior_std_at_mean.shocks_std;
                 column_name = 'Estimated value (posterior mean) ';
-            elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'shocks_std'))
+            elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'shocks_std') && isfield(oo_, 'posterior_std_at_mode')&& isfield(oo_.posterior_std_at_mode, 'shocks_std') )
                 estimated_values = oo_.posterior_mode.shocks_std;
                 std_values = oo_.posterior_std_at_mode.shocks_std;
                 column_name = 'Estimated value (posterior mode) ';
@@ -139,7 +158,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                         std_value = getfield(std_values,data{i,1});
                         data{i,6} = std_value;
                     catch ME
-                        %gui_tools.show_error('Error while displaying shocks std estimated values',ME, 'basic');
+                        gui_tools.show_error('Error while displaying shocks std estimated values',ME, 'basic');
                     end
                 end
             end
@@ -183,8 +202,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             
         else % deterministic case
             for ii=1:M_.exo_nbr
-                if(~isempty(ex0_))
-                    data{ii,5} = ex0_(ii);
+                if(~isempty(ex0_) && ~isnan(ex0_(ii)))
+                    data{ii,4} = ex0_(ii);
                 end
             end
             
@@ -203,13 +222,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         end
         tab_created_id(3) = 1;
         
+        
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
             if(c==4)
-               val = str2double(val); 
-               hObject.Data{r,c} = val;
+                val = str2double(val);
+                hObject.Data{r,c} = val;
             end
             current_settings.shocks{r,c} = val;
             if(project_info.model_type == 1)
@@ -224,7 +244,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             end
             
             if(c == c_show_hide_group || c == c_rename_group)
-                t_data=get(uit,'data');  
+                t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
@@ -279,12 +299,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             c_show_hide_group = 6;
             c_rename_group = 7;
             
-            if(c == c_show_hide_group || c == c_rename_group) 
-                t_data=get(uit,'data'); 
+            if(c == c_show_hide_group || c == c_rename_group)
+                t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
-                        if(c == c_show_hide_group)                        
+                        if(c == c_show_hide_group)
                             t_data{i,c}= val;
                             t_data{i,c-2}= val;
                             current_settings.variables{i,c} = val;
@@ -293,7 +313,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                             t_data{i,c_group_name}= val;
                             current_settings.variables{i,c_group_name} = val;
                         end
-                   end
+                    end
                 end
                 t_data{r,c_rename_group} = '';
                 current_settings.variables{r,c_rename_group} = '';
@@ -305,56 +325,74 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function gui_params(tabId, data)
-        has_estim_values = 1;
-        if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'parameters'))
-            estimated_values = oo_.posterior_mean.parameters;
-            std_values = oo_.posterior_std_at_mean.parameters;
-            column_name = 'Estimated value (posterior mean) ';
-        elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'parameters'))
-            estimated_values = oo_.posterior_mode.parameters;
-            std_values = oo_.posterior_std_at_mode.parameters;
-            column_name = 'Estimated value (posterior mode) ';
-        else
-            has_estim_values = 0;
-            column_name = 'Estimated value ';
-        end
-        
-        for i = 1:size(data,1)
+        if(project_info.model_type == 1) %stohastic  case
+            has_estim_values = 1;
+            if (isfield(oo_, 'posterior_mean') && isfield(oo_.posterior_mean, 'parameters'))
+                estimated_values = oo_.posterior_mean.parameters;
+                std_values = oo_.posterior_std_at_mean.parameters;
+                column_name = 'Estimated value (posterior mean) ';
+            elseif(isfield(oo_, 'posterior_mode') && isfield(oo_.posterior_mode, 'parameters'))
+                estimated_values = oo_.posterior_mode.parameters;
+                std_values = oo_.posterior_std_at_mode.parameters;
+                column_name = 'Estimated value (posterior mode) ';
+            else
+                has_estim_values = 0;
+                column_name = 'Estimated value ';
+            end
             
-            data{i,4} = get_param_by_name(data{i,1});
-            if(has_estim_values)
-                try
-                    estim_value = getfield(estimated_values,data{i,1});
-                    data{i,5} = estim_value;
-                    std_value = getfield(std_values,data{i,1});
-                    data{i,6} = std_value;
-                catch ME
-                    %gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
+            for i = 1:size(data,1)
+                
+                data{i,4} = get_param_by_name(data{i,1});
+                if(has_estim_values)
+                    try
+                        estim_value = getfield(estimated_values,data{i,1});
+                        data{i,5} = estim_value;
+                        std_value = getfield(std_values,data{i,1});
+                        data{i,6} = std_value;
+                    catch ME
+                        %gui_tools.show_error('Error while displaying parameters estimated values',ME, 'basic');
+                    end
                 end
             end
+            
+            
+            column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name , 'STD ', 'Show/Hide ','Group (tab) name ','Show/Hide group ', 'Rename group '};
+            column_format = {'char','char','char','numeric','numeric','numeric','logical','char','logical','char'};
+            uit = uitable(tabId,'Data',data,...
+                'Units','normalized',...
+                'ColumnName', column_names,...
+                'ColumnFormat', column_format,...
+                'ColumnEditable', [ false true true true false false true true true true],...
+                'ColumnWidth', {'auto', 'auto', 150, 'auto','auto','auto','auto','auto','auto','auto'}, ...
+                'RowName',[],...
+                'Position',[0.01,0.05,.98,0.9],...
+                'CellEditCallback',@savedata);
+            
+        else % deterministic case
+            for i = 1:size(data,1)
+                data{i,4} = get_param_by_name(data{i,1});
+            end
+            column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', 'Show/Hide ','Group (tab) name ','Show/Hide group ', 'Rename group '};
+            column_format = {'char','char','char','numeric','logical','char','logical','char'};
+            uit = uitable(tabId,'Data',data,...
+                'Units','normalized',...
+                'ColumnName', column_names,...
+                'ColumnFormat', column_format,...
+                'ColumnEditable', [ false true true true true true true true],...
+                'ColumnWidth', {'auto', 'auto', 150, 'auto','auto','auto','auto','auto'}, ...
+                'RowName',[],...
+                'Position',[0.01,0.05,.98,0.9],...
+                'CellEditCallback',@savedata);
         end
-        
-        
-        column_names = {'Name in Dynare model ','LATEX name ', 'Long name ', 'Current value ', column_name , 'STD ', 'Show/Hide ','Group (tab) name ','Show/Hide group ', 'Rename group '};
-        column_format = {'char','char','char','numeric','numeric','numeric','logical','char','logical','char'};
-        uit = uitable(tabId,'Data',data,...
-            'Units','normalized',...
-            'ColumnName', column_names,...
-            'ColumnFormat', column_format,...
-            'ColumnEditable', [ false true true true false false true true true true],...
-            'ColumnWidth', {'auto', 'auto', 150, 'auto','auto','auto','auto','auto','auto','auto'}, ...
-            'RowName',[],...
-            'Position',[0.01,0.05,.98,0.9],...
-            'CellEditCallback',@savedata);
-        
+        tab_created_id(2) = 1;
         
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
             c = callbackdata.Indices(2);
             if(c==4)
-               val = str2double(val); 
-               hObject.Data{r,c} = val;
+                val = str2double(val);
+                hObject.Data{r,c} = val;
             end
             current_settings.params{r,c} = val;
             if(project_info.model_type == 1)
@@ -368,12 +406,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             end
             
             
-            if(c == c_show_hide_group || c == c_rename_group) 
-                t_data=get(uit,'data'); 
+            if(c == c_show_hide_group || c == c_rename_group)
+                t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
-                        if(c == c_show_hide_group)                        
+                        if(c == c_show_hide_group)
                             t_data{i,c}= val;
                             t_data{i,c-2}= val;
                             current_settings.params{i,c} = val;
@@ -390,7 +428,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             end
             
         end
-        tab_created_id(2) = 1;
+        
     end
 
     function close_tab(hObject,event, hTab)

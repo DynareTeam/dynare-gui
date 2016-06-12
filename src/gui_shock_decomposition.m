@@ -1,4 +1,32 @@
 function gui_shock_decomposition(tabId)
+% function gui_shock_decomposition(tabId)
+% interface for the DYNARE shock_decomposition command
+%
+% INPUTS
+%   tabId:  GUI tab element which displays shock_decomposition command interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global M_;
@@ -10,14 +38,10 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
-parameter_set = '';
-
-%set(tabId, 'OnShow', @showTab_Callback);
-do_not_check_all_results = 0;
-v_size = 30; %28
-top = 35;
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
 first_period = project_info.first_obs_date;
+
 if(~isnan(options_.first_obs))
     first_period = first_period+options_.first_obs-1;
 else
@@ -27,87 +51,75 @@ last_period = project_info.last_obs_date;
 if(~isnan(options_.nobs))
     last_period = first_period+options_.nobs-1;
 end
-        
-        
-        
+
 % --- PANELS -------------------------------------
-        handles.uipanelVars = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
-			'Units', 'normalized', 'Position', [0.01 0.09 0.48 0.82], ...
-			'Title', '', 'BorderType', 'none');
-        
-        handles = gui_tabs.create_uipanel_endo_vars(handles);
+handles.uipanelVars = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.48 0.82], ...
+    'Title', '', 'BorderType', 'none');
 
-        handles.uipanelResults = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', 'BackgroundColor', bg_color,...
-			'Units', 'normalized', 'Position', [0.51 0.09 0.48 0.82], ...
-			'Title', 'Command and results options:');
-        
-        uipanelResults_CreateFcn();
-     
-	% --- STATIC TEXTS -------------------------------------
-	
-      uicontrol( ...
-			'Parent', tabId, ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
-			'FontWeight', 'bold', ...
-			'String', 'Select endogenous variables for shock decomposition:', ...
-			'HorizontalAlignment', 'left'); 
-        
-        % --- PUSHBUTTONS -------------------------------------
-        handles.pussbuttonShockDecomposition = uicontrol( ...
-            'Parent', tabId, ...
-			'Tag', 'pussbuttonSimulation', ...
-			'Style', 'pushbutton', ...
-            'Units','normalized','Position',[0.01 0.02 .15 .05],...
-			'String', 'Shock decomposition !', ...
-			'Callback', @pussbuttonShockDecomposition_Callback);
-        
-        
-        
-		handles.pussbuttonReset = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.17 0.02 .15 .05],...
-			'String', 'Reset', ...
-			'Callback', @pussbuttonReset_Callback);
-        
-        handles.pussbuttonCloseAll = uicontrol( ...
-            'Parent', tabId, ...
-            'Tag', 'pussbuttonSimulation', ...
-            'Style', 'pushbutton', ...
-            'Units','normalized','Position',[0.33 0.02 .15 .05],...
-            'String', 'Close all output figures', ...
-            'Enable', 'off',...
-            'Callback', @pussbuttonCloseAll_Callback);
-        
-        handles.pussbuttonClose = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Units','normalized','Position',[0.49 0.02 .15 .05],...
-			'String', 'Close this tab', ...
-			'Callback',{@close_tab,tabId});
-        
-        handles.pussbuttonShockDecomposition.Units = 'Pixels';
-        handles.pussbuttonCloseAll.Units = 'Pixels';
-        handles.pussbuttonReset.Units = 'Pixels';
-        handles.pussbuttonClose.Units = 'Pixels';
-    
-        
+handles = gui_tabs.create_uipanel_endo_vars(handles);
+
+handles.uipanelResults = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', bg_color,...
+    'Units', 'normalized', 'Position', [0.51 0.09 0.48 0.82], ...
+    'Title', 'Command and results options:');
+
+uipanelResults_CreateFcn();
+
+% --- STATIC TEXTS -------------------------------------
+
+uicontrol( ...
+    'Parent', tabId, ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Select endogenous variables for shock decomposition:', ...
+    'HorizontalAlignment', 'left');
+
+% --- PUSHBUTTONS -------------------------------------
+handles.pussbuttonShockDecomposition = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height],...
+    'String', 'Shock decomposition !', ...
+    'Callback', @pussbuttonShockDecomposition_Callback);
+
+handles.pussbuttonReset = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height],...
+    'String', 'Reset', ...
+    'Callback', @pussbuttonReset_Callback);
+
+handles.pussbuttonCloseAll = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height],...
+    'String', 'Close all output figures', ...
+    'Enable', 'on',...
+    'Callback', @pussbuttonCloseAll_Callback);
+
+handles.pussbuttonClose = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Units','normalized','Position',[gui_size.space*4+gui_size.button_width*3 gui_size.bottom gui_size.button_width gui_size.button_height],...
+    'String', 'Close this tab', ...
+    'Callback',{@close_tab,tabId});
+
     function uipanelResults_CreateFcn()
-        % Specify the parameter set to use for running the smoother
-        r_top = v_size -4;
-        lo = 2;
         top = 1;
-        dwidth = 0.3;
-        dheight = 0.08;
-        spc = 0.02;
+        dwidth = gui_size.default_width;
+        dheight = gui_size.default_height;
+        spc = gui_size.c_width;
+        
         num = 1;
-
+        
         uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'text7', ...
@@ -116,63 +128,59 @@ end
             'FontWeight', 'bold', ...
             'String', 'Specify the parameter set to use for running the smoother:', ...
             'HorizontalAlignment', 'left');
-         num = num+0.8;
-            uicontrol( ...
+        num = num+0.8;
+        uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'text8', ...
             'Style', 'text', ...
-            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*0.8 dheight/2],...
+            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*1.5 dheight/2],...
             'String', 'parameter_set:', ...
             'HorizontalAlignment', 'left');
         
-         handles.parameterSet = uicontrol( ...
+        handles.parameterSet = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'parameterSet', ...
             'Style', 'popupmenu', ...
-            'Units','normalized','Position',[spc*3+dwidth*0.8 top-num*dheight dwidth dheight/2],...
+            'Units','normalized','Position',[spc*3+dwidth*1.5 top-num*dheight dwidth*1.5 dheight/2],...
             'CreateFcn', @parameterSet_CreateFcn);
         
-        
-        
-         num = num+1.5;
+        num = num+1.5;
         
         uicontrol( ...
-			'Parent', handles.uipanelResults, ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[spc top-num*dheight 1-spc*4 dheight/2],...
-			'FontWeight', 'bold', ...
+            'Parent', handles.uipanelResults, ...
+            'Style', 'text', 'BackgroundColor', bg_color,...
+            'Units','normalized','Position',[spc top-num*dheight 1-spc*4 dheight/2],...
+            'FontWeight', 'bold', ...
             'String', 'Select historical observations to be displayed:', ...
             'HorizontalAlignment', 'left');
-          num = num+0.8;
+        num = num+0.8;
         handles.text8 = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'text8', ...
             'Style', 'text', ...
-            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*1.8 dheight/2],...
+            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*3.5 dheight/2],...
             'String', 'The first historical observation to be displayed:', ...
             'HorizontalAlignment', 'left');
-        
-        
         
         handles.firstPeriodQuarter = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'firstPeriodQuarter', ...
             'Style', 'popupmenu', ...
-             'Units','normalized','Position',[spc*3+dwidth*1.8 top-num*dheight dwidth*.4 dheight/2],...
+            'Units','normalized','Position',[spc*3+dwidth*3.5 top-num*dheight dwidth*0.7 dheight/2],...
             'CreateFcn', @firstPeriodQuarter_CreateFcn);
         
         handles.firstPeriodYear = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'firstPeriodYear', ...
             'Style', 'popupmenu', ...
-            'Units','normalized','Position',[spc*4+dwidth*2.2 top-num*dheight dwidth*.4 dheight/2],...
+            'Units','normalized','Position',[spc*4+dwidth*4.2 top-num*dheight dwidth*0.7 dheight/2],...
             'CreateFcn', @firstPeriodYear_CreateFcn);
-          num = num+0.8;
+        num = num+0.8;
         handles.text9 = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'text9', ...
             'Style', 'text', ...
-            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*1.8 dheight/2],...
+            'Units','normalized','Position',[spc*3 top-num*dheight dwidth*3.5 dheight/2],...
             'String', 'The last historical observation to be displayed:', ...
             'HorizontalAlignment', 'left');
         
@@ -180,14 +188,14 @@ end
             'Parent', handles.uipanelResults, ...
             'Tag', 'lastPeriodQuarter', ...
             'Style', 'popupmenu', ...
-             'Units','normalized','Position',[spc*3+dwidth*1.8 top-num*dheight dwidth*.4 dheight/2],...
+            'Units','normalized','Position',[spc*3+dwidth*3.5 top-num*dheight dwidth*.7 dheight/2],...
             'CreateFcn', @lastPeriodQuarter_CreateFcn);
         
         handles.lastPeriodYear = uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Tag', 'lastPeriodYear', ...
             'Style', 'popupmenu', ...
-            'Units','normalized','Position',[spc*4+dwidth*2.2 top-num*dheight dwidth*.4 dheight/2],...
+            'Units','normalized','Position',[spc*4+dwidth*4.2 top-num*dheight dwidth*.7 dheight/2],...
             'CreateFcn', @lastPeriodYear_CreateFcn);
         
         num = num+1.5;
@@ -197,34 +205,27 @@ end
             'Units','normalized','Position',[spc top-num*dheight 1-spc*4 dheight/2],...
             'String','Use shock groups when displaying decomposition',...
             'FontWeight', 'bold');
-        
-        
-        
     end
-        
+
 
     function pussbuttonShockDecomposition_Callback(hObject,evendata)
-   
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
-        if(~isfield(model_settings, 'estimation'))
+        
+        if(~(isfield(oo_, 'SmoothedVariables') && isfield(oo_, 'SmoothedShocks')))
             gui_tools.show_warning('Please run estimation before shock decomposition!');
             return;
             
         end
-        user_options = model_settings.estimation;
         old_options = options_;
         options_.datafile = project_info.data_file;
         values = get(handles.parameterSet, 'String');
         options_.parameter_set=char(values( get(handles.parameterSet, 'Value')));
         
-        if(strcmp(parameter_set, options_.parameter_set))
-            plot_without_smoother = 1;
-        else
-            plot_without_smoother = 0;
-        end
-        
-            
-            
+%         if(strcmp(parameter_set, options_.parameter_set))
+%             plot_without_smoother = 1;
+%         else
+%             plot_without_smoother = 0;
+%         end
+ 
         quarter1 = get(handles.firstPeriodQuarter,'Value');
         year1=  get(handles.firstPeriodYear,'Value');
         T0 = (year1-1)*4 + quarter1- handles.firstPeriodQuarterDefault +1;
@@ -247,11 +248,9 @@ end
             uicontrol(hObject);
             return;
         end
-        
-
         options_.nodisplay = 0;
         options_.plot_priors = 0;
-
+        
         shock_grouping = get(handles.useShockGrouping,'Value');
         
         if(~variablesSelected)
@@ -261,7 +260,7 @@ end
         end
         gui_tools.project_log_entry('Doing shock decomposition','...');
         [jObj, guiObj] = gui_tools.create_animated_screen('I am doing shock decomposition... Please wait...', tabId);
-       
+        
         var_list_=[];
         
         num_selected = 0;
@@ -280,25 +279,22 @@ end
         
         dynare_default = 1;
         if(isfield(oo_, 'FilteredVariables') && isfield(oo_, 'SmoothedVariables') && isfield(oo_, 'UpdatedVariables'))
-            sfields = fieldnames(oo_.FilteredVariables);
-            x = find(strcmp(sfields, 'Mean'));
-            
-            if(isempty(x))
-                dynare_default = 0;
+            if(isfield(oo_.FilteredVariables, 'Mean'))
+               dynare_default = 0;
             end
+
         end
         
         % computations take place here
-       
+        
         try
             if(~dynare_default)
-                
                 %options_.first_obs = 1;
                 d = project_info.first_obs_date(1);
                 %d= first_period(1);
                 [ex_names, leg] = get_shock_groups(shock_grouping);
                 gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0,[],[], T0, T1);
-            
+                
             else
                 options_.model_settings.shocks = model_settings.shocks;
                 options_.shock_grouping = shock_grouping;
@@ -306,7 +302,6 @@ end
             end
             
             parameter_set = options_.parameter_set;
-            set(handles.pussbuttonCloseAll, 'Enable', 'on');
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Shock decomposition command executed successfully!', 'DynareGUI','modal'));
@@ -363,7 +358,7 @@ end
             end
         end
         leg{num_groups+1,1} = 'Others';
-
+        
     end
 
     function pussbuttonReset_Callback(hObject,evendata)
@@ -371,17 +366,14 @@ end
             set(handles.vars(ii),'Value',0);
             
         end
-        % TODO Default value: posterior_mean if Metropolis has been run, else posterior_mode.
         set(handles.parameterSet,'Value', handles.parameterSetDefault);
-      
+        
         set(handles.firstPeriodQuarter,'Value', handles.firstPeriodQuarterDefault);
         set(handles.firstPeriodYear,'Value', handles.firstPeriodYearDefault);
         set(handles.lastPeriodQuarter,'Value', handles.lastPeriodQuarterDefault);
         set(handles.lastPeriodYear,'Value', handles.lastPeriodYearDefault);
         
         set(handles.useShockGrouping, 'Value', 0);
-        
-        
     end
 
     function value = variablesSelected
@@ -414,30 +406,27 @@ end
     end
 
     function parameterSet_CreateFcn(hObject,evendata)
-
+        
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
         set(hObject, 'String', {'calibration','prior_mode', 'prior_mean', 'posterior_mode', 'posterior_mean','posterior_median'});
         
-        % TODO Default value: posterior_mean if Metropolis has been run, else posterior_mode.
+        %Default value: posterior_mean if Metropolis has been run, else posterior_mode.
         handles.parameterSetDefault = 4;
+         if isfield(oo_,'posterior_mean')
+              handles.parameterSetDefault = 5;
+         end
+        
         set(hObject,'Value', handles.parameterSetDefault);
     end
 
-    
-
-
-
-
     function firstPeriodQuarter_CreateFcn(hObject,evendata)
-        % Hint: popupmenu controls usually have a white background on Windows.
-        %       See ISPC and COMPUTER.
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
         set(hObject, 'String', {'Q1','Q2', 'Q3', 'Q4'});
-
+        
         handles.firstPeriodQuarterDefault = first_period.time(2);
         set(hObject,'Value', handles.firstPeriodQuarterDefault);
     end
@@ -446,7 +435,7 @@ end
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
-       
+        
         ii=1;
         for y= first_period.time(1):last_period.time(1)
             years_str{ii} = num2str(y);
@@ -479,22 +468,10 @@ end
         set(hObject, 'String', years_str);
         handles.lastPeriodYearDefault = ii-1;
         set(hObject,'Value', handles.lastPeriodYearDefault);
-       
-    end
-
-    %TODO  put this function into gui_tools
-    function pussbuttonCloseAll_Callback(hObject,evendata)
         
-        main_figure = getappdata(0,'main_figure');
-        fh=findall(0,'type','figure');
-        for i=1:length(fh)
-            if(~(fh(i)==main_figure))
-                close(fh(i));
-            end
-        end
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
     end
 
-
-  
+    function pussbuttonCloseAll_Callback(hObject,evendata)
+        gui_tools.close_all_figures();
+    end
 end

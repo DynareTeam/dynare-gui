@@ -1,14 +1,35 @@
 function dynare_command_options_estimation()
-% Create Dynare_GUI internals structure which hold
-% all options for command estimation
+% function dynare_command_options_estimation()
+% creates Dynare_GUI internal structure which holds possible options for
+% estimation command
+%
+% Each command option has following four fields: name, default value (if any), type and description. 
+%
+% INPUTS
+%   none
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
 
-% There are 70 options of this command which are grouped in following
-% groups: data, optimizer, solver, MH_options, filter, postprocessing, Particle_filter and output.
-
-% Each command option has following four fields: name, default value (if any), type
-% INTEGER, DOUBLE, check_option, special) and description. Option of type
-% special needs to be specifically handled in Dynare_GUI.
-
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global dynare_gui_;
 dynare_gui_.estimation = {};

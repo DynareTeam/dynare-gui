@@ -1,16 +1,45 @@
 function fHandle= gui_define_comm_options(comm, comm_name)
+% function fHandle= gui_define_comm_options(comm, comm_name)
+% interface for defining options for following DYNARE commands: dynare,
+% stoch_simul, simul, estimation and conditional dorecast
+%
+% INPUTS
+%   comm:         dynare_gui_ structure where options for command are saved
+%   comm_name:    command name (dynare, stoch_simul, simul, estimation or conditional dorecast) 
+%
+% OUTPUTS
+%   fHandle:    handle of Matlab figure which displays the interface
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global model_settings;
 global project_info;
 global options_;
-
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 fHandle = figure('Name', 'Dynare GUI - Command definition', ...
     'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
-    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off');%,'WindowStyle','modal');
+    'Position', [10 10 180 36], 'Visible', 'off', 'Resize', 'off','WindowStyle','modal');
 
 movegui(fHandle,'center');
 set(fHandle, 'Visible', 'on');
@@ -34,7 +63,6 @@ if(isempty(fieldnames(user_options)))
     user_options.tex = project_info.latex;
     user_options.graph_format = 'fig,eps';
     user_options.order = 1;
-
 end
 
 uicontrol( ...
@@ -53,9 +81,7 @@ handles.uipanel = uipanel( ...
     'Position', [2 5 178 28], ...
     'Title', '','BorderType', 'none');
 
-
 % Create tabs
-%handles.tab_group = uiextras.TabPanel( 'Parent',  handles.uipanel,  'Padding', 2, 'Visible', 'on' );
 handles.tab_group = uitabgroup(handles.uipanel,'Position',[0 0 1 1]);
 
 for i=1:num_groups
@@ -108,13 +134,9 @@ handles.pussbuttonClose = uicontrol( ...
 
 
     function create_tab(num,group_name)
-        %new_tab = uiextras.Panel( 'Parent', handles.tab_group, 'Padding', 2);
-        %handles.tab_group.TabNames(num) = group_name;
         new_tab = uitab(handles.tab_group, 'Title', group_name, 'UserData', num);
         
         tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-        
-        %group = getfield(comm, group_name{1});
         group = getfield(comm, group_name);
         numOptions = size(group,1);
         tab_handles = [];
@@ -199,9 +221,6 @@ handles.pussbuttonClose = uicontrol( ...
             
             if(isfield(user_options,  group{ii,1}))
                 userDefaultValue = getfield(user_options, group{ii,1});
-                %userDefaultValue =  eval(sprintf('model_settings.%s.%s;',comm_name, group{ii,1}));
-%                 if(strcmp(option_type, 'check_option'))
-%                     userDefaultValue= 1;
                 if(strcmp(option_type, 'INTEGER'))
                     userDefaultValue = num2str(userDefaultValue);
                 elseif(strcmp(option_type, 'DOUBLE'))
@@ -221,7 +240,6 @@ handles.pussbuttonClose = uicontrol( ...
             
             if(strcmp(option_type, 'check_option'))
                 
-                
                 tab_handles.values(ii)=uicontrol( ...
                     'Parent', tabs_panel, ...
                     'Style', 'checkbox', ...
@@ -235,28 +253,15 @@ handles.pussbuttonClose = uicontrol( ...
                 
             else
                 if(iscell(option_type))
-                    %tool_tip_string = sprintf(' %s',option_type{1});
                     if(~isnumeric(userDefaultValue))
                         
-                        %[found, ind]  = ismember(option_type, userDefaultValue);
                         ind  = find(ismember(option_type, userDefaultValue));
                         if(~isempty(ind))
                             userDefaultValue = ind;
                         else
                             userDefaultValue = 1;    
                         end
-                        
-                        %                         found = 0;
-%                         for j=1: size(ind,2)
-%                             if ind(j)
-%                                 userDefaultValue = j;
-%                                 found = 1;
-%                             end
-%                         end
-%                         if(~found)
-%                             userDefaultValue = 1;
-%                         end
-                        
+                       
                     end
                     tab_handles.values(ii)=  uicontrol('Parent',  tabs_panel, ...
                         'Style', 'popup',...
@@ -266,11 +271,8 @@ handles.pussbuttonClose = uicontrol( ...
                         'HorizontalAlignment', 'left',...
                         'TooltipString', 'popup_value',...
                         'Visible', visible);
-                    
-                    
-                else
+               else
                     tool_tip_string = option_type;
-                    
                     
                     tab_handles.values(ii)=uicontrol( ...
                         'Parent',  tabs_panel, ...
@@ -289,15 +291,10 @@ handles.pussbuttonClose = uicontrol( ...
                         'Units','characters',...
                         'Position', [h_space*2+width_name+width_value-3 new_top-ii*2 3 1.5], ...
                         'Callback',{@select_file, group{ii,1},tab_handles.values(ii)});
-                    
                 end
-                
             end
             
-            
-            
             try
-                %current_value= eval(sprintf('options_.%s;',group{ii,5}));
                 if(strcmp(comm_name,'conditional_forecast'))
                     current_value= getfield(model_settings.conditional_forecast_options, group{ii,1});
                 else
@@ -347,12 +344,6 @@ handles.pussbuttonClose = uicontrol( ...
                     'Enable', 'off',...
                     'HorizontalAlignment', 'left',...
                     'Visible', visible);
-            
-%             if(strcmp(option_type, 'check_option'))
-%                 if(isnumeric(current_value))    
-%                     set(tab_handles.values(ii),'Value', current_value);
-%                 end
-%             end
             
             defaultString = group{ii,2};
             if (length(defaultString)> width_default)
@@ -404,7 +395,6 @@ handles.pussbuttonClose = uicontrol( ...
                 'String', textDesc, ...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
-            %'TooltipString', group{ii,4},...
             set(tab_handles.description(ii), 'TooltipString', tool_tip_string);
             
             handles.options(current_option) = tab_handles.options(ii);
@@ -484,7 +474,6 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                 case '(NAME, VALUE, ...)'
                    %TODO optim
- 
                     
             end
             
@@ -527,43 +516,14 @@ handles.pussbuttonClose = uicontrol( ...
     end
 
     function pussbuttonUseOptions_Callback(hObject,callbackdata)
-        %saveUserOptions();
-        %setappdata(0,comm_name,user_options);
-        
         comm_str = saveUserOptions();
         setappdata(0,comm_name,comm_str);
-        
-        %[new_comm, new_options] = createCommand();
-        %comm_str = gui_tools.command_string(comm_name, new_comm);
-        
-        %gui_tools.project_log_entry(sprintf('Defined %s command', comm_name),comm_str);
-        %setappdata(0,comm_name,comm_str);
-        %setappdata(0,comm_name,new_comm);
-        %setappdata(0,'new_options_',new_options);
         close;
-        
-        %set(fHandle, 'UserData', comm_str);
-        %set(getappdata(0, 'tabGroup'), 'SelectedTab' , callbackTabId);
-        %gui_tabs.add_tab(getappdata(0,'main_figure'), 'Shocks simul. ');
-        
     end
 
 
     function new_user_options = saveUserOptions()
-        
-%         if(~isfield(model_settings, 'user_options'))
-%            model_settings.user_options = struct();
-%         end
-%          
-%         if(~isfield(model_settings.user_options, comm_name))
-%            model_settings.user_options = setfield(model_settings.user_options,comm_name,struct());
-%         end
-%         
-%         user_options = getfield(model_settings.user_options,comm_name); 
-%         
         new_user_options = struct();
-        
-
         numOptions = size(handles.values,2);
         for ii = 1:numOptions
             
@@ -573,7 +533,6 @@ handles.pussbuttonClose = uicontrol( ...
                 current_value = get(handles.current_values(ii),'String');
                 if(value || (value ~= str2num(current_value)))
                     comm_option = get(handles.options(ii),'String');
-                    %new_comm = setfield(new_comm,comm_option,'');
                     new_user_options = setfield(new_user_options,comm_option,value);
                 end
                
@@ -582,10 +541,6 @@ handles.pussbuttonClose = uicontrol( ...
                 
                 if(~isempty(value))
                     comm_option = get(handles.options(ii),'String');
-                    % eval(sprintf('new_comm.%s = %s',option, value));
-                    
-                    
-                    %if(strcmp(option_type, 'INTEGER'))
                     if(~isempty(strfind(option_type, 'INTEGER')))
                         new_user_options = setfield(new_user_options,comm_option,str2double(value));
                         
@@ -603,100 +558,13 @@ handles.pussbuttonClose = uicontrol( ...
                         
                     else%we save it as a string
                         new_user_options = setfield(new_user_options,comm_option,value);
-                        
                     end
-                    
-                    
                 end
             end
             
         end
-      % model_settings.user_options = setfield(model_settings.user_options,comm_name,user_options);        
         
     end
-
-%     function [new_comm, new_options] = createCommand()
-%         
-%         new_comm = struct();
-%         new_options = struct();
-%         numOptions = size(handles.values,2);
-%         for ii = 1:numOptions
-%             
-%             option_type = get(handles.values(ii),'TooltipString');
-%             if(strcmp(option_type, 'check_option'))
-%                 value = get(handles.values(ii),'Value');
-%                 if(value)
-%                     comm_option = get(handles.options(ii),'String');
-%                     new_comm = setfield(new_comm,comm_option,'');
-%                     option = get(handles.options(ii),'UserData');
-%                     eval(sprintf('new_options.%s=1;',option));
-%                 end
-%                
-%             else 
-%                 value = strtrim(get(handles.values(ii),'String'));
-%                 if(~isempty(value))
-%                     comm_option = get(handles.options(ii),'String');
-%                     % eval(sprintf('new_comm.%s = %s',option, value));
-%                     option = get(handles.options(ii),'UserData');
-%                     
-%                     %if(strcmp(option_type, 'INTEGER'))
-%                     if(~isempty(strfind(option_type, 'INTEGER')))
-%                         new_comm = setfield(new_comm,comm_option,str2double(value));
-%                         eval(sprintf('new_options.%s=%d;',option,str2double(value) ));
-%                     elseif(strcmp(option_type, 'DOUBLE'))
-%                         new_comm = setfield(new_comm,comm_option,str2double(value));
-%                         eval(sprintf('new_options.%s=%d;',option,str2double(value) ));
-%                     else %we save it as a string
-%                         new_comm = setfield(new_comm,comm_option,value);
-%                         eval(sprintf('new_options.%s=''%s'';',option,value));
-%                     end
-%                     
-%                     
-%                 end
-%             end
-%             
-%         end
-%                
-%         
-%     end
-
-
-%     function comm_str = createCommandString()
-%         comm_str = sprintf('%s( ',comm_name);
-%         first_option = 1;
-%         numOptions = size(handles.values,2);
-%         for ii = 1:numOptions
-%             
-%             option_type = get(handles.values(ii),'TooltipString');
-%             if(strcmp(option_type, 'check_option'))
-%                 value = get(handles.values(ii),'Value');
-%                 if(value)
-%                     option = get(handles.options(ii),'String');
-%                     if(first_option)
-%                         comm_str = strcat(comm_str, sprintf('%s ', option));
-%                         first_option = 0;
-%                     else
-%                         comm_str = strcat(comm_str, sprintf(', %s ',option));
-%                     end
-%                 end
-%             else
-%                 value = strtrim(get(handles.values(ii),'String'));
-%                 if(~isempty(value))
-%                     option = get(handles.options(ii),'String');
-%                     if(first_option)
-%                         comm_str = strcat(comm_str, sprintf('%s = %s', option, value));
-%                         first_option = 0;
-%                     else
-%                         comm_str = strcat(comm_str, sprintf(', %s = %s',option, value));
-%                     end
-%                 end
-%             end
-%             
-%         end
-%         comm_str = strcat(comm_str, ' )');
-%         
-%         gui_tools.project_log_entry(sprintf('Defined %s command', comm_name),comm_str);
-%     end
 
     function pushbuttonSaveDefaults_Callback(hObject,callbackdata)
         numOptions = size(handles.values,2);
@@ -707,23 +575,17 @@ handles.pussbuttonClose = uicontrol( ...
             option_type = get(handles.values(ii),'TooltipString');
             if(strcmp(option_type, 'check_option'))
                 value = get(handles.values(ii),'Value');
-               
-                %eval(sprintf('model_settings.defaults.%s.%s = %d;',comm_name, get(handles.options(ii),'String'),value));
             else
                 value = strtrim(get(handles.values(ii),'String'));
                 if(iscell(value))
                    user_value = value {get(handles.values(ii),'Value')}; 
                    value = user_value;
                 end
-                %eval(sprintf('model_settings.%s.%s = ''%s'';',comm_name, get(handles.options(ii),'String'),value));
             end
             defaults = setfield(defaults,get(handles.options(ii),'String'),value);
         end
-        %fileName = 'dynare_gui_user_settings.mat';
-        %save(fileName,'dynare_gui_user_settings_');
         
         if(~isfield(model_settings, 'defaults'))
-            %model_settings = setfield(model_settings, 'defaults', struct());
             model_settings.defaults = struct();
         end
         model_settings.defaults = setfield(model_settings.defaults,comm_name,defaults);
@@ -733,7 +595,6 @@ handles.pussbuttonClose = uicontrol( ...
     end
 
     function pushbuttonLoadDefaults_Callback(hObject,callbackdata)
-        %defaults = struct();
         if(~isfield(model_settings, 'defaults') || ~isfield(model_settings.defaults, comm_name))
             msgbox('There are no saved default values. Please save them first for future use.', 'DynareGUI');
             return;
@@ -745,17 +606,7 @@ handles.pussbuttonClose = uicontrol( ...
             field_name = get(handles.options(ii),'String');
             value= getfield(defaults,field_name);
             option_type = get(handles.values(ii),'TooltipString');
-%             try
-%                 value = eval(sprintf('model_settings.defaults.%s.%s;', comm_name, get(handles.options(ii),'String')));
-%             catch
-%                 if(strcmp(option_type, 'check_option'))
-%                     value = 0;
-%                 else
-%                     value = '';
-%                 end
-%             end
-            
-            
+           
             if(strcmp(option_type, 'check_option'))
                 if(~isnumeric(value))
                     value = 0;
@@ -766,33 +617,17 @@ handles.pussbuttonClose = uicontrol( ...
                 if(~isnumeric(value))
                     userValue = 1;
                     [found, ind] = ismember(value,  get(handles.values(ii),'String'));
-                    %ind = find(ismember(value,  get(handles.values(ii),'String')));
                     if(found)
                         userValue = ind;
                     end
-                    
-%                     found = 0;
-%                     for j=1: size(ind,2)
-%                         if ind(j)
-%                             userValue = j;
-%                             found = 1;
-%                         end
-%                     end
-%                     if(~found)
-%                         userValue = 1;
-%                     end
-                    
                 else
                     userValue = value;
                 end
                 
                 set(handles.values(ii),'Value', userValue);
             else
-                
                 set(handles.values(ii),'String', value);
             end
-            
-            
         end
         msgbox('Default values loaded successfully', 'DynareGUI');
         
@@ -808,8 +643,6 @@ handles.pussbuttonClose = uicontrol( ...
             else
                 set(handles.values(ii),'String','');
             end
-            
-            
         end
     end
 

@@ -1,4 +1,32 @@
 function gui_estim_params(tabId)
+% function gui_estim_params(tabId)
+% interface for the estimated parameters & shocks functionality
+%
+% INPUTS
+%   tabId:      GUI tab element which displays the interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global estim_params_;
@@ -8,7 +36,6 @@ if(~isfield(model_settings, 'estim_params'))
     try
         model_settings.estim_params = create_estim_params_cell_array(evalin('base','M_.param_names'),evalin('base','M_.exo_names'), evalin('base','estim_params_'));
     catch ME
-        
         gui_tools.show_error('Error while creating estimated parameters', ME, 'basic');
         %warnStr = [sprintf('Estimated parameters were not specified in .mod file! \n\nYou can change .mod file or specify them here by selecting them out of complete list of parameters and exogenous variables.\n')];
         %gui_tools.show_warning(warnStr,'Estimated parameters were not specified in .mod file!' );
@@ -16,13 +43,14 @@ if(~isfield(model_settings, 'estim_params'))
     end
 end
 
-
 estim_params = model_settings.estim_params;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 top = 35;
 handles = []; %use by nasted functions
+
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
 uicontrol(tabId,'Style','text',...
     'String','Estimated parameters & shocks:',...
@@ -38,19 +66,15 @@ panel_id = uipanel( ...
 
 create_panel_elements(panel_id);
 
-uicontrol(tabId, 'Style','pushbutton','String','Select parameters','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@select_params} );
-uicontrol(tabId, 'Style','pushbutton','String','Select shocks','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@select_vars} );
-uicontrol(tabId, 'Style','pushbutton','String','Remove selected','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@remove_selected} );
-uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[0.49 0.02 .15 .05], 'Callback',{@save_changes} );
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.65 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Select parameters','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@select_params} );
+uicontrol(tabId, 'Style','pushbutton','String','Select shocks','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@select_vars} );
+uicontrol(tabId, 'Style','pushbutton','String','Remove selected','Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@remove_selected} );
+uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[gui_size.space*4+gui_size.button_width*3 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@save_changes} );
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*5+gui_size.button_width*4 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function save_changes(hObject,event, hTab)
         
         try
-            %             field = priors_not_specified();
-            %             if(~isempty(field))
-            %                 gui_tools.show_warning(['prior shape is not specified for ', field]);
-            %             else
             if(check_values())
                 remove_selected();
                 model_settings.estim_params = estim_params;
@@ -173,7 +197,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
 
 
 
- function status = check_values()
+    function status = check_values()
         status = 1;
         data = estim_params;
         for i = 1:size(data,1)
@@ -291,15 +315,6 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             cellArray{i,13} = false;% remove flag
             
             
-            %             cellArray{i,4} = LB; %params(i,3);% lower bound
-            %             cellArray{i,5} = UB; %params(i,4);% upper bound
-            %
-            %             cellArray{i,6} = gui_tools.prior_shape(params(i,5));% prior shape
-            %
-            %             cellArray{i,7} = params(i,6);% prior mean
-            %             cellArray{i,8} = params(i,7);% prior std
-            %             cellArray{i,9} = false;% remove flag
-            
         end
         
         for i = 1:m
@@ -322,22 +337,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             cellArray{n+i,10} = var_exo(i,8);% Prior 3rd parameter
             cellArray{n+i,11} = var_exo(i,9);% Prior 4rd parameter
             cellArray{n+i,12} = var_exo(i,10);% scale parameter
-            
-            
-            
             cellArray{n+i,13} = false;% remove flag
-            
-            %             cellArray{n+i,4} = LB; %var_exo(i,3);% lower bound
-            %             cellArray{n+i,5} = UB; %var_exo(i,4);% upper bound
-            %
-            %             cellArray{n+i,6} =  gui_tools.prior_shape(var_exo(i,5));% prior shape
-            %             cellArray{n+i,7} = var_exo(i,6);% prior mean
-            %             cellArray{n+i,8} = var_exo(i,7);% prior std
-            %             cellArray{n+i,9} = false;% remove flag
-            
-            
         end
-        
     end
 
 end

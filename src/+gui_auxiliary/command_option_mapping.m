@@ -1,6 +1,33 @@
 function mapping = command_option_mapping(name)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+% function mapping = command_option_mapping(name)
+% auxiliary function which returns name of oo_ field which corresponds to
+% specified command option name
+%
+% INPUTS
+%   name:       command option name
+%
+% OUTPUTS
+%   mapping:    name of corresponding oo_ field
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 
@@ -9,8 +36,6 @@ mapping = name;
 switch(name)
 
     % estimation command options
-    
-           
     case 'datafile'
         if(project_info.new_data_format )
             mapping = 'dataset.file';
@@ -32,8 +57,7 @@ switch(name)
             mapping = 'first_obs';
         end
                    
-                    
-    case 'mode_check'
+   case 'mode_check'
         mapping = 'mode_check.status';
         
     case 'mode_check_neighbourhood_size'
@@ -95,7 +119,6 @@ switch(name)
          
 
     % estimation and stoch_simul command options
- 
     case 'tex'
         mapping = 'TeX';
 

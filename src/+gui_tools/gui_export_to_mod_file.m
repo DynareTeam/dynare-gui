@@ -1,4 +1,32 @@
 function gui_export_to_mod_file()
+% function gui_export_to_mod_file()
+% creates new .dyn file based on the current settings in the Dynare_GUI 
+%
+% INPUTS
+%   none
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info model_settings;
 global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info;
@@ -16,9 +44,9 @@ try
     fprintf(exp_file, '// It is meant to be used with @#include directive in ‘.mod’ file. Comment out parts that you don''t need.\n\n\n');
                 
                 
-    export_model_settings('var', model_settings.variables(:,2), model_settings.variables(:,3), model_settings.variables(:,4));
-    export_model_settings('varexo',model_settings.shocks(:,2), model_settings.shocks(:,3), model_settings.shocks(:,4));
-    export_model_settings('parameters', model_settings.params(:,2), model_settings.params(:,3), model_settings.params(:,4));
+    export_model_settings('var', model_settings.variables(:,1), model_settings.variables(:,2), model_settings.variables(:,3));
+    export_model_settings('varexo',model_settings.shocks(:,1), model_settings.shocks(:,2), model_settings.shocks(:,3));
+    export_model_settings('parameters', model_settings.params(:,1), model_settings.params(:,2), model_settings.params(:,3));
     export_estimated_params();
     export_varobs();
     export_dynare_commands();
@@ -85,12 +113,39 @@ end
     end
 
     function export_dynare_commands
-        
-        if(isfield(model_settings, 'simul') && ~isempty(model_settings.simul))
-            fprintf(exp_file, '/* simul command (deterministic simulation)  */\n');
-            fprintf(exp_file, '%s %s', gui_tools.command_string('simul', model_settings.simul ), get_varlist('simul'));
-            fprintf(exp_file, ';\n\n');
+        if(project_info.model_type == 0)
+            if(isfield(M_, 'det_shocks') && ~isempty(M_.det_shocks))
+                fprintf(exp_file, '/* the shocks block */\n');
+                fprintf(exp_file, 'shocks;\n');
+                for i =1: size(M_.det_shocks,1)
+                    fprintf(exp_file, 'var %s;\n', M_.exo_names(M_.det_shocks(i).exo_id));
+                    if(length(M_.det_shocks(i).periods)>1)
+                        fprintf(exp_file, 'periods %g:%g;\n', M_.det_shocks(i).periods(1),  M_.det_shocks(i).periods(end));
+                    else
+                        fprintf(exp_file, 'periods %g;\n', M_.det_shocks(i).periods);
+                    end
+                    fprintf(exp_file, 'values %g;\n', M_.det_shocks(i).value);
+                end
+                fprintf(exp_file, 'end;\n\n');
+            end
+            
+            
+            if(isfield(model_settings, 'simul') && ~isempty(model_settings.simul))
+                fprintf(exp_file, '/* simul command (deterministic simulation)  */\n');
+                fprintf(exp_file, '%s ;\n\n', gui_tools.command_string('simul', model_settings.simul ));
+                
+                if(isfield(model_settings.varlist_, 'simul'))
+                    vlist = model_settings.varlist_.simul;
+                    fprintf(exp_file, '/* display the path   */\n');
+                    for i =1: size(vlist,1)
+                        fprintf(exp_file, 'rplot %s;\n', vlist(i, :));
+                    end
+                    fprintf(exp_file, '\n\n');
+                end
+            end
         end
+        
+        
         
         if(isfield(model_settings, 'stoch_simul') && ~isempty(model_settings.stoch_simul))
             fprintf(exp_file, '/* stoch_simul command (stochastic simulation) */\n');

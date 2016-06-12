@@ -1,6 +1,36 @@
 function [str_value,num_value] = prior_shape(value)
-%PRIOR_SHAPE Summary of this function goes here
-%   Detailed explanation goes here
+% function [str_value,num_value] = prior_shape(value)
+% auxiliary function which returns both numerical and string value for the
+% specified prior shape type
+%
+% INPUTS
+%   value:  prior shape type (can be specified in numerical or string
+%   representation)
+%
+% OUTPUTS
+%   str_value:      string representation of specified prior shape type
+%   num_value:      numerical representation of specified prior shape type
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
+
 str_value = '';
 num_value = 0;
 if(isnumeric(value))
@@ -18,10 +48,9 @@ if(isnumeric(value))
         case 6
             str_value = 'inv_gamma2_pdf';
         case 8
-             str_value = 'Weibull';
+            str_value = 'Weibull';
         otherwise
             str_value = '...';
-            
     end
     
 else
@@ -38,10 +67,8 @@ else
             num_value = 5;
         case 'inv_gamma2_pdf'
             num_value = 6;
-         case 'Weibull'
+        case 'Weibull'
             num_value = 8;
-       
-            
     end
 end
 end

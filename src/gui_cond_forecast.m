@@ -1,4 +1,32 @@
 function gui_cond_forecast(tabId)
+% function gui_cond_forecast(tabId)
+% interface for the DYNARE imcforecast command
+%
+% INPUTS
+%   tabId:  GUI tab element which displays imcforecast command interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global M_;
@@ -14,13 +42,12 @@ handles = [];
 cf_vars = [];
 shocks = [];
 
+gui_size = gui_tools.get_gui_elements_size(tabId);
+
 if(~isfield(model_settings,'conditional_forecast_options'))
     model_settings.conditional_forecast_options = dynare_gui_.conditional_forecast_options;
 end
 
-%set(tabId, 'OnShow', @showTab_Callback);
-v_size = 28; %30
-top = 35;
 % --- PANELS -------------------------------------
 handles.uipanelConditions = uipanel( ...
     'Parent', tabId, ...
@@ -37,7 +64,6 @@ handles.uipanelVars = uipanel( ...
     'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
     'Title', '', 'BorderType', 'none');
 
-%uipanelVars_CreateFcn;
 handles = gui_tabs.create_uipanel_endo_vars(handles);
 
 handles.uipanelComm = uipanel( ...
@@ -84,13 +110,12 @@ handles.conditional_forecast = uicontrol( ...
     'TooltipString', comm_str, ...
     'HorizontalAlignment', 'left');
 
-
 % --- PUSHBUTTONS -------------------------------------
 handles.pussbuttonCondForecast = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonCondForecast', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.01 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height],...
     'String', 'Conditional forecast !', ...
     'Callback', @pussbuttonCondForecast_Callback);
 
@@ -98,7 +123,7 @@ handles.pussbuttonReset = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonReset', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.17 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height],...
     'String', 'Reset', ...
     'Callback', @pussbuttonReset_Callback);
 
@@ -106,7 +131,7 @@ handles.pussbuttonClose = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonReset', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.33 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height],...
     'String', 'Close this tab', ...
     'Callback',{@close_tab,tabId});
 
@@ -114,16 +139,16 @@ handles.pussbuttonCloseAll = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonSimulation', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.49 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*4+gui_size.button_width*3 gui_size.bottom gui_size.button_width gui_size.button_height],...
     'String', 'Close all output figures', ...
-    'Enable', 'off',...
+    'Enable', 'on',...
     'Callback', @pussbuttonCloseAll_Callback);
 
 handles.pushbuttonCommandDefinition = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pushbuttonCommandDefinition', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.84 0.02 .15 .05],...
+    'Units','normalized','Position',[1-gui_size.space-gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height],...
     'String', 'Define command options ...', ...
     'Callback', @pushbuttonCommandDefinition_Callback);
 
@@ -144,8 +169,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
     'Callback', @pushbuttonDeleteCond_Callback);
 
 
-
-
     function uipanelConditions_CreateFcn()
         
         handles.tabConditionalPanel = uitabgroup(handles.uipanelConditions,'Position',[0 0 1 1]);
@@ -161,7 +184,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         handles.tubNum= handles.tubNum+1;
         tubNum = handles.tubNum;
         htabPanel = uitab(handles.tabConditionalPanel, 'Title',sprintf('Cond %d', tubNum) , 'UserData', tubNum);
-        %htabPanel = uiextras.Panel( 'Parent', handles.tabConditionalPanel, 'Padding', 2);  % 'BorderType', 'none'
         handles.htabPanel(tubNum)= htabPanel;
         
         tempPanel = uipanel('Parent', htabPanel,'BackgroundColor', 'white', 'BorderType', 'none');
@@ -169,9 +191,7 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         
         handles.tabConditionalPanel.SelectedTab = htabPanel;
         
-        %cf_vars= eval('fields(oo_.MeanForecast.Mean)');
         cf_vars= model_settings.variables;
-        numVariables = length(cf_vars);
         
         listBox = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.86 0.96 0.06]);
         for ii=1: size(cf_vars,1)
@@ -196,11 +216,8 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             'RowName',[],...
             'CellEditCallback',@savedata);
         
-        %%%listBox.UserData = handles.uit(tubNum);
-        
         shocks = model_settings.shocks;
         listBox2 = uicontrol('Parent',tempPanel,'Style','popupmenu','Units','normalized','Position',[0.02 0.08 0.96 0.06]);
-        %list2 = shocks(:,4);
         for ii=1: size(shocks,1)
             list2{ii,1} = shocks{ii,1};
             if(~strcmp(shocks{ii,1}, shocks{ii,3}))
@@ -209,8 +226,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         end
         set(listBox2,'String',['Select controlled varexo...'; list2]);
         handles.ExoVars(tubNum) = listBox2;
-        
-        
         
         function popupmenu_Callback(hObject,eventdata)
             val = get(hObject,'Value');
@@ -222,12 +237,10 @@ handles.pushbuttonDeleteCond = uicontrol( ...
                 return;
             end
             
-            %selectedVar = cf_vars(val-1);
             selectedVar = cf_vars(val-1, 2);
             periods = project_info.default_forecast_periods;
             try
                 value = eval (sprintf('oo_.MeanForecast.Mean.%s', selectedVar{1}));
-                %data = [(1:periods)', value(1:periods), value(1:periods), zeros(periods,1)];
                 for ii=1:periods
                     data{ii,1} = ii;
                     data{ii,2} = value(ii);
@@ -236,7 +249,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
                 end
                 
             catch ME
-                %data = [(1:periods)', zeros(periods,1),zeros(periods,1),zeros(periods,1)];
                 for ii=1:periods
                     data{ii,1} = ii;
                     data{ii,2} = '';
@@ -255,15 +267,16 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             hObject.Data{r,c} = val;
             if(hObject.Data{r,c-1}~= 0)
                 hObject.Data{r,c+1}= ((val - hObject.Data{r,c-1})/hObject.Data{r,c-1})*100;
-                
             end
         end
-        
-        
     end
 
-
     function pussbuttonCondForecast_Callback(hObject,evendata)
+        
+        if(~(isfield(oo_, 'dr') && isfield(oo_.dr, 'ghu')&& isfield(oo_.dr, 'ghx')))
+            gui_tools.show_warning('Please solve the model before running this command (run estimation or stochastic simulation)!');
+            return;
+        end
         
         comm_str = get(handles.conditional_forecast, 'String');
         if(isempty(comm_str))
@@ -271,8 +284,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             uicontrol(hObject);
             return;
         end
-        
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
         
         failCondition = conditionNotDefined();
         if(failCondition)
@@ -314,7 +325,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         for ii=1:handles.tubNum
             listbox = handles.ConVars(ii);
             val = get(listbox, 'Value');
-            %selectedVar = cf_vars(val-1);
             selectedVar = cf_vars(val-1, 2);
             
             listbox2 = handles.ExoVars(ii);
@@ -374,7 +384,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             
             plot_icforecast(var_list_, plot_periods, options_);
             
-            set(handles.pussbuttonCloseAll, 'Enable', 'on');
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Conditional forecast command executed successfully!', 'DynareGUI','modal'));
@@ -389,7 +398,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         delete(guiObj);
         options_ = old_options;
     end
-
 
     function pushbuttonAddCond_Callback(hObject,evendata)
         creteTab();
@@ -426,7 +434,6 @@ handles.pushbuttonDeleteCond = uicontrol( ...
         end
     end
 
-
     function pussbuttonReset_Callback(hObject,evendata)
         for ii = 1:handles.numVars
             set(handles.vars(ii),'Value',0);
@@ -441,11 +448,7 @@ handles.pushbuttonDeleteCond = uicontrol( ...
                 data{jj,4}= '';
             end
             set(handles.uit(ii), 'Data', data);
-            
         end
-        
-        
-        
     end
 
     function value = variablesSelected
@@ -466,29 +469,16 @@ handles.pushbuttonDeleteCond = uicontrol( ...
                 num=num+1;
                 varName = get(handles.vars(ii),'TooltipString');
                 vars(num) = cellstr(varName);
-                
             end
         end
-        
     end
 
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
-        
     end
 
-
-%TODO  put this function into gui_tools
     function pussbuttonCloseAll_Callback(hObject,evendata)
-        
-        main_figure = getappdata(0,'main_figure');
-        fh=findall(0,'type','figure');
-        for i=1:length(fh)
-            if(~(fh(i)==main_figure))
-                close(fh(i));
-            end
-        end
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        gui_tools.close_all_figures();
     end
 
     function condition = conditionNotDefined()
@@ -524,9 +514,7 @@ handles.pushbuttonDeleteCond = uicontrol( ...
                     jj = jj+1;
                 end
             end
-            
         end
-        
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)

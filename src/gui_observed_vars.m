@@ -1,9 +1,36 @@
 function gui_observed_vars(tabId)
+% function gui_observed_vars(tabId)
+% interface for the observed variables and data file functionality
+%
+% INPUTS
+%   tabId:      GUI tab element which displays the interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
 
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
-global options_;
 global model_settings;
+global options_;
 
 if(~isfield(model_settings, 'varobs'))
     try
@@ -15,7 +42,7 @@ if(~isfield(model_settings, 'varobs'))
         model_settings.varobs = [];
     end
 end
- 
+
 varobs = model_settings.varobs;
 
 if(~isfield(model_settings, 'all_varobs'))
@@ -28,11 +55,13 @@ special_color = char(getappdata(0,'special_color'));
 
 handles = []; %use by nasted functions
 
+gui_size = gui_tools.get_gui_elements_size(tabId);
+
 uicontrol(tabId,'Style','text',...
     'String','Observed variables & data file:',...
     'FontWeight', 'bold', ...
     'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-    'Units','normalized','Position',[0.01 0.92 1 0.05] ); 
+    'Units','normalized','Position',[0.01 0.92 1 0.05] );
 
 panel_id = uipanel( ...
     'Parent', tabId, 'Tag', 'uipanelSettings', ...
@@ -42,15 +71,13 @@ panel_id = uipanel( ...
 
 create_panel_elements(panel_id);
 
-uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[0.01 0.02 .15 .05], 'Callback',{@save_changes} );
-uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','normalized','Position',[0.17 0.02 .15 .05], 'Callback',{@select_vars});
-uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','normalized','Position',[0.33 0.02 .15 .05], 'Callback',{@remove_selected});
-uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[0.49 0.02 .15 .05], 'Callback',{@close_tab,tabId} );
-
-
+uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@save_changes} );
+uicontrol(tabId, 'Style','pushbutton','String','Select observed var.','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@select_vars});
+uicontrol(tabId, 'Style','pushbutton','String','Remove selected obs.vars','Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@remove_selected});
+uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*4+gui_size.button_width*3 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function save_changes(hObject,event, hTab)
-         try
+        try
             first_obs = get(handles.first_obs,'String');
             frequency = get(handles.frequency,'Value');
             num_obs = get(handles.num_obs,'String');
@@ -68,7 +95,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 
                 project_info.first_obs = first_obs;
                 project_info.first_obs_date = dates(first_obs);
-                project_info.last_obs_date = dates(first_obs)+ str2num(num_obs)-1;                
+                project_info.last_obs_date = dates(first_obs)+ str2num(num_obs)-1;
                 project_info.freq = frequency;
                 project_info.nobs = num_obs;
                 project_info.data_file = data_file;
@@ -97,10 +124,10 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 msgbox('Changes saved successfully', 'DynareGUI');
                 
             end
-         catch ME
-             gui_tools.show_error('Error while saving observed variables and data file information', ME, 'extended');
-             
-         end
+        catch ME
+            gui_tools.show_error('Error while saving observed variables and data file information', ME, 'extended');
+            
+        end
         
     end
 
@@ -112,12 +139,10 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     function select_vars(hObject,event)
         
         setappdata(0,'varobs',varobs);
-        %h = gui_select_observed_vars();
         window_title = 'Dynare GUI - Select observed variables';
         subtitle = 'Select which observed variables will be used:';
         field_name = 'varobs';  %model_settings filed name
-        %base_field_name = 'variables';  
-        base_field_name = 'all_varobs';  
+        base_field_name = 'all_varobs';
         column_names = {'Endogenous variable','LATEX name ', 'Long name ', 'Set as observed variable '};
         
         if(~isfield(model_settings, 'all_varobs') || isempty(model_settings.all_varobs))
@@ -131,34 +156,33 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         try
             varobs = getappdata(0,'varobs');
             set(handles.obs_table, 'Data',  varobs);
-        catch
-            
+        catch ME
+            gui_tools.show_error('Error while selecting observed variables', ME, 'basic');
         end
         
     end
 
-   
+
 
     function remove_selected(hObject,event)
-         data = varobs;
-         selected = find(cell2mat(data(:,4)));
-         data(selected,:)= [];
-         
-         varobs = data;
-         setappdata(0,'varobs',varobs);
-         
-         set(handles.obs_table, 'Data',  varobs);
-         
+        data = varobs;
+        selected = find(cell2mat(data(:,4)));
+        data(selected,:)= [];
+        
+        varobs = data;
+        setappdata(0,'varobs',varobs);
+        
+        set(handles.obs_table, 'Data',  varobs);
     end
 
     function create_panel_elements(panel_id)
-         
-        top = 1;
-        dwidth = 0.2;
-        dheight = 0.08;
-        spc = 0.01;
-        fheight=0.05;
         
+        top = 1;
+        dwidth = gui_size.default_width;
+        dheight = gui_size.default_height;
+        spc = gui_size.c_width;
+        fheight = dheight/2;
+      
         try
             num = 1;
             uicontrol(panel_id,'Style','text',...
@@ -192,7 +216,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             
             handles.first_obs =  uicontrol(panel_id,'Style','edit',...
                 'String', project_info.first_obs, ...
-                 'TooltipString','For example: 1990Y, 1990Q3, 1990M11,1990W49',...
+                'TooltipString','For example: 1990Y, 1990Q3, 1990M11,1990W49',...
                 'HorizontalAlignment', 'left',...
                 'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
@@ -216,9 +240,9 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 'Value', project_info.freq,...
                 'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
-           
             
-             uicontrol(panel_id,'Style','text',...
+            
+            uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc fheight]);
@@ -236,25 +260,21 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 'Units','normalized','Position',[spc*3+dwidth top-num*dheight dwidth fheight],...
                 'Enable', 'off');
             
-             uicontrol(panel_id,'Style','text',...
+            uicontrol(panel_id,'Style','text',...
                 'String','*',...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','normalized','Position',[spc*3.3+dwidth*2 top-num*dheight spc fheight]);
             
-
-             num=num+1.5;
             
-             uicontrol(panel_id,'Style','text',...
+            num=num+1.5;
+            
+            uicontrol(panel_id,'Style','text',...
                 'String','Observed variables:',...
                 'FontWeight', 'bold', ...
                 'HorizontalAlignment', 'left','BackgroundColor', special_color,...
                 'Units','normalized','Position',[spc*2 top-num*dheight dwidth fheight]);
             
-            
-            
             obs_variables(panel_id,varobs);
-            
-            
             
             uicontrol(panel_id,'Style','text',...
                 'String','* = required field',...
@@ -279,7 +299,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
             if(status)
                 uiwait(msgbox('Data file copied to project folder', 'DynareGUI','modal'));
-          
+                
             end
             
             [directory,basename,extension] = fileparts(fileName);
@@ -304,7 +324,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                             j=1;
                             while ~found && j <= size(W1,1)
                                 if(strcmp(W2(i).name, W1(j).name))
-                                   found = 1;
+                                    found = 1;
                                 end
                                 j = j+1;
                             end
@@ -325,7 +345,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                         end
                         
                         if(invalid_data)
-                           error('data size is too large'); 
+                            error('data size is too large');
                         end
                         
                     case '.mat'
@@ -334,20 +354,19 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                         num_observables = size(getfield(data, observable_vars{1}),1);
                         
                         
-                
+                        
                     case { '.xls', '.xlsx' }
-                         xls_sheet = 1;
-                         xls_range = '';
-                         [freq,init,data,observable_vars] = load_xls_file_data(fileName,xls_sheet,xls_range);
-                         num_observables = size(data,1);
-                         first_obs =  gui_tools.dates2str(init);
-                         
+                        xls_sheet = 1;
+                        xls_range = '';
+                        [freq,init,data,observable_vars] = load_xls_file_data(fileName,xls_sheet,xls_range);
+                        num_observables = size(data,1);
+                        first_obs =  gui_tools.dates2str(init);
+                        
                     case '.csv'
                         %TODO Check why load_csv_file_data is not working
-%                         [freq,init,data,observable_vars] = load_csv_file_data(fileName);
-%                         num_observables = size(data,1);
-%                         first_obs =  gui_tools.dates2str(init);
-                        
+                        %                         [freq,init,data,observable_vars] = load_csv_file_data(fileName);
+                        %                         num_observables = size(data,1);
+                        %                         first_obs =  gui_tools.dates2str(init);
                         
                         [num,txt,raw] = xlsread(fileName);
                         firs_cell = 1;
@@ -358,8 +377,6 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                         observable_vars = txt(1,firs_cell:end);%names of observable variables is in forst raw
                         num_observables = size(num,1);
                         set(handles.first_obs,'Enable', 'on');
-            
-
                 end
                 
                 if(~isempty(freq))
@@ -395,22 +412,21 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 gui_tools.show_error('Data file is not valid! Please specify new data file.', ME, 'basic');
             end
             
-            
         catch ME
             gui_tools.show_error('Error while selecting data file', ME, 'basic');
         end
     end
 
     function set_all_observables(observable_vars)
-       all_varobs = {};
-       all_endo = model_settings.variables;
-       if(~isempty(observable_vars))
-           indx = ismember(all_endo(:,2),observable_vars);
-           all_varobs = all_endo(indx, :);
-       else
-           all_varobs = all_endo;
-       end
-       model_settings.all_varobs = all_varobs;
+        all_varobs = {};
+        all_endo = model_settings.variables;
+        if(~isempty(observable_vars))
+            indx = ismember(all_endo(:,2),observable_vars);
+            all_varobs = all_endo(indx, :);
+        else
+            all_varobs = all_endo;
+        end
+        model_settings.all_varobs = all_varobs;
     end
 
 
@@ -418,7 +434,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         column_names = {'Observed var.','LATEX name ', 'Long name ', 'Remove obs. var'};
         column_format = {'char','char','char', 'logical'};
         handles.obs_table = uitable(panel_id,'Data',data,...
-            'Units','normalized','Position',[0.02 0.1 0.96 0.4],...
+            'Units','normalized','Position',[0.02 0.1 0.96 0.45],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
             'ColumnEditable', [false false false true ],...
@@ -426,7 +442,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             'RowName',[],...
             'CellEditCallback',@savedata);
         
-              
+        
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
@@ -440,8 +456,6 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function cellArray = create_varobs_cell_array(data,data_tex, data_long, data_id)
-        
-        %n = size(data,1);
         n = length(data);
         
         for i = 1:n
@@ -454,7 +468,4 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             
         end
     end
-    
-
-
 end

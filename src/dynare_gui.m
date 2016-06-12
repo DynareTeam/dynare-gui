@@ -1,10 +1,11 @@
 function varargout = dynare_gui(varargin)
-% This command runs DYNARE_GUI.
+% function varargout = dynare_gui(varargin)
+% Runs DYNARE_GUI.
 %      DYNARE_GUI, by itself, creates a new DYNARE_GUI or raises the existing
 %      singleton*.
 %
 %      H = DYNARE_GUI returns the handle to a new DYNARE_GUI or the handle to
-%      the existing singleton*.
+%      the existing singleton*.interface for the DYNARE estimation command 
 %
 %      DYNARE_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in DYNARE_GUI.M with the given input arguments.
@@ -15,13 +16,8 @@ function varargout = dynare_gui(varargin)
 %      unrecognized property name or invalid value makes property application
 %      stop.  All inputs are passed to dynare_gui_OpeningFcn via varargin.
 %
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
 %
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-
-% Copyright (C) 2001-2015 Dynare Team
+% Copyright (C) 2003-2015 Dynare Team
 %
 % This file is part of Dynare.
 %
@@ -37,7 +33,6 @@ function varargout = dynare_gui(varargin)
 %
 % You should have received a copy of the GNU General Public License
 % along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
-
 
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -79,7 +74,7 @@ movegui(hObject,'center');
 
 %axis off; % Remove axis ticks and numbers
 %axis image; % Set aspect ratio to obtain square pixels
-global dynare_gui_root;
+
 global dynareroot;
 
 setappdata(0, 'bg_color', 'default');
@@ -99,9 +94,9 @@ evalin('base','clear M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_i
 evalin('base','global dynare_gui_ project_info model_settings');
 evalin('base','global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_');
 
-evalin('base','dynare_gui_root = which(''dynare_gui'');');
-
+dynare_gui_root = evalin('base','which(''dynare_gui'');');
 dynare_gui_root = dynare_gui_root(1: strfind(dynare_gui_root, 'dynare_gui.m')-1);
+setappdata(0, 'dynare_gui_root', dynare_gui_root);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -429,6 +424,9 @@ function help_product_help_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+dynare_gui_root = getappdata(0, 'dynare_gui_root');
+path = [dynare_gui_root, filesep,'resources', filesep,'html', filesep, 'index.html'];
+open(path);
 %addTab(hObject, 'Product help ', handles);
 end
 
@@ -534,16 +532,6 @@ h1 = figure(...
 
 appdata = [];
 appdata.lastValidTag = 'uitoolbar1';
-
-% h_test_size = uicontrol(...
-%     'Parent',h1,...
-%     'Units','normalized',...
-%     'String','x',...
-%     'Style','text');
-% default_char_size = get(h_test_size,'extent');
-% set(h_test_size, 'Visible', 'Off');
-% setappdata(0, 'c_width', default_char_size(3));
-% setappdata(0, 'c_height', default_char_size(4));
 
 h2 = uitoolbar(...
     'Parent',h1,...
@@ -895,7 +883,7 @@ h28 = uicontrol(...
     'Max',get(0,'defaultuicontrolMax'),...
     'Min',get(0,'defaultuicontrolMin'),...
     'SliderStep',get(0,'defaultuicontrolSliderStep'),...
-    'String','Prototype v.0.6.5',...
+    'String','Prototype v.0.7',...
     'Style','text',...
     'Value',get(0,'defaultuicontrolValue'),...
     'Position',[0,0.4,1,.1],...

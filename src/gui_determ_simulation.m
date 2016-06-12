@@ -1,4 +1,32 @@
 function gui_determ_simulation(tabId)
+% function gui_determ_simulation(tabId)
+% interface for the DYNARE simul command (deterministic simulations)
+%
+% INPUTS
+%   tabId:  GUI tab element which displays deterministic simulation interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global model_settings;
@@ -12,10 +40,8 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
-%set(tabId, 'OnShow', @showTab_Callback);
-
-top = 35;
 % --- PANELS -------------------------------------
 handles.uipanelShocks = uipanel( ...
     'Parent', tabId, ...
@@ -40,8 +66,6 @@ handles.uipanelComm = uipanel( ...
     'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
     'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
     'Title', 'Current command options:');
-
-
 
 % --- STATIC TEXTS -------------------------------------
 handles.text7 = uicontrol( ...
@@ -85,7 +109,7 @@ handles.pussbuttonSimulation = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonSimulation', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.01 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width_small gui_size.button_height],...
     'String', 'Simulation !', ...
     'Callback', @pussbuttonSimulation_Callback);
 
@@ -93,7 +117,7 @@ handles.pussbuttonReset = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonReset', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.17 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*2+gui_size.button_width_small gui_size.bottom gui_size.button_width_small gui_size.button_height],...
     'String', 'Reset', ...
     'Callback', @pussbuttonReset_Callback);
 
@@ -101,7 +125,7 @@ handles.pussbuttonClose = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonReset', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.33 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*3+gui_size.button_width_small*2 gui_size.bottom gui_size.button_width_small gui_size.button_height],...
     'String', 'Close this tab', ...
     'Callback',{@close_tab,tabId});
 
@@ -109,25 +133,21 @@ handles.pussbuttonCloseAll = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pussbuttonSimulation', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.49 0.02 .15 .05],...
+    'Units','normalized','Position',[gui_size.space*4+gui_size.button_width_small*3 gui_size.bottom gui_size.button_width_small gui_size.button_height],...
     'String', 'Close all output figures', ...
-    'Enable', 'off',...
+    'Enable', 'on',...
     'Callback', @pussbuttonCloseAll_Callback);
 
 handles.pushbuttonCommandDefinition = uicontrol( ...
     'Parent', tabId, ...
     'Tag', 'pushbuttonCommandDefinition', ...
     'Style', 'pushbutton', ...
-    'Units','normalized','Position',[0.84 0.02 .15 .05],...
+    'Units','normalized','Position',[1-gui_size.space-gui_size.button_width_small gui_size.bottom gui_size.button_width_small gui_size.button_height],...
     'String', 'Define command options ...', ...
     'Callback', @pushbuttonCommandDefinition_Callback);
 
     function uipanelShocks_CreateFcn()
-        gui_shocks = model_settings.shocks;
-        numShocks = size(gui_shocks,1);
-        position = 1;
-        top_position = 25;
-        
+                        
         handles.shocksTabGroup = uitabgroup(handles.uipanelShocks,'Position',[0 0 1 1]);
         
         handles.shocks_tab = uitab(handles.shocksTabGroup, 'Title','Temporary shocks' , 'UserData', 1);
@@ -146,7 +166,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         
         shocks = model_settings.shocks;
         list_shocks = uicontrol('Parent',handles.shocks_panel,'Style','popupmenu','Units','normalized','Position',[0.02 0.77 0.7 0.06]);
-        list2 = shocks(:,4);
+        list2 = shocks(:,3);
         set(list_shocks,'String',['Select varexo...'; list2]);
         set(list_shocks,'Callback', @pussbuttonValueChanged_Callback);
         
@@ -156,8 +176,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             'Enable', 'Off',...
             'Callback', @pussbuttonAddValue_Callback);
         
-        %shocks_data = cell(0,4);
-        %shocks_data_items = 0;
         column_names = {'Shock ','Period ','Value ', 'Remove '};
         column_format = {'char','numeric','numeric', 'logical'};
         data = get_det_shocks();
@@ -237,9 +255,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
         end
-        
-        
-        
     end
 
 
@@ -257,8 +272,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         end
     end
 
-
-
     function set_det_shocks()
         data = get(handles.shocks_table, 'Data');
         M_.det_shocks = [];
@@ -269,7 +282,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                     M_.det_shocks = [ M_.det_shocks;
                         struct('exo_det',0,'exo_id',exo_id,'multiplicative',0,'periods',data{i,2},'value',data{i,3}) ];
                 else
-                    %TODO error
+                    gui_tools.show_error('Error while saving deterministic shocks!');
                     
                 end
             end
@@ -281,7 +294,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         for i=1:M_.exo_nbr
             data{i,1} = M_.exo_names(i,:);
             data{i,2} = oo_.exo_steady_state(i);
-            if(~isempty(ex0_))
+            if(~isempty(ex0_) && ~isnan(ex0_(i)))
                 data{i,3} =  data{i,2};
                 data{i,2} = ex0_(i);
             end
@@ -318,7 +331,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
 
 
     function pussbuttonSimulation_Callback(hObject,evendata)
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
         
         comm_str = get(handles.simul, 'String');
         if(isempty(comm_str))
@@ -327,8 +339,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             return;
         end
         if(variablesSelected)
-            % TODO check this - if we don't save oo_ (in case of errors)
-            % consecutive calls to simul are not working
+
             old_oo = oo_;
             
             gui_tools.project_log_entry('Doing deterministic simulation','...');
@@ -378,7 +389,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                     rplot(vars{ii});
                 end
                 
-                set(handles.pussbuttonCloseAll, 'Enable', 'on');
                 jObj.stop;
                 jObj.setBusyText('All done!');
                 uiwait(msgbox('Deterministic simulation executed successfully!', 'DynareGUI','modal'));
@@ -401,16 +411,11 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
     function pussbuttonReset_Callback(hObject,evendata)
         for ii = 1:handles.numVars
             set(handles.vars(ii),'Value',0);
-            
         end
         
         for ii = 1:handles.numShocks
             set(handles.shocks(ii),'Value',0);
         end
-        
-        %set(handles.GroupDisplayBy, 'SelectedObject', handles.radiobuttonShock);
-        
-        
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)
@@ -476,17 +481,8 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         
     end
 
-    %TODO  put this function into gui_tools
     function pussbuttonCloseAll_Callback(hObject,evendata)
-        
-        main_figure = getappdata(0,'main_figure');
-        fh=findall(0,'type','figure');
-        for i=1:length(fh)
-            if(~(fh(i)==main_figure))
-                close(fh(i));
-            end
-        end
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        gui_tools.close_all_figures();
     end
 
     function close_tab(hObject,event, hTab)

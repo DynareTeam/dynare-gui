@@ -1,6 +1,36 @@
 function [jObj, guihandle] = create_animated_screen(title, tabId)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+% function [jObj, guihandle] = create_animated_screen(title, tabId)
+% auxiliary function which creates animated screen for operations that
+% requires longer time
+%
+% INPUTS
+%   title: text for the animated window
+%   tabId: handle of GUI tab elements inside which animated screen is
+%   displayed
+%
+% OUTPUTS
+%   jObj:       java handle for the animated screen
+%   guihandle:  GUI element handle for the animated screen
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 try
     % R2010a and newer

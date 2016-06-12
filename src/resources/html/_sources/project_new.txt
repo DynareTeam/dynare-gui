@@ -1,0 +1,18 @@
+.. _project_new:
+
+Create new project
+============
+
+When creating new project user is displayed form with following information:
+	* project name (required field)
+	* project folder (required field)
+	* project description
+	* project specific settings:
+		* model type
+		* latex representation of the model
+		* maximum forecast periods.
+
+.. figure:: _img\new_project_form.png
+	:width: 800 px
+	
+	New project form

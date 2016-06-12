@@ -1,0 +1,22 @@
+.. _project:
+
+The project file
+============
+
+User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).
+
+Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables: 
+	* DYNARE structures: ``M_, options_, oo_, estim_params_, bayestopt_, dataset_, dataset_info, estimation_info, ys0_, ex0_``
+	* Dynare_GUI structures: ``dynare_gui_, project_info, model_settings``.
+
+Project related functionalities are initiated with Project submenu:
+
+.. image:: _img\project_submenu.png
+
+
+Project related functionalities are:
+
+	* :ref:`project_new`
+	* Open project
+	* Close project
+	* Save project.   

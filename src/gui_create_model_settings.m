@@ -1,8 +1,36 @@
-function status = gui_create_model_settings(modelName)
+function status = gui_create_model_settings()
+% function status = gui_create_model_settings()
+% creates initial model settings and saves it in model_settings structure
+%
+% INPUTS
+%   none
+%
+% OUTPUTS
+%   status: status indicator - success (1) or error (0)
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global model_settings;
 global project_info;
-global M_ ex0_;
+global M_ ex0_ oo_;
 status = 1;
 try
     
@@ -23,8 +51,6 @@ end
         n = size(data,1);
         
         for i = 1:n
-            
-            %cellArray{i,2} = cellstr(char(data(i,:)));
             name = deblank(data(i,:));
             cellArray{i,1} = name;
             cellArray{i,2} = deblank(data_tex(i,:));
@@ -98,7 +124,12 @@ end
                 cellArray{i,6} = ''; %STD
                 next = 7;
             else %deterministic model
-                cellArray{i,4} =  ex0_(i); %oo_.exo_steady_state(i); %initval
+                %TODO: check with Dynare team - how to display initval for deterministic case
+                if(~isempty(ex0_))
+                    cellArray{i,4} =  ex0_(i); 
+                else
+                    cellArray{i,4} = oo_.exo_steady_state(i); %initval
+                end
                 next = 5;
             end
            

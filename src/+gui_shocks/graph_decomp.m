@@ -56,13 +56,13 @@ for j=1:nvar
     if(DynareOptions.shock_grouping)
         shocks = DynareOptions.model_settings.shocks;
         num_shocks = size(shocks,1);
-        [~,idx] = unique(  strcat(shocks(:,1) , 'rows'));
-        shock_groups = shocks(idx,1);
+        [~,idx] = unique(  strcat(shocks(:,8) , 'rows'));
+        shock_groups = shocks(idx,8);
         num_shock_groups = length(shock_groups);
         
         for i=1:num_shock_groups
             g_name = shock_groups{i};
-            members = ismember(shocks(:,1), g_name);
+            members = ismember(shocks(:,8), g_name);
             members(num_shocks+1:num_shocks+2)= 0;
             if(sum(members)==1)
                 new_z(i,:) = squeeze(z(i_var(j),members,:));

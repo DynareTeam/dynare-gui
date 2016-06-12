@@ -1,148 +1,173 @@
 function gui_estimation(tabId)
+% function gui_estimation(tabId)
+% interface for the DYNARE estimation command
+%
+% INPUTS
+%   tabId:      GUI tab element which displays estimation command interface
+%
+% OUTPUTS
+%   none
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 global project_info;
 global dynare_gui_;
 global options_ ;
+global oo_ ;
 global model_settings;
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
-%new_options_ = [];
+gui_size = gui_tools.get_gui_elements_size(tabId);
 
-%set(tabId, 'OnShow', @showTab_Callback);
 do_not_check_all_results = 0;
 
-top = 35;
 % --- PANELS -------------------------------------
-		handles.uipanelResults = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
-			'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73], ...
-			'Title', '', 'BorderType', 'none');
-        
-        uipanelResults_CreateFcn;
-        
-        handles.uipanelVars = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
-			'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
-			'Title', '', 'BorderType', 'none');
-        
-        handles = gui_tabs.create_uipanel_endo_vars(handles);
-        
-        handles.uipanelComm = uipanel( ...
-			'Parent', tabId, ...
-			'Tag', 'uipanelCommOptions', ...
-			'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
-			'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
-			'Title', 'Current command options:');%, ...
-			%'BorderType', 'none');
+handles.uipanelResults = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.01 0.18 0.48 0.73], ...
+    'Title', '', 'BorderType', 'none');
 
-	% --- STATIC TEXTS -------------------------------------
-		uicontrol( ...
-			'Parent', tabId, 'Tag', 'text7', ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
-			'FontWeight', 'bold', ...
-			'String', 'Select wanted results:', ...
-			'HorizontalAlignment', 'left');
-       
-       uicontrol( ...
-			'Parent', tabId, 'Tag', 'text7', ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
-			'FontWeight', 'bold', ...
-			'String', 'Select endogenous variables that will be used in estimation:', ...
-			'HorizontalAlignment', 'left'); 
-		     
-       %current_comm = getappdata(0,'estimation');
-       if(isfield(model_settings,'estimation'))
-           comm = getfield(model_settings,'estimation');
-           comm_str = gui_tools.command_string('estimation', comm);
-           check_all_result_option();
-           if(isfield(comm,'consider_all_endogenous'))
-               set_all_endogenous(comm.consider_all_endogenous);
-           end
-           
-           if(isfield(comm,'consider_only_observed'))
-               if(comm.consider_only_observed)
-                   select_only_observed();
-               end
-           end
-           
-           
-       else
-            comm_str = '';
-            model_settings.estimation = struct();
-       end
-        
-        handles.estimation = uicontrol( ...
-			'Parent', handles.uipanelComm, ...
-			'Tag', 'estimation', ...
-			'Style', 'text', 'BackgroundColor', bg_color,...
-			'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
-			'FontAngle', 'italic', ...
-			'String', comm_str, ...
-            'TooltipString', comm_str, ...
-			'HorizontalAlignment', 'left');
+uipanelResults_CreateFcn;
 
-      
-        % --- PUSHBUTTONS -------------------------------------
-		handles.pussbuttonEstimation = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonSimulation', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.01 0.02 .15 .05],...
-			'String', 'Estimation !', ...
-            'Interruptible','on',...
-			'Callback', @pussbuttonEstimation_Callback);
+handles.uipanelVars = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelVars', 'BackgroundColor', special_color,...
+    'Units', 'normalized', 'Position', [0.51 0.18 0.48 0.73], ...
+    'Title', '', 'BorderType', 'none');
 
-		handles.pussbuttonReset = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.17 0.02 .15 .05],...
-			'String', 'Reset', ...
-			'Callback', @pussbuttonReset_Callback);
-        
-        handles.pussbuttonClose = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonReset', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.33 0.02 .15 .05],...
-			'String', 'Close this tab', ...
-			'Callback',{@close_tab,tabId});
-        
-        handles.pussbuttonResults = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonSimulation', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.49 0.02 .15 .05],...
-			'String', 'Browse results...', ...
-            'Enable', 'on',...
-			'Callback', @pussbuttonResults_Callback);
-        
-        handles.pussbuttonCloseAll = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pussbuttonSimulation', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.65 0.02 .15 .05],...
-			'String', 'Close all output figures', ...
-            'Enable', 'Off',...
-			'Callback', @pussbuttonCloseAll_Callback);
-        
-        handles.pushbuttonCommandDefinition = uicontrol( ...
-			'Parent', tabId, ...
-			'Tag', 'pushbuttonCommandDefinition', ...
-			'Style', 'pushbutton', ...
-			'Units','normalized','Position',[0.84 0.02 .15 .05],...
-			'String', 'Define command options ...', ...
-			'Callback', @pushbuttonCommandDefinition_Callback);
-        
-        
-        
+handles = gui_tabs.create_uipanel_endo_vars(handles);
+
+handles.uipanelComm = uipanel( ...
+    'Parent', tabId, ...
+    'Tag', 'uipanelCommOptions', ...
+    'UserData', zeros(1,0), 'BackgroundColor', bg_color, ...
+    'Units', 'normalized', 'Position', [0.01 0.09 0.98 0.09], ...
+    'Title', 'Current command options:');
+
+% --- STATIC TEXTS -------------------------------------
+uicontrol( ...
+    'Parent', tabId, 'Tag', 'text7', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.01 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Select wanted results:', ...
+    'HorizontalAlignment', 'left');
+
+uicontrol( ...
+    'Parent', tabId, 'Tag', 'text7', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.51 0.92 0.48 0.05],...
+    'FontWeight', 'bold', ...
+    'String', 'Select endogenous variables that will be used in estimation:', ...
+    'HorizontalAlignment', 'left');
+
+if(isfield(model_settings,'estimation'))
+    comm = getfield(model_settings,'estimation');
+    comm_str = gui_tools.command_string('estimation', comm);
+    check_all_result_option();
+    if(isfield(comm,'consider_all_endogenous'))
+        set_all_endogenous(comm.consider_all_endogenous);
+    end
+    
+    if(isfield(comm,'consider_only_observed'))
+        if(comm.consider_only_observed)
+            select_only_observed();
+        end
+    end
+    
+    
+else
+    comm_str = '';
+    model_settings.estimation = struct();
+end
+
+handles.estimation = uicontrol( ...
+    'Parent', handles.uipanelComm, ...
+    'Tag', 'estimation', ...
+    'Style', 'text', 'BackgroundColor', bg_color,...
+    'Units', 'normalized', 'Position', [0.01 0.01 0.98 0.98], ...
+    'FontAngle', 'italic', ...
+    'String', comm_str, ...
+    'TooltipString', comm_str, ...
+    'HorizontalAlignment', 'left');
+
+
+% --- PUSHBUTTONS -------------------------------------
+handles.pussbuttonEstimation = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Estimation !', ...
+    'Interruptible','on',...
+    'Callback', @pussbuttonEstimation_Callback);
+
+handles.pussbuttonReset = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*2+gui_size.button_width_small gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Reset', ...
+    'Callback', @pussbuttonReset_Callback);
+
+handles.pussbuttonClose = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonReset', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*3+gui_size.button_width_small*2 gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Close this tab', ...
+    'Callback',{@close_tab,tabId});
+
+handles.pussbuttonResults = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*4+gui_size.button_width_small*3 gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Browse results...', ...
+    'Enable', 'on',...
+    'Callback', @pussbuttonResults_Callback);
+
+handles.pussbuttonCloseAll = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pussbuttonSimulation', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[gui_size.space*5+gui_size.button_width_small*4 gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Close all output figures', ...
+    'Enable', 'On',...
+    'Callback', @pussbuttonCloseAll_Callback);
+
+handles.pushbuttonCommandDefinition = uicontrol( ...
+    'Parent', tabId, ...
+    'Tag', 'pushbuttonCommandDefinition', ...
+    'Style', 'pushbutton', ...
+    'Units','normalized','Position',[1-gui_size.space-gui_size.button_width_small gui_size.bottom gui_size.button_width_small gui_size.button_height],...
+    'String', 'Define command options ...', ...
+    'Callback', @pushbuttonCommandDefinition_Callback);
+
+
+
     function uipanelResults_CreateFcn()
         results = dynare_gui_.est_results;
         
@@ -152,28 +177,26 @@ top = 35;
         maxDisplayed = 12;
         
         % Create tabs
-        %handles.result_tab_group = uiextras.TabPanel( 'Parent',  handles.uipanelResults,  'Padding', 2, 'Visible', 'on' );
         handles.result_tab_group = uitabgroup(handles.uipanelResults,'Position',[0 0 1 1]);
         
         for i=1:num_groups
-            %create_tab(i, names(i));
             create_tab(i, names{i});
         end
         
-        % Show the first tab
-        %handles.result_tab_group.SelectedChild = 1;
-        
-        
         function create_tab(num,group_name)
-            %new_tab = uiextras.Panel( 'Parent', handles.result_tab_group, 'Padding', 2);
-            %handles.result_tab_group.TabNames(num) = group_name;
+            
             new_tab = uitab(handles.result_tab_group, 'Title',group_name , 'UserData', num);
             tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
             
-            %group = getfield(results, group_name{1});
+            tabs_panel.Units = 'characters';
+            pos = tabs_panel.Position;
+            tabs_panel.Units = 'Normalized';
+            
+            maxDisplayed = floor(pos(4)/2) - 3 ;
+            top_position = pos(4) - 6;
+    
             group = getfield(results, group_name);
             numTabResults = size(group,1);
-            
             
             % Create slider
             if(numTabResults > maxDisplayed)
@@ -184,7 +207,7 @@ top = 35;
                     'Callback', {@scrollPanel_Callback,num,numTabResults} );
             end
             
-            top_position = 25;
+            
             
             ii=1;
             while ii <= numTabResults
@@ -195,8 +218,8 @@ top = 35;
                 
                 tt_string = combine_desriptions(group{ii,3});
                 handles.tab_results(num,ii) = uicontrol('Parent', tabs_panel , 'style','checkbox',...  %new_tab
-                    'Units','normalized',...%'unit','characters',...
-                    'Position',[0.03 0.98-ii*0.08 0.9 .08],...%'position',[3 top_position-(2*ii) 60 2],...
+                    'Units','characters',...  %'Units','normalized',...
+                    'position',[3 top_position-(2*ii) 60 2],...%'Position',[0.03 0.98-ii*0.08 0.9 .08],...
                     'TooltipString', gui_tools.tool_tip_text(tt_string,50),...
                     'string',group{ii,1},...
                     'BackgroundColor', special_color,...
@@ -214,7 +237,6 @@ top = 35;
             
             function checkbox_Callback(hObject, callbackdata, comm_option)
                 value = get(hObject, 'Value');
-                %option = get(hObject, 'String');
                 if(isempty(comm_option))
                     return;
                 end
@@ -256,9 +278,6 @@ top = 35;
                         if(~isempty(indx))
                             option_value = option_value(1:indx(1)-1);
                         end
-                        
-                        
-                        
                         if(comm_option(i).flag)
                             if(comm_option(i).used)
                                 user_options = rmfield(user_options, option_value);
@@ -308,8 +327,8 @@ top = 35;
                     else
                         visible = 'on';
                         set(handles.tab_results(tab_index, ii), 'Visible', visible);
-                        %set(handles.tab_results(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
-                        set(handles.tab_results(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
+                        set(handles.tab_results(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
+                        %set(handles.tab_results(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
                         
                     end
                     
@@ -346,8 +365,8 @@ top = 35;
                         if(comm_option(jj).used)
                             if(~isfield(user_options, comm_option(jj).option))
                                 selected = 0;
-%                             elseif(str2num(getfield(user_options, comm_option(jj).option))==0)
-%                                 selected = 0;
+                                %                             elseif(str2num(getfield(user_options, comm_option(jj).option))==0)
+                                %                                 selected = 0;
                             end
                         else
                             if(isfield(user_options, comm_option(jj).option))
@@ -356,16 +375,16 @@ top = 35;
                         end
                     else
                         if(~isfield(user_options, comm_option(jj).option))
-                                selected = 0;
+                            selected = 0;
                         else
                             value = getfield(user_options, comm_option(jj).option);
                             if(value ~= comm_option(jj).value_if_selected)
                                 selected = 0;
                             end
                         end
-                       
+                        
                     end
-                   jj = jj+1;
+                    jj = jj+1;
                 end
                 set(handles.tab_results(num,ii),'Value',selected);
                 ii = ii+1;
@@ -373,17 +392,15 @@ top = 35;
         end
         do_not_check_all_results = 0;
     end
-    
+
 
     function pussbuttonEstimation_Callback(hObject,evendata)
-        
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
         set(handles.pussbuttonResults, 'Enable', 'off');
         
         user_options = model_settings.estimation;
         old_options = options_;
-                
-
+        old_oo = oo_;
+        
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
@@ -404,10 +421,8 @@ top = 35;
             end
         end
         
-        
         gui_tools.project_log_entry('Doing estimation','...');
-        
-        
+
         var_list_=[];
         
         num_selected = 0;
@@ -425,27 +440,21 @@ top = 35;
         
         model_settings.varlist_.estimation = var_list_;
         
-        %[jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
-        [jObj, guiObj, guiStop, guiOK, fHandle] = gui_tools.run_dynare_command('I am doing estimation... Please wait...', tabId);
-            
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
         
         % computations take place here
-        %status = 1;
         try
             %TODO Check with Dynare team/Ratto!!!
             %gui_tools.clear_dynare_oo_structure();
             
-            oo_recursive_ = dynare_estimation(var_list_); 
+            oo_recursive_ = dynare_estimation(var_list_);
             
             jObj.stop;
-            set(guiStop, 'Enable', 'off');
-            set(guiOK, 'Enable', 'on');
-            %jObj.setBusyText('All done!');
-            jObj.setBusyText('Estimation executed successfully!!');
-            %uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
+            jObj.setBusyText('All done!');
+            
+            uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
             %enable menu options
             gui_tools.menu_options('output','On');
-            set(handles.pussbuttonCloseAll, 'Enable', 'on');
             set(handles.pussbuttonResults, 'Enable', 'on');
             project_info.modified = 1;
             
@@ -454,9 +463,14 @@ top = 35;
             jObj.setBusyText('Done with errors!');
             gui_tools.show_error('Error in execution of estimation command', ME, 'extended');
             uicontrol(hObject);
+            %TODO  Check with Dynare team/Ratto!!!
+            options_ = old_options;
+            oo_ = old_oo;
+            
         end
-        figure(fHandle); 
-        %delete(guiObj);
+        
+        delete(guiObj);
+        
     end
 
 
@@ -474,30 +488,24 @@ top = 35;
         old_comm = model_settings.estimation;
         
         h = gui_define_comm_options(dynare_gui_.estimation,'estimation');
-         
+        
         uiwait(h);
-         
+        
         try
             new_comm = getappdata(0,'estimation');
             
             if(isfield(new_comm,'consider_all_endogenous'))
                 set_all_endogenous(new_comm.consider_all_endogenous);
-                %new_comm = rmfield(new_comm,'consider_all_endogenous');
-                %new_options_ = rmfield(new_options_,'consider_all_endogenous');
-            %else
-                %set_all_endogenous(0);
-            end
+             end
             
             if(isfield(new_comm,'consider_only_observed'))
                 if(new_comm.consider_only_observed)
                     select_only_observed();
                 end
-                %new_comm = rmfield(new_comm,'consider_only_observed');
-                %new_options_ = rmfield(new_options_,'consider_only_observed');
             end
             
             if(~isempty(new_comm))
-                model_settings.estimation = new_comm;   
+                model_settings.estimation = new_comm;
             end
             
             comm_str = gui_tools.command_string('estimation', new_comm);
@@ -548,7 +556,6 @@ top = 35;
                 num=num+1;
                 varName = get(handles.vars(ii),'TooltipString');
                 vars(num) = cellstr(varName);
-                
             end
         end
         
@@ -560,27 +567,10 @@ top = 35;
     end
 
     function pussbuttonResults_Callback(hObject,evendata)
-        h = gui_results('estimation', dynare_gui_.est_results);
-         
-        %uiwait(h);
-        
-        
+        gui_results('estimation', dynare_gui_.est_results);
     end
 
     function pussbuttonCloseAll_Callback(hObject,evendata)
- 
-        main_figure = getappdata(0,'main_figure');
-        fh=findall(0,'type','figure');
-        for i=1:length(fh)
-            if(~(fh(i)==main_figure))
-                close(fh(i));
-            end
-        end
-        set(handles.pussbuttonCloseAll, 'Enable', 'off');
+        gui_tools.close_all_figures();
     end
-
-
-
-
-
 end

@@ -1,4 +1,34 @@
 function [newTab, created] = add_tab(hObject, title)
+% function [newTab, created] = add_tab(hObject, title)
+% creates new GUI tab element
+%
+% INPUTS
+%   hObject: handle of main application window
+%   title:  title for the new GUI tab
+%
+% OUTPUTS
+%   newTab: handle of the new GUI tab
+%   created: indicator if GUI tab was created or if it already existed
+%
+% SPECIAL REQUIREMENTS
+%   none
+
+% Copyright (C) 2003-2015 Dynare Team
+%
+% This file is part of Dynare.
+%
+% Dynare is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Dynare is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
 % Get handles structure
 handles = guidata(hObject);
@@ -8,10 +38,10 @@ if(isfield(handles, 'tabGroup') == 0)
     hTabGroup = uitabgroup(handles.figure1,'Position',[0 0 1 1]); %, 'SelectionChangeFcn', {@selection_tab_changed});
     panel = handles.uipanel_welcome;
     set(panel,'Visible','off');
-   
+    
     drawnow;
     handles.tabGroup = hTabGroup;
-    setappdata(0,'tabGroup', hTabGroup); 
+    setappdata(0,'tabGroup', hTabGroup);
     
     % Update handles structure
     guidata(hObject, handles);
@@ -23,9 +53,6 @@ tabGroup = getappdata(0, 'tabGroup');
 tab = checkIfExistsTab(tabGroup, title);
 
 if(~isempty(tab))
-    %%% set(tabGroup, 'SelectedIndex' , index);
-    %tabs = get(tabGroup,'Children');
-    %newTab = tabs(index);
     set(handles.tabGroup, 'SelectedTab' , tab);
     newTab = tab;
     created = 0;
@@ -35,111 +62,26 @@ end
 num = length(get(handles.tabGroup,'Children'));
 
 newTab = uitab(handles.tabGroup, 'Title', title);
-% addCloseButton(newTab);
-
-%%% set(handles.tabGroup, 'SelectedIndex' , num+1);
 set(handles.tabGroup, 'SelectedTab' , newTab);
 
 % Update handles structure
 guidata(hObject, handles);
 
-setappdata(0,'tabGroup', tabGroup); 
- 
-%     function selection_tab_changed(hObject,event,tabGroup)
-%         newTub = event.NewValue;
-%         oldTub = event.OldValue;
-%          if(~(oldTub == 0))
-%               tabs = get(hObject,'Children');
-%               hTab = tabs(oldTub);
-%               set(hTab, 'Visible', 'off');
-%               children = get(hTab,'Children');
-%               for i=1:size(children,1)
-%                   child = children(i);
-%                   set(child, 'Visible', 'off');
-%               end
-%               hTab = tabs(newTub);
-%               set(hTab, 'Visible', 'on');
-%               children = get(hTab,'Children');
-%               for i=1:size(children,1)
-%                   child = children(i);
-%                   set(child, 'Visible', 'on');
-%               end
-%          end
-%         
-%     end
-    
+setappdata(0,'tabGroup', tabGroup);
+
     function tab = checkIfExistsTab(tabGroup,tabTitle)
         tabs = get(tabGroup,'Children');
         num = length(tabs);
-        %index = 0;
         tab = [];
         for i=1:num
             hTab = tabs(i);
             tit = get(hTab, 'Title');
             if(strcmp(tit, tabTitle))
-                %index = i;
                 tab=hTab;
                 return;
             end
         end
-
-    end
-
-    function deleteTab(hObject,event,hTab)
-        %num = handles.numTabs;
-        %handles.numTabs = num-1;
-        %delete(hTab);
-      
-        tabs = get(tabGroup,'Children');
-        if(size(tabs,1)==1)
-            delete(tabGroup);
-            rmappdata(0,'tabGroup');
-            handles = rmfield(handles, 'tabGroup');
-            panel = handles.uipanel_welcome;
-            set(panel,'Visible','on');
-            guidata(handles.figure1, handles);
-           
-            drawnow;
-        else
-            delete(hTab);
-        end
-        %guidata(parent, handles);
-    end
-
-    function addCloseButton(hTab)
         
-        % Get the underlying Java reference (use hidden property)
-        jTabGroup = getappdata(handle(handles.tabGroup),'JTabbedPane');
-       
-
-        % First let's load the close icon
-        jarFile = fullfile(matlabroot,'/java/jar/mwt.jar');
-        iconsFolder = '/com/mathworks/mwt/resources/';
-        iconURI = ['jar:file:/' jarFile '!' iconsFolder 'closebox.gif'];
-        icon = javax.swing.ImageIcon(java.net.URL(iconURI));
-
-        % Now let's prepare the close button: icon, size and callback
-        jCloseButton = handle(javax.swing.JButton,'CallbackProperties');
-        jCloseButton.setIcon(icon);
-        jCloseButton.setPreferredSize(java.awt.Dimension(15,15));
-        jCloseButton.setMaximumSize(java.awt.Dimension(15,15));
-        jCloseButton.setSize(java.awt.Dimension(15,15));
-        set(jCloseButton, 'ActionPerformedCallback',{@deleteTab,hTab});
-
-        % Now let's prepare a tab panel with our label and close button
-        jPanel = javax.swing.JPanel;	% default layout = FlowLayout
-        set(jPanel.getLayout, 'Hgap',0, 'Vgap',0);  % default gap = 5px
-        jLabel = javax.swing.JLabel(title);
-        bgcolor = get(handles.tabGroup,'BackgroundColor');
-        jLabel.setBackground(java.awt.Color(bgcolor(1),bgcolor(2),bgcolor(3),0));
-        jPanel.add(jLabel);
-        jPanel.setBackground(java.awt.Color(bgcolor(1),bgcolor(2),bgcolor(3),0));
-        jPanel.add(jCloseButton);
-
-        % Now attach this tab panel as the tab-group's  component
-        jTabGroup.setTabComponentAt(num,jPanel);	
-
-       
-
     end
+
 end

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The project file &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Deterministic simulation &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" />
-    <link rel="next" title="Load .mod file" href="load_mod_file.html" />
-    <link rel="prev" title="Installation and configuration" href="installation.html" /> 
+    <link rel="next" title="Shock decomposition" href="shock_decomposition.html" />
+    <link rel="prev" title="Stochastic simulation" href="simulation.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="shock_decomposition.html" title="Shock decomposition"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="simulation.html" title="Stochastic simulation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -49,29 +49,25 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-project-file">
-<span id="project"></span><h1>The project file<a class="headerlink" href="#the-project-file" title="Permalink to this headline">¶</a></h1>
-<p>User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).</p>
-<dl class="docutils">
-<dt>Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables:</dt>
-<dd><ul class="first last simple">
-<li>DYNARE structures: <code class="docutils literal"><span class="pre">M_,</span> <span class="pre">options_,</span> <span class="pre">oo_,</span> <span class="pre">estim_params_,</span> <span class="pre">bayestopt_,</span> <span class="pre">dataset_,</span> <span class="pre">dataset_info,</span> <span class="pre">estimation_info,</span> <span class="pre">ys0_,</span> <span class="pre">ex0_</span></code></li>
-<li>Dynare_GUI structures: <code class="docutils literal"><span class="pre">dynare_gui_,</span> <span class="pre">project_info,</span> <span class="pre">model_settings</span></code>.</li>
+  <div class="section" id="deterministic-simulation">
+<span id="det-simulation"></span><h1>Deterministic simulation<a class="headerlink" href="#deterministic-simulation" title="Permalink to this headline">¶</a></h1>
+<p>This functionality provides an interface to run simulation of the deterministic model with a specific interface for setting the options for DYNARE simul command (see figures below).</p>
+<p>On the left part of the screen user can defined temporary and permanent shocks.</p>
+<p>On the right part of the screen model variables are grouped and displayed as defined in <a class="reference internal" href="model_settings_variables.html#model-settings-variables"><span>model settings</span></a>. Only variables that have shown attribute set are displayed on this screen.</p>
+<p>After user defines <a class="reference internal" href="det_simulation_options.html#det-simulation-options"><span>simul command options</span></a>, deterministic simulation is performed. This is done with internal function call to DYNARE’ <code class="docutils literal"><span class="pre">simul()</span></code> function.</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/det_simulation_temp.png"><img alt="_images/det_simulation_temp.png" src="_images/det_simulation_temp.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Deterministic simulation screen: temporary shocks</span></p>
+</div>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/det_simulation_perm.png"><img alt="_images/det_simulation_perm.png" src="_images/det_simulation_perm.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Deterministic simulation screen: permanent shocks</span></p>
+<div class="legend">
+<ul class="simple">
+<li><a class="reference internal" href="det_simulation_options.html#det-simulation-options"><span>Define deterministic simulation options</span></a></li>
 </ul>
-</dd>
-</dl>
-<p>Project related functionalities are initiated with Project submenu:</p>
-<img alt="_images/project_submenu.png" src="_images/project_submenu.png" />
-<p>Project related functionalities are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="project_new.html#project-new"><span>Create new project</span></a></li>
-<li><a class="reference internal" href="project_open.html#project-open"><span>Open project</span></a></li>
-<li><a class="reference internal" href="project_close.html#project-close"><span>Close project</span></a></li>
-<li><a class="reference internal" href="project_save.html#project-save"><span>Save project</span></a></li>
-<li><a class="reference internal" href="project_save_as.html#project-save-as"><span>Save project as</span></a>.</li>
-</ul>
-</div></blockquote>
+</div>
+</div>
 </div>
 
 
@@ -81,15 +77,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation and configuration</a></p>
+  <p class="topless"><a href="simulation.html"
+                        title="previous chapter">Stochastic simulation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="load_mod_file.html"
-                        title="next chapter">Load .mod file</a></p>
+  <p class="topless"><a href="shock_decomposition.html"
+                        title="next chapter">Shock decomposition</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project.txt"
+      <li><a href="_sources/det_simulation.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +113,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="shock_decomposition.html" title="Shock decomposition"
              >next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="simulation.html" title="Stochastic simulation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>

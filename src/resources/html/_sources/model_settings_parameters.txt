@@ -1,0 +1,33 @@
+.. _model_settings_parameters:
+
+Model settings: parameters
+============
+
+This functionality allows settings for the model parameters (see figures below).
+
+Model parameters, as read from the .mod/.dyn file, are displayed in an editable table. For each parameter following information is displayed:
+	* name of the parameter in the DYNARE model (this field is only not editable field in this table); initial values are copied from ``M_.param_names``
+	* DYNARE LATEX name for the parameter; initial values are copied from ``M_. param _names_tex``
+	* DYNARE long name for the parameter; initial values are copied from ``M_. param _names_long``
+	* current value of the parameter; this value is initially loaded from MATLAB workspace (it exists in the workspace after successful execution of .mod/.dyn file as described in :ref:`Load .mod file <load_mod_file>`) 
+	* estimated value and STD (for stochastic models only) 
+		* current value is copied from ``M_.Sigma_e`` (sqrt of ``M_.Sigma_e`` value)
+		* estimated value (posterior mean or mode) and STD are displayed only after estimation command has been run
+	* show/hide indicator which defines whether or not parameter will be shown in estimation/simulation options 
+	* name of the group that parameter belongs to (user can create arbitrary number of groups by entering different values in this field for different parameters); with this functionality grouping of parameters is achieved 
+	* show/hide group indicator – foe the convenience ability to show/hide group of parameters
+	* rename group - for the convenience ability to rename group of parameters by entering new name for any parameter that belongs to corresponding group.
+
+
+.. figure:: _img\model_settings_parameters.png
+	:width: 600 px
+	
+	Model settings: parameters screen (stochastic model)
+
+
+.. figure:: _img\model_settings_parameters_det.png
+	:width: 600 px
+	
+	Model settings: parameters screen (deterministic model)
+
+:ref:`Back to Model settings<model_settings>`

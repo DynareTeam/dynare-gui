@@ -1,0 +1,20 @@
+.. _change_mod_file:
+
+Change .mod file
+============
+
+This functionality allows user to specify new .mod/.dyn file for the current project with a standard file browsing interface. 
+
+After new .mod/dyn file has been specified, it should be executed in the same manner as described in :ref:`Load .mod file <load_mod_file>`.
+
+This functionality is initiated with “Specify .mod file” button (see figure below).
+
+
+.. figure:: _img\load_mod_file.png
+	:width: 600 px
+	
+	Load/change .mod file
+
+
+	* :ref:`Load .mod file <load_mod_file>`
+	* :ref:`Define dynare command options <define_dynare_comm>`

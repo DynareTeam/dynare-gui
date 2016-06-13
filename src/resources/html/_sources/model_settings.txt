@@ -1,0 +1,22 @@
+.. _model_settings:
+
+Model settings
+============
+
+This functionality provides interface for defining model settings regarding variables, parameters and shocks (see figures below).These model settings are used in various functionalities of Dynare_GUI application. They can be also used to generate new .mod/dyn file.
+
+Model settings are saved in MATLAB structure named model_settings. This structure is stored in project (.dproj) file.
+
+Model settings are saved/overridden each time user presses “Save settings” button.
+
+Model settings regarding variables, parameters and shocks are defined in separate sub-tabs of model settings screen. 
+
+.. figure:: _img\model_settings_variables.png
+	:width: 600 px
+	
+	Model settings screen
+
+
+	* :ref:`Model settings: variables <model_settings_variables>`
+	* :ref:`Model settings: parameters <model_settings_parameters>`
+	* :ref:`Model settings: shocks <model_settings_shocks>`

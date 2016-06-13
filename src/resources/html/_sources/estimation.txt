@@ -1,0 +1,20 @@
+.. _estimation:
+
+Estimation   
+============
+
+This functionality provides an interface to run estimation of the model with a specific interface for setting the options for DYNARE estimation command (see figure below).
+
+On the left part of the screen possible results and diagnostics of estimation command are displayed. This allows user to easily define some of possible estimation command options based on desired results. 
+
+On the right part of the screen model variables are grouped and displayed as defined in :ref:`model settings<model_settings_variables>`. Only variables that have shown attribute set are displayed on this screen.
+
+After user defines :ref:`estimation command options<estimation_options>`, estimation is performed. This is done with internal function call to DYNARE’ function ``dynare_estimation()``.
+
+.. figure:: _img\estimation.png
+	:width: 600 px
+	
+	Run estimation screen   
+
+	* :ref:`Define estimation command options <estimation_options>`
+	* :ref:`Browse estimation results <estimation_results>` 

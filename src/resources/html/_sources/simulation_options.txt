@@ -1,0 +1,23 @@
+.. _simulation_options:
+
+Define stochastic simulation options   
+============
+
+This functionality defines stoch_simul command options. Functionality is triggered with “Define command options” button on  :ref:`stochastic simulation screen<simulation>` and new modal (child) screen for defining options is displayed (see figure below).
+
+All stoch_simul command options as defined in the DYNARE’ reference manual are saved in Dynare_GUI internal structure. This structure is called ``dynare_gui_`` and has a separate substructure ``dynare_gui_.stoch_simul`` for stoch_simul command options. 
+
+All command options are classified in following groups: simulation, irf, solver, dr, filter and output, and each of the groups has corresponding Matlab cell structure.
+
+Besides fields to enter new value for command options, current values and DYNARE’ default values are displayed.
+
+User can define his/her own command options defaults. They are saved in ``model_settings.defaults.stoch_simul`` structure when command button “Save as default options” is pressed. Default options are loaded with “Load default options button”. 
+
+When user clicks “Use this options” button, modal screen for defining options is closed and user is back on :ref:`stochastic simulation screen<simulation>`. In the bottom part of the screen defined options for stoch_simul command are displayed (panel with a title “Current command options”).
+
+.. figure:: _img\simulation_options.png
+	:width: 600 px
+	
+	Stochastic simulation options screen 
+
+:ref:`Back to stochastic simulation <simulation>`

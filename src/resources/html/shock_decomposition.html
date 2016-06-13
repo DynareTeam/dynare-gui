@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The project file &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Shock decomposition &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" />
-    <link rel="next" title="Load .mod file" href="load_mod_file.html" />
-    <link rel="prev" title="Installation and configuration" href="installation.html" /> 
+    <link rel="next" title="Conditional forecast" href="conditional_forecast.html" />
+    <link rel="prev" title="Deterministic simulation" href="det_simulation.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="conditional_forecast.html" title="Conditional forecast"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="det_simulation.html" title="Deterministic simulation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -49,29 +49,26 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-project-file">
-<span id="project"></span><h1>The project file<a class="headerlink" href="#the-project-file" title="Permalink to this headline">¶</a></h1>
-<p>User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).</p>
-<dl class="docutils">
-<dt>Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables:</dt>
-<dd><ul class="first last simple">
-<li>DYNARE structures: <code class="docutils literal"><span class="pre">M_,</span> <span class="pre">options_,</span> <span class="pre">oo_,</span> <span class="pre">estim_params_,</span> <span class="pre">bayestopt_,</span> <span class="pre">dataset_,</span> <span class="pre">dataset_info,</span> <span class="pre">estimation_info,</span> <span class="pre">ys0_,</span> <span class="pre">ex0_</span></code></li>
-<li>Dynare_GUI structures: <code class="docutils literal"><span class="pre">dynare_gui_,</span> <span class="pre">project_info,</span> <span class="pre">model_settings</span></code>.</li>
-</ul>
-</dd>
-</dl>
-<p>Project related functionalities are initiated with Project submenu:</p>
-<img alt="_images/project_submenu.png" src="_images/project_submenu.png" />
-<p>Project related functionalities are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="project_new.html#project-new"><span>Create new project</span></a></li>
-<li><a class="reference internal" href="project_open.html#project-open"><span>Open project</span></a></li>
-<li><a class="reference internal" href="project_close.html#project-close"><span>Close project</span></a></li>
-<li><a class="reference internal" href="project_save.html#project-save"><span>Save project</span></a></li>
-<li><a class="reference internal" href="project_save_as.html#project-save-as"><span>Save project as</span></a>.</li>
-</ul>
-</div></blockquote>
+  <div class="section" id="shock-decomposition">
+<span id="id1"></span><h1>Shock decomposition<a class="headerlink" href="#shock-decomposition" title="Permalink to this headline">¶</a></h1>
+<p>This functionality provides an interface for displaying decompositions in levels of the observed variables (see figures below).</p>
+<p>On the left part of the screen model variables are grouped and displayed as defined in <a class="reference internal" href="model_settings_variables.html#model-settings-variables"><span>model settings</span></a>. Only variables that have shown attribute set are displayed on this screen.</p>
+<p>On the right part of the screen shock_decomposition command option parameter_set is displayed, together with historical period selection and option to use shock groups when displaying decomposition.</p>
+<p>Default value for parameter set is posterior_mean if Metropolis has been run, else posterior_mode.</p>
+<p>Shocks grouping functionality implements shock decomposition with grouping of structural shocks. Shocks are grouped as defined in <a class="reference internal" href="model_settings_shocks.html#model-settings-shocks"><span>model settings</span></a>.</p>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/shock_decomposition.png"><img alt="_images/shock_decomposition.png" src="_images/shock_decomposition.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Run shock decomposition screen</span></p>
+</div>
+<p>Shock decomposition is done with internal function call to new DYNARE’ <code class="docutils literal"><span class="pre">shock_decomposition()</span></code> function which displays default decomposition screen together with individual plots (see figures below).</p>
+<div class="figure" id="id3">
+<a class="reference internal image-reference" href="_images/shock_decomposition_result1.png"><img alt="_images/shock_decomposition_result1.png" src="_images/shock_decomposition_result1.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Shock decomposition result (default)</span></p>
+</div>
+<div class="figure" id="id4">
+<a class="reference internal image-reference" href="_images/shock_decomposition_result2.png"><img alt="_images/shock_decomposition_result2.png" src="_images/shock_decomposition_result2.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Shock decomposition result (individually plotted)</span></p>
+</div>
 </div>
 
 
@@ -81,15 +78,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation and configuration</a></p>
+  <p class="topless"><a href="det_simulation.html"
+                        title="previous chapter">Deterministic simulation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="load_mod_file.html"
-                        title="next chapter">Load .mod file</a></p>
+  <p class="topless"><a href="conditional_forecast.html"
+                        title="next chapter">Conditional forecast</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project.txt"
+      <li><a href="_sources/shock_decomposition.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +114,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="conditional_forecast.html" title="Conditional forecast"
              >next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="det_simulation.html" title="Deterministic simulation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The project file &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Observed variables and datafile &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" />
-    <link rel="next" title="Load .mod file" href="load_mod_file.html" />
-    <link rel="prev" title="Installation and configuration" href="installation.html" /> 
+    <link rel="next" title="Estimated parameters &amp; shocks" href="est_params.html" />
+    <link rel="prev" title="Model settings" href="model_settings.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="est_params.html" title="Estimated parameters &amp; shocks"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="model_settings.html" title="Model settings"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -49,29 +49,33 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-project-file">
-<span id="project"></span><h1>The project file<a class="headerlink" href="#the-project-file" title="Permalink to this headline">¶</a></h1>
-<p>User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).</p>
+  <div class="section" id="observed-variables-and-datafile">
+<span id="obs-vars"></span><h1>Observed variables and datafile<a class="headerlink" href="#observed-variables-and-datafile" title="Permalink to this headline">¶</a></h1>
+<p>This functionality provides an interface to specify observed variables and data file (see figure below).</p>
+<p>Initial list of observed variables is loaded from varobs command (if exists in the .mod file).</p>
+<p>Load data file functionality provides an interface to provide data file as .xls, .csv, .m or .mat file.</p>
 <dl class="docutils">
-<dt>Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables:</dt>
+<dt>Depending on the format of data file, application extracts following information:</dt>
 <dd><ul class="first last simple">
-<li>DYNARE structures: <code class="docutils literal"><span class="pre">M_,</span> <span class="pre">options_,</span> <span class="pre">oo_,</span> <span class="pre">estim_params_,</span> <span class="pre">bayestopt_,</span> <span class="pre">dataset_,</span> <span class="pre">dataset_info,</span> <span class="pre">estimation_info,</span> <span class="pre">ys0_,</span> <span class="pre">ex0_</span></code></li>
-<li>Dynare_GUI structures: <code class="docutils literal"><span class="pre">dynare_gui_,</span> <span class="pre">project_info,</span> <span class="pre">model_settings</span></code>.</li>
+<li>Sample starting date</li>
+<li>Data frequency and</li>
+<li>Number of observations.</li>
 </ul>
 </dd>
 </dl>
-<p>Project related functionalities are initiated with Project submenu:</p>
-<img alt="_images/project_submenu.png" src="_images/project_submenu.png" />
-<p>Project related functionalities are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="project_new.html#project-new"><span>Create new project</span></a></li>
-<li><a class="reference internal" href="project_open.html#project-open"><span>Open project</span></a></li>
-<li><a class="reference internal" href="project_close.html#project-close"><span>Close project</span></a></li>
-<li><a class="reference internal" href="project_save.html#project-save"><span>Save project</span></a></li>
-<li><a class="reference internal" href="project_save_as.html#project-save-as"><span>Save project as</span></a>.</li>
-</ul>
-</div></blockquote>
+<p>If some of this information is not available in data file, user must enter these values in dedicated fields (see figure below). Otherwise, dedicated fields are disabled.</p>
+<p>Sample starting and ending dates are saved as DYNARE dates objects.</p>
+<p>In addition, this functionality extracts possible observed variables (intersection between declare variables in .mod file and variables that are used in data file). List of all possible observed variables is stored in Dynare_GUI structure <code class="docutils literal"><span class="pre">model_settings.all_varobs</span></code>.</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/obs_vars.png"><img alt="_images/obs_vars.png" src="_images/obs_vars.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Observed variables &amp; data file screen</span></p>
+</div>
+<p>Select observed variables functionality provides an interface to choose the set of observed variables out of complete list of endogenous variables for which historical values exist in data file (see figure below).</p>
+<p>The selected set of observed variables are saved in DYNARE structure <code class="docutils literal"><span class="pre">options_.varobs</span></code> and in Dynare_GUI structure <code class="docutils literal"><span class="pre">model_settings.varobs</span></code>.</p>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/obs_vars_select.png"><img alt="_images/obs_vars_select.png" src="_images/obs_vars_select.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Select observed variables screen</span></p>
+</div>
 </div>
 
 
@@ -81,15 +85,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation and configuration</a></p>
+  <p class="topless"><a href="model_settings.html"
+                        title="previous chapter">Model settings</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="load_mod_file.html"
-                        title="next chapter">Load .mod file</a></p>
+  <p class="topless"><a href="est_params.html"
+                        title="next chapter">Estimated parameters &amp; shocks</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project.txt"
+      <li><a href="_sources/obs_vars.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +121,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="est_params.html" title="Estimated parameters &amp; shocks"
              >next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="model_settings.html" title="Model settings"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>

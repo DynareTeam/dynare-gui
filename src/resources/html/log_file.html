@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The project file &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Dynare_GUI log file &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" />
-    <link rel="next" title="Load .mod file" href="load_mod_file.html" />
-    <link rel="prev" title="Installation and configuration" href="installation.html" /> 
+    <link rel="next" title="Exit Dynare_GUI" href="exit_gui.html" />
+    <link rel="prev" title="Export to .mod file" href="export_to_mod_file.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="exit_gui.html" title="Exit Dynare_GUI"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="export_to_mod_file.html" title="Export to .mod file"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -49,29 +49,25 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-project-file">
-<span id="project"></span><h1>The project file<a class="headerlink" href="#the-project-file" title="Permalink to this headline">¶</a></h1>
-<p>User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).</p>
+  <div class="section" id="dynare-gui-log-file">
+<span id="log-file"></span><h1>Dynare_GUI log file<a class="headerlink" href="#dynare-gui-log-file" title="Permalink to this headline">¶</a></h1>
+<p>Dynare_GUI log file is created for each project and it is saved in project folder under the name project_name.log file.</p>
+<p>Every functionality invoked in Dynare_GUI (except for the Help submenu) generates entry in the log file. In addition, important errors and warnings in Dynare_GUI generate entry in the log file.</p>
 <dl class="docutils">
-<dt>Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables:</dt>
+<dt>Each entry in the log file has following information:</dt>
 <dd><ul class="first last simple">
-<li>DYNARE structures: <code class="docutils literal"><span class="pre">M_,</span> <span class="pre">options_,</span> <span class="pre">oo_,</span> <span class="pre">estim_params_,</span> <span class="pre">bayestopt_,</span> <span class="pre">dataset_,</span> <span class="pre">dataset_info,</span> <span class="pre">estimation_info,</span> <span class="pre">ys0_,</span> <span class="pre">ex0_</span></code></li>
-<li>Dynare_GUI structures: <code class="docutils literal"><span class="pre">dynare_gui_,</span> <span class="pre">project_info,</span> <span class="pre">model_settings</span></code>.</li>
+<li>Date</li>
+<li>Time</li>
+<li>Operation name/Error/Warning</li>
+<li>Additional information (if applicable).</li>
 </ul>
 </dd>
 </dl>
-<p>Project related functionalities are initiated with Project submenu:</p>
-<img alt="_images/project_submenu.png" src="_images/project_submenu.png" />
-<p>Project related functionalities are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="project_new.html#project-new"><span>Create new project</span></a></li>
-<li><a class="reference internal" href="project_open.html#project-open"><span>Open project</span></a></li>
-<li><a class="reference internal" href="project_close.html#project-close"><span>Close project</span></a></li>
-<li><a class="reference internal" href="project_save.html#project-save"><span>Save project</span></a></li>
-<li><a class="reference internal" href="project_save_as.html#project-save-as"><span>Save project as</span></a>.</li>
-</ul>
-</div></blockquote>
+<p>User has possibility to reload log file (see figure below).</p>
+<div class="figure" id="id1">
+<a class="reference internal image-reference" href="_images/log_file.png"><img alt="_images/log_file.png" src="_images/log_file.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Dynare_GUI log file</span></p>
+</div>
 </div>
 
 
@@ -81,15 +77,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation and configuration</a></p>
+  <p class="topless"><a href="export_to_mod_file.html"
+                        title="previous chapter">Export to .mod file</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="load_mod_file.html"
-                        title="next chapter">Load .mod file</a></p>
+  <p class="topless"><a href="exit_gui.html"
+                        title="next chapter">Exit Dynare_GUI</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project.txt"
+      <li><a href="_sources/log_file.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +113,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
+          <a href="exit_gui.html" title="Exit Dynare_GUI"
              >next</a> |</li>
         <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="export_to_mod_file.html" title="Export to .mod file"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>

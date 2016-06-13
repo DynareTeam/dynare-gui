@@ -1,0 +1,30 @@
+.. _load_mod_file:
+
+Load .mod file
+============
+
+This functionality provides an interface to load and execute .mod/.dyn file with a specific interface for setting the options for dynare command (see figures below).
+
+If .mod/.dyn file has not been set for the current project, application first ask user to select .mod/.dyn file with standard file browsing interface. Specified .mod/.dyn file is copied to the project folder. The .mod/.dyn file should include only  model parameters, variables and equations. Any other DYNARE commands should be commented out. 
+
+If commands steady & check are not included in .mod/.dyn file application issue a warning and inserts these commands to the.mod/.dyn file. Similarly, if user has selected in project specific settings option “always create LATEX representation of the model”, .application will check if command write_latex_dynamic_model exists in the mod/.dyn file and if not present, it will insert it. 
+
+Once the .mod/.dyn file has been set, it is displayed it in a read-only mode to the user (see figure below).
+
+After user defines .mod/.dyn file and :ref:`dynare command options<define_dynare_comm>`, initialization is performed – DYNARE is loading the model specified in the .mod/.dyn file. This is done with ``dynare <mod_file_name>`` command.
+
+In case of DYNARE error, details about error are provided to the user. 
+
+After successful execution of .mod/dyn file, DYNARE structures ``oo_, M_, options_`` , etc. will be present in MATLAB workspace. 
+
+Also, at this moment all menu options under the Model submenu are enabled. In addition, if model_settings have been already defined, all menu options under the Estimation, Simulation and Output submenus are enabled. 
+
+
+.. figure:: _img\load_mod_file.png
+	:width: 600 px
+	
+	Load .mod file
+
+
+	* :ref:`Change .mod file <change_mod_file>`
+	* :ref:`Define dynare command options <define_dynare_comm>`

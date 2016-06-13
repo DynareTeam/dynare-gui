@@ -1,0 +1,36 @@
+.. _obs_vars:
+
+Observed variables and datafile
+============
+
+This functionality provides an interface to specify observed variables and data file (see figure below).
+
+Initial list of observed variables is loaded from varobs command (if exists in the .mod file).
+
+Load data file functionality provides an interface to provide data file as .xls, .csv, .m or .mat file.
+
+Depending on the format of data file, application extracts following information:
+	* Sample starting date
+	* Data frequency and
+	* Number of observations. 
+
+If some of this information is not available in data file, user must enter these values in dedicated fields (see figure below). Otherwise, dedicated fields are disabled.
+
+Sample starting and ending dates are saved as DYNARE dates objects. 
+
+In addition, this functionality extracts possible observed variables (intersection between declare variables in .mod file and variables that are used in data file). List of all possible observed variables is stored in Dynare_GUI structure ``model_settings.all_varobs``.
+
+.. figure:: _img\obs_vars.png
+	:width: 600 px
+	
+	Observed variables & data file screen
+
+Select observed variables functionality provides an interface to choose the set of observed variables out of complete list of endogenous variables for which historical values exist in data file (see figure below). 
+
+The selected set of observed variables are saved in DYNARE structure ``options_.varobs`` and in Dynare_GUI structure ``model_settings.varobs``.
+ 
+.. figure:: _img\obs_vars_select.png
+	:width: 600 px
+	
+	Select observed variables screen
+

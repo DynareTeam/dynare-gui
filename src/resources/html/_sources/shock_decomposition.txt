@@ -1,0 +1,31 @@
+.. _shock_decomposition:
+
+Shock decomposition
+============
+
+This functionality provides an interface for displaying decompositions in levels of the observed variables (see figures below).
+
+On the left part of the screen model variables are grouped and displayed as defined in :ref:`model settings<model_settings_variables>`. Only variables that have shown attribute set are displayed on this screen.
+
+On the right part of the screen shock_decomposition command option parameter_set is displayed, together with historical period selection and option to use shock groups when displaying decomposition.
+
+Default value for parameter set is posterior_mean if Metropolis has been run, else posterior_mode.
+
+Shocks grouping functionality implements shock decomposition with grouping of structural shocks. Shocks are grouped as defined in :ref:`model settings<model_settings_shocks>`. 
+
+.. figure:: _img\shock_decomposition.png
+	:width: 600 px
+	
+	Run shock decomposition screen 
+
+Shock decomposition is done with internal function call to new DYNARE’ ``shock_decomposition()`` function which displays default decomposition screen together with individual plots (see figures below).
+
+.. figure:: _img\shock_decomposition_result1.png
+	:width: 600 px
+	
+	Shock decomposition result (default) 
+
+.. figure:: _img\shock_decomposition_result2.png
+	:width: 600 px
+	
+	Shock decomposition result (individually plotted) 

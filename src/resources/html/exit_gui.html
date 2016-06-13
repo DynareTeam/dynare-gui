@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The project file &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Exit Dynare_GUI &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" />
-    <link rel="next" title="Load .mod file" href="load_mod_file.html" />
-    <link rel="prev" title="Installation and configuration" href="installation.html" /> 
+    <link rel="prev" title="Dynare_GUI log file" href="log_file.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +34,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="log_file.html" title="Dynare_GUI log file"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -49,29 +45,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-project-file">
-<span id="project"></span><h1>The project file<a class="headerlink" href="#the-project-file" title="Permalink to this headline">¶</a></h1>
-<p>User work in Dynare_GUI is organized in projects. Project is associated with single DYNARE .mod file (or alternatively .dyn file) and with a working directory (project folder).</p>
-<dl class="docutils">
-<dt>Dynare_GUI  projects have file extension .dproj. Project file is binary Matlab MAT-file which stores following project related variables:</dt>
-<dd><ul class="first last simple">
-<li>DYNARE structures: <code class="docutils literal"><span class="pre">M_,</span> <span class="pre">options_,</span> <span class="pre">oo_,</span> <span class="pre">estim_params_,</span> <span class="pre">bayestopt_,</span> <span class="pre">dataset_,</span> <span class="pre">dataset_info,</span> <span class="pre">estimation_info,</span> <span class="pre">ys0_,</span> <span class="pre">ex0_</span></code></li>
-<li>Dynare_GUI structures: <code class="docutils literal"><span class="pre">dynare_gui_,</span> <span class="pre">project_info,</span> <span class="pre">model_settings</span></code>.</li>
-</ul>
-</dd>
-</dl>
-<p>Project related functionalities are initiated with Project submenu:</p>
-<img alt="_images/project_submenu.png" src="_images/project_submenu.png" />
-<p>Project related functionalities are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="project_new.html#project-new"><span>Create new project</span></a></li>
-<li><a class="reference internal" href="project_open.html#project-open"><span>Open project</span></a></li>
-<li><a class="reference internal" href="project_close.html#project-close"><span>Close project</span></a></li>
-<li><a class="reference internal" href="project_save.html#project-save"><span>Save project</span></a></li>
-<li><a class="reference internal" href="project_save_as.html#project-save-as"><span>Save project as</span></a>.</li>
-</ul>
-</div></blockquote>
+  <div class="section" id="exit-dynare-gui">
+<span id="exit-gui"></span><h1>Exit Dynare_GUI<a class="headerlink" href="#exit-dynare-gui" title="Permalink to this headline">¶</a></h1>
+<p>This functionality closes Dynare_GUI  application. User is asked to confirm closing operation (see Figure below).</p>
+<p>In addition, if current project has been modified, user is asked if he/she wants to save changes before closing the application.</p>
+<div class="figure" id="id1">
+<img alt="_images/exit_gui.png" src="_images/exit_gui.png" />
+<p class="caption"><span class="caption-text">Exit confirmation message</span></p>
+</div>
 </div>
 
 
@@ -81,15 +62,12 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="installation.html"
-                        title="previous chapter">Installation and configuration</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="load_mod_file.html"
-                        title="next chapter">Load .mod file</a></p>
+  <p class="topless"><a href="log_file.html"
+                        title="previous chapter">Dynare_GUI log file</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project.txt"
+      <li><a href="_sources/exit_gui.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -117,10 +95,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="load_mod_file.html" title="Load .mod file"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="installation.html" title="Installation and configuration"
+          <a href="log_file.html" title="Dynare_GUI log file"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
       </ul>

@@ -1,0 +1,14 @@
+.. _model_snapshots:
+
+Model snapshots
+============
+
+Model snapshot allows saving of current DYNARE structures in a model snapshot file so that they can be loaded back into the project workspace, at any later point. 
+
+Dynare_GUI model snapshot file have file extension .snapshot. It is binary Matlab MAT-file which stores following DYNARE structures are saved: ``M_, options_, oo_, estim_params_, bayestopt_, dataset_ and estimation_info``.
+
+When saving model shapshot, user can specify name of the model snapshot file with a standard file browsing interface.
+
+Similarly, when loading model snapshot, user can select a model snapshot file with a standard file browsing interface.
+
+

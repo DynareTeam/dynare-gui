@@ -3,7 +3,7 @@
 Create new project
 ============
 
-When creating new project user is displayed form with following information:
+This functionality allows user to create new project. User is displayed new project form (see Figure below) which contains following information:
 	* project name (required field)
 	* project folder (required field)
 	* project description
@@ -13,6 +13,9 @@ When creating new project user is displayed form with following information:
 		* maximum forecast periods.
 
 .. figure:: _img\new_project_form.png
-	:width: 800 px
+	:width: 600 px
 	
 	New project form
+
+
+:ref:`Back to project file<project>`

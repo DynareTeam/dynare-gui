@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Create new project &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Model settings: variables &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -41,35 +41,28 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="create-new-project">
-<span id="project-new"></span><h1>Create new project<a class="headerlink" href="#create-new-project" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="model-settings-variables">
+<span id="id1"></span><h1>Model settings: variables<a class="headerlink" href="#model-settings-variables" title="Permalink to this headline">¶</a></h1>
+<p>This functionality allows settings for the model variables (see figure below).</p>
 <dl class="docutils">
-<dt>This functionality allows user to create new project. User is displayed new project form (see Figure below) which contains following information:</dt>
-<dd><ul class="first last">
-<li><p class="first">project name (required field)</p>
-</li>
-<li><p class="first">project folder (required field)</p>
-</li>
-<li><p class="first">project description</p>
-</li>
-<li><dl class="first docutils">
-<dt>project specific settings:</dt>
+<dt>Model variables, as read from the .mod/.dyn file, are displayed in an editable table. For each variable following information is displayed:</dt>
 <dd><ul class="first last simple">
-<li>model type</li>
-<li>latex representation of the model</li>
-<li>maximum forecast periods.</li>
+<li>name of the variable in the DYNARE model (this field is only not editable field in this table); initial values are copied from <code class="docutils literal"><span class="pre">M_.endo_names</span></code></li>
+<li>DYNARE LATEX name for the variable; initial values are copied from <code class="docutils literal"><span class="pre">M_.endo_names_tex</span></code></li>
+<li>DYNARE long name for the variable; initial values are copied from <code class="docutils literal"><span class="pre">M_.endo_names_long</span></code></li>
+<li>show/hide indicator which defines whether or not variable will be shown in estimation/simulation options</li>
+<li>name of the group that variable belongs to (user can create arbitrary number of groups by entering different values in this field for different variables); with this functionality grouping of variables is achieved</li>
+<li>show/hide group indicator – for the convenience ability to show/hide group of variables</li>
+<li>rename group - for the convenience ability to rename group of variables by entering new name for any variable that belongs to corresponding group.</li>
 </ul>
 </dd>
 </dl>
-</li>
-</ul>
-</dd>
-</dl>
-<div class="figure" id="id1">
-<a class="reference internal image-reference" href="_images/new_project_form.png"><img alt="_images/new_project_form.png" src="_images/new_project_form.png" style="width: 600px;" /></a>
-<p class="caption"><span class="caption-text">New project form</span></p>
+<p>Auxiliary variables are automatically grouped in AUX group and hidden by default.</p>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/model_settings_variables.png"><img alt="_images/model_settings_variables.png" src="_images/model_settings_variables.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Model settings: variables screen</span></p>
 </div>
-<p><a class="reference internal" href="project.html#project"><span>Back to project file</span></a></p>
+<p><a class="reference internal" href="model_settings.html#model-settings"><span>Back to Model settings</span></a></p>
 </div>
 
 
@@ -81,7 +74,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project_new.txt"
+      <li><a href="_sources/model_settings_variables.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>

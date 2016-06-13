@@ -1,0 +1,35 @@
+.. _model_settings_shocks:
+
+Model settings: shocks
+============
+
+This functionality allows settings for the model shocks (see figures below).
+
+Model shocks, as read from the .mod/.dyn file, are displayed in an editable table. For each shock following information is displayed:
+	* name of the shock in DYNARE model (this field is only not editable field in this table); initial values are copied from ``M_.exo_names``
+	* DYNARE LATEX name for the shock; initial values are copied from ``M_.exo_names_tex``
+	* DYNARE long name for the shock; initial values are copied from ``M_.exo_names_long``
+	* current value, estimated value and STD (for stochastic models only) 
+		* current value is copied from ``M_.Sigma_e`` (sqrt of ``M_.Sigma_e`` value)
+		* estimated value (posterior mean or mode) and STD are displayed only after estimation command has been run
+	* initval (for deterministic models only) is initially copied from ``oo_.exo_steady_state``, and later from ``ex0_``
+	* show/hide indicator which defines whether or not shock will be shown in estimation/simulation options
+	* name of the group that shock belongs to (user can create arbitrary number of groups by entering different values in this field for different shocks); with this functionality grouping of shock is achieved 
+	* show/hide group indicator – foe the convenience ability to show/hide group of shocks
+	* rename group - for the convenience ability to rename group of shocks by entering new name for any shock that belongs to corresponding group.
+
+For stochastic models, shocks correlations are displayed in a separate table, which is also editable table. Initial values are copied from ``M_.Correlation_matrix``. 
+
+
+.. figure:: _img\model_settings_shocks.png
+	:width: 600 px
+	
+	Model settings: shocks screen (stochastic model)
+
+
+.. figure:: _img\model_settings_shocks_det.png
+	:width: 600 px
+	
+	Model settings: shocks screen (deterministic model)
+
+:ref:`Back to Model settings<model_settings>`

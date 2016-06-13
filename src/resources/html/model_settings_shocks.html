@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Model settings: shocks &mdash; Dynare_GUI 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Dynare_GUI 1.0 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="model-settings-shocks">
+<span id="id1"></span><h1>Model settings: shocks<a class="headerlink" href="#model-settings-shocks" title="Permalink to this headline">¶</a></h1>
+<p>This functionality allows settings for the model shocks (see figures below).</p>
+<dl class="docutils">
+<dt>Model shocks, as read from the .mod/.dyn file, are displayed in an editable table. For each shock following information is displayed:</dt>
+<dd><ul class="first last">
+<li><p class="first">name of the shock in DYNARE model (this field is only not editable field in this table); initial values are copied from <code class="docutils literal"><span class="pre">M_.exo_names</span></code></p>
+</li>
+<li><p class="first">DYNARE LATEX name for the shock; initial values are copied from <code class="docutils literal"><span class="pre">M_.exo_names_tex</span></code></p>
+</li>
+<li><p class="first">DYNARE long name for the shock; initial values are copied from <code class="docutils literal"><span class="pre">M_.exo_names_long</span></code></p>
+</li>
+<li><dl class="first docutils">
+<dt>current value, estimated value and STD (for stochastic models only)</dt>
+<dd><ul class="first last simple">
+<li>current value is copied from <code class="docutils literal"><span class="pre">M_.Sigma_e</span></code> (sqrt of <code class="docutils literal"><span class="pre">M_.Sigma_e</span></code> value)</li>
+<li>estimated value (posterior mean or mode) and STD are displayed only after estimation command has been run</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">initval (for deterministic models only) is initially copied from <code class="docutils literal"><span class="pre">oo_.exo_steady_state</span></code>, and later from <code class="docutils literal"><span class="pre">ex0_</span></code></p>
+</li>
+<li><p class="first">show/hide indicator which defines whether or not shock will be shown in estimation/simulation options</p>
+</li>
+<li><p class="first">name of the group that shock belongs to (user can create arbitrary number of groups by entering different values in this field for different shocks); with this functionality grouping of shock is achieved</p>
+</li>
+<li><p class="first">show/hide group indicator – foe the convenience ability to show/hide group of shocks</p>
+</li>
+<li><p class="first">rename group - for the convenience ability to rename group of shocks by entering new name for any shock that belongs to corresponding group.</p>
+</li>
+</ul>
+</dd>
+</dl>
+<p>For stochastic models, shocks correlations are displayed in a separate table, which is also editable table. Initial values are copied from <code class="docutils literal"><span class="pre">M_.Correlation_matrix</span></code>.</p>
+<div class="figure" id="id2">
+<a class="reference internal image-reference" href="_images/model_settings_shocks.png"><img alt="_images/model_settings_shocks.png" src="_images/model_settings_shocks.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Model settings: shocks screen (stochastic model)</span></p>
+</div>
+<div class="figure" id="id3">
+<a class="reference internal image-reference" href="_images/model_settings_shocks_det.png"><img alt="_images/model_settings_shocks_det.png" src="_images/model_settings_shocks_det.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Model settings: shocks screen (deterministic model)</span></p>
+</div>
+<p><a class="reference internal" href="model_settings.html#model-settings"><span>Back to Model settings</span></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model_settings_shocks.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="index.html">Dynare_GUI 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Milica Labus.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>

@@ -17,6 +17,8 @@ Project related functionalities are initiated with Project submenu:
 Project related functionalities are:
 
 	* :ref:`project_new`
-	* Open project
-	* Close project
-	* Save project.   
+	* :ref:`project_open`
+	* :ref:`project_close`
+	* :ref:`project_save`
+	* :ref:`project_save_as`.   
+

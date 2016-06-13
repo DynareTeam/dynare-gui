@@ -1,0 +1,23 @@
+.. _conditional_forecast_options:
+
+Define conditional forecast options   
+============
+
+This functionality defines options for conditional_forecast and plot_conditional_forecast commands. Functionality is triggered with “Define command options” button on :ref:`conditional forecast screen<conditional_forecast>`and new modal (child) screen for defining options is displayed (see figure below).
+
+All conditional_forecast and plot_conditional_forecast commands options as defined in the DYNARE’ reference manual are saved in Dynare_GUI internal structure. This structure is called ``dynare_gui_`` and has a separate substructure ``dynare_gui_.conditional_forecast`` for these two commands options. 
+
+All command options are classified in one group: setup, which has corresponding Matlab cell structure.
+
+Besides fields to enter new value for command options, current values and DYNARE’ default values are displayed.
+
+User can define his/her own command options defaults. They are saved in ``model_settings.defaults.conditional_forecast`` structure when command button “Save as default options” is pressed. Default options are loaded with “Load default options button”. 
+
+When user clicks “Use this options” button, modal screen for defining options is closed and user is back on :ref:`conditional forecast screen<conditional_forecast>`. In the bottom part of the screen defined options for conditional_forecast and plot_conditional_forecast command are displayed (panel with a title “Current command options”).
+
+.. figure:: _img\conditional_forecast_options.png
+	:width: 600 px
+	
+	Conditional forecast options screen 
+
+:ref:`Back to conditional forecast<conditional_forecast>`

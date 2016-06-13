@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Create new project &mdash; Dynare_GUI 1.0 documentation</title>
+    <title>Define conditional forecast options &mdash; Dynare_GUI 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -41,35 +41,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="create-new-project">
-<span id="project-new"></span><h1>Create new project<a class="headerlink" href="#create-new-project" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>This functionality allows user to create new project. User is displayed new project form (see Figure below) which contains following information:</dt>
-<dd><ul class="first last">
-<li><p class="first">project name (required field)</p>
-</li>
-<li><p class="first">project folder (required field)</p>
-</li>
-<li><p class="first">project description</p>
-</li>
-<li><dl class="first docutils">
-<dt>project specific settings:</dt>
-<dd><ul class="first last simple">
-<li>model type</li>
-<li>latex representation of the model</li>
-<li>maximum forecast periods.</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-<div class="figure" id="id1">
-<a class="reference internal image-reference" href="_images/new_project_form.png"><img alt="_images/new_project_form.png" src="_images/new_project_form.png" style="width: 600px;" /></a>
-<p class="caption"><span class="caption-text">New project form</span></p>
+  <div class="section" id="define-conditional-forecast-options">
+<span id="conditional-forecast-options"></span><h1>Define conditional forecast options<a class="headerlink" href="#define-conditional-forecast-options" title="Permalink to this headline">¶</a></h1>
+<p>This functionality defines options for conditional_forecast and plot_conditional_forecast commands. Functionality is triggered with “Define command options” button on :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>conditional forecast screen&lt;conditional_forecast&gt;`and new modal (child) screen for defining options is displayed (see figure below).</p>
+<p>All conditional_forecast and plot_conditional_forecast commands options as defined in the DYNARE’ reference manual are saved in Dynare_GUI internal structure. This structure is called <code class="docutils literal"><span class="pre">dynare_gui_</span></code> and has a separate substructure <code class="docutils literal"><span class="pre">dynare_gui_.conditional_forecast</span></code> for these two commands options.</p>
+<p>All command options are classified in one group: setup, which has corresponding Matlab cell structure.</p>
+<p>Besides fields to enter new value for command options, current values and DYNARE’ default values are displayed.</p>
+<p>User can define his/her own command options defaults. They are saved in <code class="docutils literal"><span class="pre">model_settings.defaults.conditional_forecast</span></code> structure when command button “Save as default options” is pressed. Default options are loaded with “Load default options button”.</p>
+<p>When user clicks “Use this options” button, modal screen for defining options is closed and user is back on <a class="reference internal" href="conditional_forecast.html#conditional-forecast"><span>conditional forecast screen</span></a>. In the bottom part of the screen defined options for conditional_forecast and plot_conditional_forecast command are displayed (panel with a title “Current command options”).</p>
+<div class="figure" id="id3">
+<a class="reference internal image-reference" href="_images/conditional_forecast_options.png"><img alt="_images/conditional_forecast_options.png" src="_images/conditional_forecast_options.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Conditional forecast options screen</span></p>
 </div>
-<p><a class="reference internal" href="project.html#project"><span>Back to project file</span></a></p>
+<p><a class="reference internal" href="conditional_forecast.html#conditional-forecast"><span>Back to conditional forecast</span></a></p>
 </div>
 
 
@@ -81,7 +65,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/project_new.txt"
+      <li><a href="_sources/conditional_forecast_options.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>

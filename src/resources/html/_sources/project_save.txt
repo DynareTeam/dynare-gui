@@ -1,0 +1,19 @@
+.. _project_save:
+
+Save project
+============
+
+This functionality allows saving of all project related variables in project (.dproj) file.
+
+This functionality also allows modification of all project related information except for project name (this is part of :ref:`Save Project As <project_save_as>` functionality).
+
+When project is saved current versions of all project related variables (structures) are stored in .dproj file.
+Whenever project is saved, user is asked to confirm if he/she wants to override existing project.
+
+.. figure:: _img\project_save.png
+	:width: 600 px
+	
+	Modifying/saving project form
+
+
+:ref:`Back to project file<project>`

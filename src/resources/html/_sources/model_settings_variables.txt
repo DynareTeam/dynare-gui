@@ -1,0 +1,26 @@
+.. _model_settings_variables:
+
+Model settings: variables
+============
+
+This functionality allows settings for the model variables (see figure below).
+
+Model variables, as read from the .mod/.dyn file, are displayed in an editable table. For each variable following information is displayed:
+	* name of the variable in the DYNARE model (this field is only not editable field in this table); initial values are copied from ``M_.endo_names``
+	* DYNARE LATEX name for the variable; initial values are copied from ``M_.endo_names_tex``
+	* DYNARE long name for the variable; initial values are copied from ``M_.endo_names_long``
+	* show/hide indicator which defines whether or not variable will be shown in estimation/simulation options
+	* name of the group that variable belongs to (user can create arbitrary number of groups by entering different values in this field for different variables); with this functionality grouping of variables is achieved 
+	* show/hide group indicator – for the convenience ability to show/hide group of variables
+	* rename group - for the convenience ability to rename group of variables by entering new name for any variable that belongs to corresponding group.
+
+Auxiliary variables are automatically grouped in AUX group and hidden by default.
+
+
+.. figure:: _img\model_settings_variables.png
+	:width: 600 px
+	
+	Model settings: variables screen
+
+
+:ref:`Back to Model settings<model_settings>`

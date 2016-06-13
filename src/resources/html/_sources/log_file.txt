@@ -1,0 +1,22 @@
+.. _log_file:
+
+Dynare_GUI log file
+============
+
+Dynare_GUI log file is created for each project and it is saved in project folder under the name project_name.log file.
+
+Every functionality invoked in Dynare_GUI (except for the Help submenu) generates entry in the log file. In addition, important errors and warnings in Dynare_GUI generate entry in the log file.
+
+Each entry in the log file has following information:
+	* Date 
+	* Time 
+	* Operation name/Error/Warning
+	* Additional information (if applicable).
+
+User has possibility to reload log file (see figure below).
+
+
+.. figure:: _img\log_file.png
+	:width: 600 px
+	
+	Dynare_GUI log file

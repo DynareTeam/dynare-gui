@@ -1,0 +1,35 @@
+.. _est_params:
+
+Estimated parameters & shocks
+============
+
+This functionality provides an interface to specify estimated parameters. It also provides interface to estimate standard error of selected exogenous variable (temporary shocks). This is the same information as in estimated_params block of .mod file (see figure below).
+
+For each estimated parameter user is able to specify the prior shape, the prior mean, the prior std., and optionally the prior upper and lower bounds. 
+
+Similarly, for each temporarily shock, user is able to specify prior shape, the prior mean, the prior std., and optionally the prior upper and lower bounds.
+
+Prior lower and upper bounds are checked against acceptable values.
+
+Initial values are loaded form ``estim_params_`` structure if the .mod file already contains the information on estimated parameters.
+
+User defined values are stored in in DYNARE structure ``estim_params_`` and in Dynare_GUI structure ``model_settings.estim_params``.
+
+.. figure:: _img\est_params.png
+	:width: 600 px
+	
+	Estimated parameters & shocks screen
+
+Select parameters functionality provides an interface to select parameters which will be estimated. Estimated parameters are selected out of complete list of parameters (see figure below). 
+
+.. figure:: _img\est_params_select_params.png
+	:width: 600 px
+	
+	Select parameters screen
+
+Select shocks functionality provides an interface to select exogenous variables (temporary shocks) for which standard error will be estimated. Shocks are selected out of the list of exogenous variables (see figure below).
+
+.. figure:: _img\est_params_select_shocks.png
+	:width: 600 px
+	
+	Select shocks screen

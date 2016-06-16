@@ -408,6 +408,12 @@ handles.pussbuttonCloseAll = uicontrol( ...
         set(handles.filter_step_ahead,'String','');
         set(handles.select_all_vars,'Value',0);
         set(handles.consider_only_observed,'Value',0);
+        
+        model_settings.calib_smoother = struct();
+        comm_str = gui_tools.command_string('calib_smoother', model_settings.calib_smoother);
+        set(handles.calib_smoother, 'String', comm_str);
+        set(handles.calib_smoother, 'TooltipString', comm_str);
+        
     end
 
 

@@ -219,12 +219,18 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             if(position(tabIndex)> maxDisplayed)
                 visible = 'off';
             end
+            sname = char(gui_shocks(ii,1));
+            lname = char(gui_shocks(ii,3));
+
+            if(~strcmp(sname, lname))
+                lname = sprintf('%s (%s)', sname, lname); 
+            end
             
             handles.shocks(currentShock) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
                 'Units','characters',...
                 'position',[3 top_position-(2*position(tabIndex)) 60 2]',... %Position',[0.03 0.98-position(tabIndex)*0.08 0.9 .08],...
-                'TooltipString', char(gui_shocks(ii,1)),...
                 'string',char(gui_shocks(ii,3)),...
+                'string',lname,...
                 'BackgroundColor', special_color,...
                 'Visible', visible);
             handles.grouped_shocks(tabIndex, currenGroupedShock(tabIndex))= handles.shocks(currentShock);
@@ -375,6 +381,10 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             set(handles.shocks(ii),'Value',0);
         end
         
+        model_settings.stoch_simul = struct();
+        comm_str = gui_tools.command_string('stoch_simul', model_settings.stoch_simul);
+        set(handles.stoch_simul, 'String', comm_str);
+        set(handles.stoch_simul, 'TooltipString', comm_str);
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)

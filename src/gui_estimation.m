@@ -481,6 +481,10 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         for ii = 1:handles.num_results
             set(handles.results(ii),'Value',0);
         end
+        model_settings.estimation = struct();
+        comm_str = gui_tools.command_string('estimation', model_settings.estimation);
+        set(handles.estimation, 'String', comm_str);
+        set(handles.estimation, 'TooltipString', comm_str);
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)

@@ -416,6 +416,11 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         for ii = 1:handles.numShocks
             set(handles.shocks(ii),'Value',0);
         end
+        
+        model_settings.simul = struct();
+        comm_str = gui_tools.command_string('simul', model_settings.simul);
+        set(handles.simul, 'String', comm_str);
+        set(handles.simul, 'TooltipString', comm_str);
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)

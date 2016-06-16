@@ -57,6 +57,8 @@ for ii = 1:num_options
     if(isempty(value))
         option = sprintf('%s',names{ii});
         
+    elseif(iscell(option_type))
+        option = sprintf('%s=%s',names{ii},value);
     elseif(~isempty(option_type) && strcmp(option_type,'check_option'))
         if(value)
             option = sprintf('%s',names{ii});

@@ -449,6 +449,11 @@ handles.pushbuttonDeleteCond = uicontrol( ...
             end
             set(handles.uit(ii), 'Data', data);
         end
+        
+        model_settings.conditional_forecast = struct();
+        comm_str = gui_tools.command_string('conditional_forecast', model_settings.conditional_forecast);
+        set(handles.conditional_forecast, 'String', comm_str);
+        set(handles.conditional_forecast, 'TooltipString', comm_str);
     end
 
     function value = variablesSelected

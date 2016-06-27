@@ -342,17 +342,32 @@ end
             end
         end
         
+        %save globals
+        glob_project_info = project_info;
+        glob_model_settings = model_settings;
+        glob_dynare_gui_ = dynare_gui_;
+            
         [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod file... Please wait...', tabId);
         
         try
             %eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
             
-            dynare_comm_str = sprintf ('%s noclearall -DGUI',comm_str);
+            %dynare_comm_str = sprintf ('%s noclearall -DGUI',comm_str);
+           
+            
+            dynare_comm_str = sprintf ('%s -DGUI',comm_str);
             eval(dynare_comm_str);
             
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('.mod file executed successfully!', 'DynareGUI','modal'));
+            
+            %restore globals
+            evalin('base','global dynare_gui_ project_info model_settings');
+            project_info = glob_project_info;
+            model_settings = glob_model_settings;
+            dynare_gui_ = glob_dynare_gui_;
+            
             project_info.modified = 1;
             
             %enable menu options
@@ -384,6 +399,11 @@ end
             gui_tools.project_log_entry('Running .mod file',sprintf('mod_file=%s',project_info.mod_file));
             
         catch ME
+            %restore globals
+            evalin('base','global dynare_gui_ project_info model_settings');
+            project_info = glob_project_info;
+            model_settings = glob_model_settings;
+            dynare_gui_ = glob_dynare_gui_;
             
             jObj.stop;
             jObj.setBusyText('Done with errors!');
@@ -391,6 +411,7 @@ end
         end
         delete(guiObj);
         
+
         
     end
 

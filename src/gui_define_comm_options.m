@@ -63,6 +63,7 @@ if(isempty(fieldnames(user_options)))
     user_options.tex = project_info.latex;
     user_options.graph_format = 'fig,eps';
     user_options.order = 1;
+    options_.plot_priors = 0;
 end
 
 uicontrol( ...

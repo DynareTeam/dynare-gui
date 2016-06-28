@@ -36,6 +36,7 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 dynare_gui_root = getappdata(0, 'dynare_gui_root');
+path = [dynare_gui_root, filesep,'+gui_external', filesep,'tablefilter-swing-5.2.2.jar'];
 javaaddpath(path);
 
 if (isempty(model_settings) || isempty(fieldnames(model_settings)))

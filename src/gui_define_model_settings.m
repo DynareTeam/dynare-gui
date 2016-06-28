@@ -35,6 +35,9 @@ global oo_ M_ ex0_;
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
+dynare_gui_root = getappdata(0, 'dynare_gui_root');
+javaaddpath(path);
+
 if (isempty(model_settings) || isempty(fieldnames(model_settings)))
     uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
     status = gui_create_model_settings();
@@ -222,6 +225,9 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         end
         tab_created_id(3) = 1;
         
+        jScrollPane = gui_external.findjobj(uit);
+        jtable = jScrollPane.getViewport.getView;
+        filter = net.coderazzi.filters.gui.TableFilterHeader(jtable);
         
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
@@ -243,27 +249,35 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 
             end
             
-            if(c == c_show_hide_group || c == c_rename_group)
+            if(c == c_show_hide_group)
                 t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
-                        if(c == c_show_hide_group)
                             t_data{i,c}= val;
                             t_data{i,c-2}= val;
                             current_settings.shocks{i,c} = val;
                             current_settings.shocks{i,c-2} = val;
-                        else
-                            t_data{i,c_group_name}= val;
-                            current_settings.shocks{i,c_group_name} = val;
-                        end
                         
                     end
                 end
+                set(uit,'data',t_data);
+            elseif(c == c_rename_group)
+                t_data=get(uit,'data');
+                group_name = t_data{r,c_group_name};
+                
+                for row = 0:jtable.getRowCount()-1
+                    i = jtable.convertRowIndexToModel(row)+1;
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        t_data{i,c_group_name}= val;
+                        current_settings.variables{i,c_group_name} = val;
+                    end
+                end
+                
                 t_data{r,c_rename_group} = '';
                 current_settings.shocks{r,c_rename_group} = '';
                 set(uit,'data',t_data);
-            end
+             end
         end
         
         function savecorrdata(hObject,callbackdata)
@@ -289,7 +303,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             'CellEditCallback',@savedata);
         
         tab_created_id(1) = 1;
-        
+  
+        jScrollPane = gui_external.findjobj(uit);
+        jtable = jScrollPane.getViewport.getView;
+        filter = net.coderazzi.filters.gui.TableFilterHeader(jtable);
+      
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
@@ -299,25 +317,37 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             c_show_hide_group = 6;
             c_rename_group = 7;
             
-            if(c == c_show_hide_group || c == c_rename_group)
+            if(c == c_show_hide_group)
                 t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
-                        if(c == c_show_hide_group)
-                            t_data{i,c}= val;
-                            t_data{i,c-2}= val;
-                            current_settings.variables{i,c} = val;
-                            current_settings.variables{i,c-2} = val;
-                        else
-                            t_data{i,c_group_name}= val;
-                            current_settings.variables{i,c_group_name} = val;
-                        end
+                        t_data{i,c}= val;
+                        t_data{i,c-2}= val;
+                        current_settings.variables{i,c} = val;
+                        current_settings.variables{i,c-2} = val;
                     end
                 end
+                set(uit,'data',t_data);
+            elseif(c == c_rename_group)
+                %current_filter = jtable.getRowSorter.getRowFilter;
+                
+                t_data=get(uit,'data');
+                group_name = t_data{r,c_group_name};
+                
+                for row = 0:jtable.getRowCount()-1
+                    %x = jtable.getModel.getValueAt(jtable.convertRowIndexToModel(row), 0);
+                    i = jtable.convertRowIndexToModel(row)+1;
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        t_data{i,c_group_name}= val;
+                        current_settings.variables{i,c_group_name} = val;
+                    end
+                end
+                
                 t_data{r,c_rename_group} = '';
                 current_settings.variables{r,c_rename_group} = '';
                 set(uit,'data',t_data);
+                %jtable.getRowSorter.setRowFilter(current_filter);
             end
             
         end
@@ -386,6 +416,10 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         end
         tab_created_id(2) = 1;
         
+        jScrollPane = gui_external.findjobj(uit);
+        jtable = jScrollPane.getViewport.getView;
+        filter = net.coderazzi.filters.gui.TableFilterHeader(jtable);
+        
         function savedata(hObject,callbackdata)
             val = callbackdata.EditData;
             r = callbackdata.Indices(1);
@@ -406,29 +440,36 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             end
             
             
-            if(c == c_show_hide_group || c == c_rename_group)
+            if(c == c_show_hide_group)
                 t_data=get(uit,'data');
                 group_name = t_data{r,c_group_name};
                 for i = 1:size(data,1)
                     if(strcmp(t_data{i,c_group_name},group_name))
-                        if(c == c_show_hide_group)
-                            t_data{i,c}= val;
-                            t_data{i,c-2}= val;
-                            current_settings.params{i,c} = val;
-                            current_settings.params{i,c-2} = val;
-                        else
-                            t_data{i,c_group_name}= val;
-                            current_settings.params{i,c_group_name} = val;
-                        end
+                        t_data{i,c}= val;
+                        t_data{i,c-2}= val;
+                        current_settings.params{i,c} = val;
+                        current_settings.params{i,c-2} = val;
                     end
                 end
+                set(uit,'data',t_data);
+            elseif(c == c_rename_group)
+                t_data=get(uit,'data');
+                group_name = t_data{r,c_group_name};
+                
+                for row = 0:jtable.getRowCount()-1
+                    i = jtable.convertRowIndexToModel(row)+1;
+                    if(strcmp(t_data{i,c_group_name},group_name))
+                        t_data{i,c_group_name}= val;
+                        current_settings.variables{i,c_group_name} = val;
+                    end
+                end
+                
                 t_data{r,c_rename_group} = '';
                 current_settings.params{r,c_rename_group} = '';
                 set(uit,'data',t_data);
             end
-            
         end
-        
+          
     end
 
     function close_tab(hObject,event, hTab)

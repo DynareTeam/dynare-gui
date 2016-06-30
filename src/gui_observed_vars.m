@@ -421,7 +421,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         all_varobs = {};
         all_endo = model_settings.variables;
         if(~isempty(observable_vars))
-            indx = ismember(all_endo(:,2),observable_vars);
+            indx = ismember(all_endo(:,1),observable_vars);
             all_varobs = all_endo(indx, :);
         else
             all_varobs = all_endo;

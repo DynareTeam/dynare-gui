@@ -346,7 +346,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
                         fh = figure('Units', 'characters', 'Position', [p(1)+p(3)*0.4 p(2)+2 p(3)*0.6-6  p(4)-6], 'Resize', 'on');
                         x =evalin('base', data);
                         plot(x);
-                        title(name);
+                        title(name, 'Interpreter', 'None');
                     end
                 end
             catch ME

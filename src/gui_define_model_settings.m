@@ -271,7 +271,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                     i = jtable.convertRowIndexToModel(row)+1;
                     if(strcmp(t_data{i,c_group_name},group_name))
                         t_data{i,c_group_name}= val;
-                        current_settings.variables{i,c_group_name} = val;
+                        current_settings.shocks{i,c_group_name} = val;
                     end
                 end
                 
@@ -461,7 +461,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                     i = jtable.convertRowIndexToModel(row)+1;
                     if(strcmp(t_data{i,c_group_name},group_name))
                         t_data{i,c_group_name}= val;
-                        current_settings.variables{i,c_group_name} = val;
+                        current_settings.params{i,c_group_name} = val;
                     end
                 end
                 

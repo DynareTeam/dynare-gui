@@ -341,7 +341,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
             
-            options_.nodisplay = 0;
+            
             model_settings.varlist_.stoch_simul = var_list_;
             
             try

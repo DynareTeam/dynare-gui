@@ -376,7 +376,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
             
-            options_.nodisplay = 0;
             model_settings.varlist_.simul = var_list_;
             try
                 set_det_shocks();

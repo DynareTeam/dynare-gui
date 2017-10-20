@@ -425,13 +425,15 @@ handles.pussbuttonClose = uicontrol( ...
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end
-        set(hObject, 'String', {'calibration','prior_mode', 'prior_mean', 'posterior_mode', 'posterior_mean','posterior_median'});
+        set(hObject, 'String', {'calibration','prior_mode', 'mle_mode', 'prior_mean', 'posterior_mode', 'posterior_mean','posterior_median'});
         
-        %Default value: posterior_mean if Metropolis has been run, else posterior_mode.
-        handles.parameterSetDefault = 4;
-         if isfield(oo_,'posterior_mean')
-              handles.parameterSetDefault = 5;
-         end
+        %Default value: posterior_mean if Metropolis has been run, mle_mode if ML has been conducted, else posterior_mode.
+        handles.parameterSetDefault = 5;
+        if isfield(oo_,'posterior_mean')
+             handles.parameterSetDefault = 6;
+        elseif isfield(oo_,'mle_mode')
+            handles.parameterSetDefault = 3
+        end
         
         set(hObject,'Value', handles.parameterSetDefault);
     end

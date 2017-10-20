@@ -34,6 +34,9 @@ global oo_;
 global options_ ;
 global model_settings;
 
+global bayestopt_;
+global estim_params_;
+
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
@@ -235,8 +238,8 @@ handles.pussbuttonClose = uicontrol( ...
         T1 = (year2-1)*4 + quarter2- handles.firstPeriodQuarterDefault +1;
         
         if(T1 > T0 && T1 <= str2double(project_info.nobs))
-            options_.initial_date.first = T0;
-            options_.initial_date.last = T1;
+            %options_.initial_date.first = T0;
+            %options_.initial_date.last = T1;
         elseif(T1<=T0)
             gui_tools.show_warning('The last historical observation to be displayed must be after the first historical observation.');
             uicontrol(hObject);
@@ -298,7 +301,7 @@ handles.pussbuttonClose = uicontrol( ...
             else
                 options_.model_settings.shocks = model_settings.shocks;
                 options_.shock_grouping = shock_grouping;
-                oo_ = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_);
+                [oo_,~] = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
             end
             
             parameter_set = options_.parameter_set;
@@ -421,7 +424,7 @@ handles.pussbuttonClose = uicontrol( ...
         set(hObject,'Value', handles.parameterSetDefault);
     end
 
-    function firstPeriodQuarter_CreateFcn(hObject,evendata)
+        function firstPeriodQuarter_CreateFcn(hObject,evendata)
         if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
             set(hObject,'BackgroundColor','white');
         end

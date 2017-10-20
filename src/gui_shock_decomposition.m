@@ -208,6 +208,14 @@ handles.pussbuttonClose = uicontrol( ...
             'Units','normalized','Position',[spc top-num*dheight 1-spc*4 dheight/2],...
             'String','Use shock groups when displaying decomposition',...
             'FontWeight', 'bold');
+        
+        num = num+1.5;
+        handles.useInitState = uicontrol(...
+            'Parent', handles.uipanelResults, ...
+            'Style','checkbox',...
+            'Units','normalized','Position',[spc top-num*dheight 1-spc*4 dheight/2],...
+            'String','init_state (condition on smoothed states in period 1)',...
+            'FontWeight', 'bold');
     end
 
 
@@ -256,6 +264,8 @@ handles.pussbuttonClose = uicontrol( ...
         
         shock_grouping = get(handles.useShockGrouping,'Value');
         
+        initial_state = get(handles.useInitState,'Value');
+        
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
@@ -301,6 +311,7 @@ handles.pussbuttonClose = uicontrol( ...
             else
                 options_.model_settings.shocks = model_settings.shocks;
                 options_.shock_grouping = shock_grouping;
+                options_.shock_decomp.init_state = initial_state;
                 [oo_,~] = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
             end
             
@@ -377,6 +388,7 @@ handles.pussbuttonClose = uicontrol( ...
         set(handles.lastPeriodYear,'Value', handles.lastPeriodYearDefault);
         
         set(handles.useShockGrouping, 'Value', 0);
+        set(handles.useInitState, 'Value', 0);
     end
 
     function value = variablesSelected

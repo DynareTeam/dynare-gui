@@ -221,7 +221,6 @@ end
 end
 
 
-
 % Model!
 % --------------------------------------------------------------------
 function model_Callback(hObject, eventdata, handles)
@@ -248,8 +247,6 @@ function model_settings_Callback(hObject, eventdata, handles)
 gui_define_model_settings(hObject);
 end
 
-
-
 % --------------------------------------------------------------------
 function model_save_snapshot_Callback(hObject, eventdata, handles)
 % hObject    handle to model_save_snapshot (see GCBO)
@@ -257,7 +254,6 @@ function model_save_snapshot_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 gui_tools.save_model_snapshot();
 end
-
 
 % --------------------------------------------------------------------
 function model_load_snapshot_Callback(hObject, eventdata, handles)
@@ -267,7 +263,6 @@ function model_load_snapshot_Callback(hObject, eventdata, handles)
 gui_tools.load_model_snapshot();
 end
 
-
 % --------------------------------------------------------------------
 function model_export_Callback(hObject, eventdata, handles)
 % hObject    handle to model_export (see GCBO)
@@ -276,7 +271,6 @@ function model_export_Callback(hObject, eventdata, handles)
 gui_tools.gui_export_to_mod_file();
 end
 
-
 % --------------------------------------------------------------------
 function model_logfile_Callback(hObject, eventdata, handles)
 % hObject    handle to model_logfile (see GCBO)
@@ -284,7 +278,6 @@ function model_logfile_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 gui_log_file(hObject);
 end
-
 
 
 % % --------------------------------------------------------------------
@@ -303,7 +296,6 @@ function estimation_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 end
 
-
 % --------------------------------------------------------------------
 function estimation_observed_variables_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_observed_variables (see GCBO)
@@ -313,7 +305,6 @@ tabId = addTab(hObject, 'Observed vars. ');
 gui_observed_vars(tabId);
 end
 
-
 % --------------------------------------------------------------------
 function estimation_parameters_shocks_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_parameters_shocks (see GCBO)
@@ -322,10 +313,6 @@ function estimation_parameters_shocks_Callback(hObject, eventdata, handles)
 tabId = addTab(hObject, 'Est. params & shocks ');
 gui_estim_params(tabId);
 end
-
-
-
-
 
 % --------------------------------------------------------------------
 function estimation_run_Callback(hObject, eventdata, handles)
@@ -345,6 +332,7 @@ tabId = addTab(hObject, 'Calib. smoother ', handles);
 gui_calib_smoother(tabId);
 end
 
+
 % Simulation!
 % --------------------------------------------------------------------
 function simulation_Callback(hObject, eventdata, handles)
@@ -352,7 +340,6 @@ function simulation_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
-
 
 % --------------------------------------------------------------------
 function simulation_stochastic_Callback(hObject, eventdata, handles)
@@ -373,7 +360,7 @@ gui_determ_simulation(tabId);
 end
 
 
-
+% Output!
 % --------------------------------------------------------------------
 function output_Callback(hObject, eventdata, handles)
 % hObject    handle to output (see GCBO)
@@ -381,16 +368,29 @@ function output_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 end
 
+function output_shocks_dec_Callback(hObject, eventdata, handles)
+% hObject    handle to output (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+end
 
 % --------------------------------------------------------------------
 function output_shocks_decomposition_Callback(hObject, eventdata, handles)
 % hObject    handle to output_shocks_decomposition (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tabId = addTab(hObject, 'Shock decomp. ', handles);
+tabId = addTab(hObject, 'Hist. shock decomp. ', handles);
 gui_shock_decomposition(tabId);
 end
 
+% --------------------------------------------------------------------
+function output_realtime_shocks_decomposition_Callback(hObject, eventdata, handles)
+% hObject    handle to output_shocks_decomposition (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+tabId = addTab(hObject, 'Realtime shock decomp. ', handles);
+gui_realtime_shock_decomposition(tabId);
+end
 
 % --------------------------------------------------------------------
 function output_conditional_forecast_Callback(hObject, eventdata, handles)
@@ -416,7 +416,6 @@ function help_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
-
 
 % --------------------------------------------------------------------
 function help_product_help_Callback(hObject, eventdata, handles)
@@ -964,14 +963,36 @@ h31 = uimenu(...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
 
 appdata = [];
+appdata.lastValidTag = 'output_shocks_dec';
+
+h39 = uimenu(...
+    'Parent',h31,...
+    'Enable','off', ...
+    'Callback',@(hObject,eventdata)dynare_gui('output_shocks_dec_Callback',hObject,eventdata,guidata(hObject)),...
+    'Label','Shock Decomposition',...
+    'Tag','output_shocks_dec',...
+    'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
+
+appdata = [];
 appdata.lastValidTag = 'output_shocks_decomposition';
 
 h32 = uimenu(...
-    'Parent',h31,...
+    'Parent',h39,...
     'Enable','off',...
     'Callback',@(hObject,eventdata)dynare_gui('output_shocks_decomposition_Callback',hObject,eventdata,guidata(hObject)),...
-    'Label','Shock decomposition',...
+    'Label','Historical',...
     'Tag','output_shocks_decomposition',...
+    'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
+
+appdata = [];
+appdata.lastValidTag = 'output_realtime_shocks_decomposition';
+
+h40 = uimenu(...
+    'Parent',h39,...
+    'Enable','off',...
+    'Callback',@(hObject,eventdata)dynare_gui('output_realtime_shocks_decomposition_Callback',hObject,eventdata,guidata(hObject)),...
+    'Label','Realtime',...
+    'Tag','output_realtime_shocks_decomposition',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
 
 appdata = [];
@@ -995,7 +1016,6 @@ h331 = uimenu(...
     'Label','Forecast',...
     'Tag','output_forecast',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
-
 
 appdata = [];
 appdata.lastValidTag = 'help';

@@ -339,7 +339,7 @@ handles.pussbuttonClose = uicontrol( ...
                 gui_shocks.shock_decomp_smooth_q_test([],d,ex_names,leg,cell_var_list_,1,[],0,[],[], T0, T1);
                 
             else
-                oo_ = gui_shocks.realtime_shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
+                oo_ = realtime_shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
             end
             
             parameter_set = options_.parameter_set;

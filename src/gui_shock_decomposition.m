@@ -312,7 +312,7 @@ handles.pussbuttonClose = uicontrol( ...
                 options_.model_settings.shocks = model_settings.shocks;
                 options_.shock_grouping = shock_grouping;
                 options_.shock_decomp.init_state = initial_state;
-                [oo_,~] = gui_shocks.shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
+                [oo_,~] = shock_decomposition(M_,oo_,options_,var_list_,bayestopt_,estim_params_);
             end
             
             parameter_set = options_.parameter_set;

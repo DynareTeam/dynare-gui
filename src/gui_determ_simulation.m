@@ -263,7 +263,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         if(isfield(M_,'det_shocks') && ~isempty(M_.det_shocks))
             num = size(M_.det_shocks);
             for i=1:num
-                data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id);
+                data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id,:);
                 data{i,2} = M_.det_shocks(i).periods;
                 data{i,3} = M_.det_shocks(i).value;
                 data{i,4} = false;

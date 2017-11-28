@@ -509,7 +509,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
 
     function unanticipated_shocks()
         data = get(handles.shocks_table, 'Data');
-        pf_unanticipated(data);
+        gui_auxiliary.pf_unanticipated(data);
     end
 
 end

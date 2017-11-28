@@ -33,7 +33,6 @@ How to run it:
 ```matlab
    >> addpath c:\dynare\dynare-gui\src
    >> addpath c:\dynare\dynare-gui\src\resources
-   >> addpath c:\dynare\dynare-gui\src\routines
 ```
 
 - Launch the GUI
@@ -45,5 +44,3 @@ How to run it:
 - Important notes: 
 
 The following folder is not on GitHub, but it is necessary for running the application: \src\resources
-
-The folder \src\routines contains matlab functions that are required for some of the GUI's functionalities.

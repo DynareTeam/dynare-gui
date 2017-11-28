@@ -38,6 +38,10 @@ shock_matrix_array = {};
 
 for i = 1:num
     aux = data(i,1:5);    
+    if aux{1,2} == 1
+        aux{1,5} = true;
+    end
+    
     if ~aux{1,5}
             ant = sortrows([ant;aux],2);
     else
@@ -73,7 +77,6 @@ for i = 1:rows(unant)
             gui_tools.show_error('Error while saving deterministic shocks!');
         end
     end
-    
     % Store each "provisional" M_.det_shocks in cell
     shock_matrix_array{i,1} = det_shocks_prov;
 end
@@ -82,13 +85,13 @@ M_.det_shocks = shock_matrix_array{1,1};
 yy = oo_.steady_state;
 perfect_foresight_setup;
 perfect_foresight_solver;
-yy = [yy, oo_.endo_simul(:,unant{1,2}-1)];
+yy = [yy, oo_.endo_simul(:,shock_matrix_array{1,1}(end).periods - 1)];
 
 for i = 2:rows(shock_matrix_array)
    M_.det_shocks = shock_matrix_array{i,1};
    oo_.endo_simul(:,1) = yy(:,end);
    perfect_foresight_solver;
-   yy = [yy, oo_.endo_simul(:,unant{i,2}-1)];
+   yy = [yy, oo_.endo_simul(:,shock_matrix_array{i,1}(end).periods - 1)];
 end
 
 end

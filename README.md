@@ -22,13 +22,13 @@ Main functionalities:
 How to run it:
 --------------
 
-- Temporarly add the dynare/matlab folder to the matlab's path.
+- Temporarily add the dynare/matlab folder to the matlab's path.
 
 ```matlab
    >> addpath c:\dynare\4.x.y\matlab
 ```
 
-- Temporarly add folder containing the fonction Dynare_GUI to the matlab's path
+- Temporarily add the folder containing the function Dynare_GUI to the Matlab's path
 
 ```matlab
    >> addpath c:\dynare\dynare-gui\src
@@ -41,7 +41,6 @@ How to run it:
   >> Dynare_GUI
 ```
 
-- Important note: 
+- Important notes: 
 
-Following folder is not on GitHub, but it is necessary for running the application: \src\resources 
-
+The following folder is not on GitHub, but it is necessary for running the application: \src\resources

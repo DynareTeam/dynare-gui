@@ -176,24 +176,22 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             'Enable', 'Off',...
             'Callback', @pussbuttonAddValue_Callback);
         
-        column_names = {'Shock ','Period ','Value ', 'Remove '};
-        column_format = {'char','numeric','numeric', 'logical'};
+        column_names = {'Shock ','Period ','Value ', 'Remove ','Unanticipated?'}; %%%
+        column_format = {'char','numeric','numeric', 'logical','logical'};%%%
         data = get_det_shocks();
         handles.shocks_table = uitable(handles.shocks_panel,'Data',data, ...
             'Units','normalized','Position',[0.02 0.10 0.96 0.6],...
             'ColumnName', column_names,...
             'ColumnFormat', column_format,...
-            'ColumnEditable', [false true true true],...
-            'ColumnWidth', {150, 90, 90, 60}, ...
+            'ColumnEditable', [false true true true true],... %%%
+            'ColumnWidth', {200, 50, 90, 60, 100}, ... %%%
             'RowName',[],...
-            'CellEditCallback',@savedata);
-        
+            'CellEditCallback',@savedata);  
         
         handles.pussbuttonRemoveValue = uicontrol('Parent',handles.shocks_panel,'Style','pushbutton','Units','normalized','Position',[0.73 0.03 0.25 0.06],...
             'String', 'Remove all selected', ...
             'Enable', 'Off',...
             'Callback', @pussbuttonRemoveValues_Callback);
-        
         
         %initval and endval
         column_names = {'Shock ','Initval ','Endval '};
@@ -225,6 +223,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 shocks_data_items = shocks_data_items +1;
                 shocks_data{shocks_data_items,1} = selected_shock;
                 shocks_data{shocks_data_items,4} = false;
+                shocks_data{shocks_data_items,5} = false; %%%
                 set(handles.shocks_table, 'Data', shocks_data);
             end
         end
@@ -233,7 +232,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             shocks_data = get(handles.shocks_table, 'Data');
             shocks_data_items = size(shocks_data,1);
             num=0;
-            new_data = cell(0,4);
+            new_data = cell(0,5); %%%
             for(i=1:shocks_data_items)
                 if(~shocks_data{i,4})
                     num = num+1;
@@ -257,18 +256,17 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         end
     end
 
-
     function data = get_det_shocks()
-        data = cell(0,4);
+        data = cell(0,5); %%%
         if(isfield(M_,'det_shocks') && ~isempty(M_.det_shocks))
             num = size(M_.det_shocks);
             for i=1:num
-                data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id);
+                data{i,1} = M_.exo_names(M_.det_shocks(i).exo_id,:);
                 data{i,2} = M_.det_shocks(i).periods;
                 data{i,3} = M_.det_shocks(i).value;
                 data{i,4} = false;
-            end
-            
+                data{i,5} = false; %%%
+            end  
         end
     end
 
@@ -282,13 +280,12 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                     M_.det_shocks = [ M_.det_shocks;
                         struct('exo_det',0,'exo_id',exo_id,'multiplicative',0,'periods',data{i,2},'value',data{i,3}) ];
                 else
-                    gui_tools.show_error('Error while saving deterministic shocks!');
-                    
+                    gui_tools.show_error('Error while saving deterministic shocks!');                   
                 end
             end
-        end
-        
+        end       
     end
+
     function data = get_exo_steady_states()
         data = cell(M_.exo_nbr,3);
         for i=1:M_.exo_nbr
@@ -328,7 +325,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             end
         end
     end
-
 
     function pussbuttonSimulation_Callback(hObject,evendata)
         
@@ -377,12 +373,32 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             end
             
             model_settings.varlist_.simul = var_list_;
-            try
-                set_det_shocks();
-                set_exo_steady_states();
+            
+            data = get(handles.shocks_table, 'Data');
+            aux  = data(:,5);
+            is_unant = 0;
+                        
+            for i = 1:rows(aux)
+                if aux{i}
+                    is_unant = is_unant + 1;
+                end
+            end
+                        
+            try    
+                if is_unant == 0
+                    set_det_shocks();
+                    set_exo_steady_states();
+                    perfect_foresight_setup;
+                    perfect_foresight_solver;
+                else
+                    set_exo_steady_states();
+                    unanticipated_shocks();
+                    % Uncomment the following if you want to keep the
+                    % original M_.det_shocks after simulation
+                    %
+                    % set_det_shocks();
+                end
                 
-                perfect_foresight_setup;
-                perfect_foresight_solver;
                 vars = getVariablesSelected;
                 for ii=1: size(vars,2)
                     rplot(vars{ii});
@@ -405,7 +421,6 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             uicontrol(hObject);
         end
     end
-
 
     function pussbuttonReset_Callback(hObject,evendata)
         for ii = 1:handles.numVars
@@ -478,11 +493,9 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             if get(handles.vars(ii),'Value')
                 num=num+1;
                 varName = get(handles.vars(ii),'TooltipString');
-                vars(num) = cellstr(varName);
-                
+                vars(num) = cellstr(varName);   
             end
-        end
-        
+        end   
     end
 
     function pussbuttonCloseAll_Callback(hObject,evendata)
@@ -493,4 +506,10 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         gui_tabs.delete_tab(hTab);
         
     end
+
+    function unanticipated_shocks()
+        data = get(handles.shocks_table, 'Data');
+        gui_auxiliary.pf_unanticipated(data);
+    end
+
 end

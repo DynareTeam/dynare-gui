@@ -32,15 +32,10 @@ How to run it:
 
 ```matlab
    >> addpath c:\dynare\dynare-gui\src
-   >> addpath c:\dynare\dynare-gui\src\resources
 ```
 
 - Launch the GUI
 
 ```matlab
-  >> Dynare_GUI
+  >> dynare_gui
 ```
-
-- Important notes: 
-
-The following folder is not on GitHub, but it is necessary for running the application: \src\resources

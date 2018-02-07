@@ -1,5 +1,5 @@
 function save_project()
-% function save_project()
+
 % auxiliary function which saves project related data in the project (.dproj) file
 %
 % INPUTS
@@ -11,7 +11,7 @@ function save_project()
 % SPECIAL REQUIREMENTS
 %   none
 
-% Copyright (C) 2003-2015 Dynare Team
+% Copyright (C) 2003-2018 Dynare Team
 %
 % This file is part of Dynare.
 %
@@ -30,6 +30,11 @@ function save_project()
 
 global project_info model_settings;
 global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_;
+
+if ~exist(project_info.project_folder)
+    warndlg(['Folder ' project_info.project_folder ' has been created.'], 'DynareGUI')
+    mkdir(project_info.project_folder)
+end
 
 fullFileName = [ project_info.project_folder, filesep, project_info.project_name,'.dproj'];
 project_info.modified = 0;

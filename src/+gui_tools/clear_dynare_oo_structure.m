@@ -11,7 +11,7 @@ function clear_dynare_oo_structure()
 % SPECIAL REQUIREMENTS
 %   none
 
-% Copyright (C) 2003-2015 Dynare Team
+% Copyright (C) 2003-2018 Dynare Team
 %
 % This file is part of Dynare.
 %

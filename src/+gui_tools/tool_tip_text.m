@@ -12,7 +12,7 @@ function tt_text = tool_tip_text(str_value, max_width)
 % SPECIAL REQUIREMENTS
 %   none
 
-% Copyright (C) 2003-2015 Dynare Team
+% Copyright (C) 2003-2018 Dynare Team
 %
 % This file is part of Dynare.
 %

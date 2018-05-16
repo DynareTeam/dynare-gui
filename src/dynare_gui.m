@@ -17,7 +17,7 @@ function varargout = dynare_gui(varargin)
 %      stop.  All inputs are passed to dynare_gui_OpeningFcn via varargin.
 %
 %
-% Copyright (C) 2003-2015 Dynare Team
+% Copyright (C) 2003-2018 Dynare Team
 %
 % This file is part of Dynare.
 %

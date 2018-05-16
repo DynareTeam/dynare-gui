@@ -5,8 +5,10 @@
 *.png
 *.jpg
 *.gif
-src/+gui_auxiliary/test 11.log
-src/+gui_auxiliary/Test 12.log
 *.log
-src/resources/dynare_gui_logo.tif
+*.tif
 *.db
+*~
+
+# MacOS stuff
+.DS_Store

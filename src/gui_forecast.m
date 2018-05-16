@@ -113,7 +113,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
     'Callback', @pussbuttonCloseAll_Callback);
 
     function uipanelResults_CreateFcn()
-        
+
         top = 1;
         dwidth = gui_size.default_width;
         dheight = gui_size.default_height;
@@ -126,7 +126,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
             'Units','normalized','Position',[spc*2 top-num*dheight dwidth*2 dheight/2],...
             'String', 'number of forecast periods:', ...
             'HorizontalAlignment', 'left');
-        
+
         handles.periods= uicontrol( ...
             'Parent', handles.uipanelResults, ...
             'Style', 'edit', 'BackgroundColor', bg_color,...
@@ -141,7 +141,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
             'Units','normalized','Position',[spc*2 top-num*dheight dwidth*2 dheight/2],...
             'String', 'start at historical period:', ...
             'HorizontalAlignment', 'left');
-        
+
         hvalue = project_info.nobs;
         if(~isnan(options_.nobs))
            hvalue =  options_.nobs;
@@ -153,7 +153,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
             'HorizontalAlignment', 'left',...
             'String', hvalue,...
             'Callback', {@checkCommOption_Callback,'histval','INTEGER'});
-        
+
         num = num+2;
         uicontrol( ...
             'Parent', handles.uipanelResults, ...
@@ -162,14 +162,14 @@ handles.pussbuttonCloseAll = uicontrol( ...
             'Units','normalized','Position',[spc*2 top-num*dheight dwidth*2 dheight/2],...
             'String', 'consider_all_endogenous:', ...
             'HorizontalAlignment', 'left');
-        
-        
+
+
         handles.select_all_vars = uicontrol(...
             'Parent', handles.uipanelResults, ...
             'Style','checkbox',...
             'Units','normalized','Position',[spc*3+dwidth*2 top-num*dheight dwidth dheight/2],...
             'Callback', {@checkCommOption_Callback,'select_all_vars','none'});
-        
+
         num = num+1;
         uicontrol( ...
             'Parent', handles.uipanelResults, ...
@@ -178,72 +178,72 @@ handles.pussbuttonCloseAll = uicontrol( ...
             'Units','normalized','Position',[spc*2 top-num*dheight dwidth*2 dheight/2],...
             'String', 'consider_only_observed:', ...
             'HorizontalAlignment', 'left');
-        
+
         handles.consider_only_observed = uicontrol(...
             'Parent', handles.uipanelResults, ...
             'Style','checkbox',...
             'Units','normalized','Position',[spc*3+dwidth*2 top-num*dheight dwidth dheight/2],...
             'TooltipString','Observable variables must be declared.',...
             'Callback', {@checkCommOption_Callback,'consider_only_observed','none'});
-        
-        
+
+
         function checkCommOption_Callback(hObject,callbackdata, option_name, option_type)
             value = get(hObject, 'Value');
             if(strcmp(option_name, 'periods') || strcmp(option_name, 'histval'))
                 value = get(hObject, 'String');
             end
-            
+
             status = 1;
             switch option_name
                 case {'periods', 'histval'}
                     if ~isempty(value)
                         [num_value, status] = str2num(value);
                     end
-                    
+
                 case 'select_all_vars'
                     if(value)
                         set(handles.consider_only_observed, 'Value',0);
                     end
                     set_all_endogenous(value);
-                    
+
                 case 'consider_only_observed'
                     if(value)
                         set(handles.select_all_vars, 'Value',0);
                     end
                     select_only_observed(value);
             end
-            
+
             if(~status)
                 errosrStr = sprintf('Not valid input! Please define option %s as %s',option_name, option_type );
                 gui_tools.show_error(errosrStr);
                 set(hObject, 'String','');
-                
+
             end
         end
     end
 
     function pussbuttonForecast_Callback(hObject,evendata)
-        
+
         set(handles.pussbuttonResults, 'Enable', 'off');
         old_options = options_;
         old_oo = oo_;
-        
+
         if(~(isfield(oo_, 'dr') && isfield(oo_.dr, 'ghu')&& isfield(oo_.dr, 'ghx')))
             gui_tools.show_warning('Please solve the model before running this command (run estimation or stochastic simulation)!');
             return;
         end
-        
+
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
             return;
         end
-        
+
         gui_tools.project_log_entry('Doing forecast ','...');
         [jObj, guiObj] = gui_tools.create_animated_screen('I am doing forecast... Please wait...', tabId);
-        
+
         var_list_=[];
-        
+
         num_selected = 0;
         for ii = 1:handles.numVars
             if get(handles.vars(ii),'Value')
@@ -256,9 +256,9 @@ handles.pussbuttonCloseAll = uicontrol( ...
                 end
             end
         end
-        
+
         model_settings.varlist_.forecast = var_list_;
-        
+
         % computations take place here
         try
             %TODO Check with Dynare team/Ratto!!!
@@ -271,19 +271,19 @@ handles.pussbuttonCloseAll = uicontrol( ...
             options_smoother2histval = struct();
             options_smoother2histval.period = str2num(handles.histval.String);
             smoother2histval(options_smoother2histval);
-            
+
             %options_.nomoments = 1;
             %info = stoch_simul(var_list_);
-            
+
             info = dyn_forecast(var_list_,M_,options_,oo_,'simul');
-            
+
             jObj.stop;
             jObj.setBusyText('All done!');
             uiwait(msgbox('Forecast executed successfully!', 'DynareGUI','modal'));
-            
+
             set(handles.pussbuttonResults, 'Enable', 'on');
             project_info.modified = 1;
-            
+
         catch ME
             jObj.stop;
             jObj.setBusyText('Done with errors!');
@@ -300,7 +300,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
         for ii = 1:handles.numVars
             set(handles.vars(ii),'Value',0);
         end
-        
+
         set(handles.periods,'String', num2str(project_info.default_forecast_periods));
         set(handles.histval,'String', project_info.nobs);
         set(handles.select_all_vars,'Value',0);
@@ -322,12 +322,12 @@ handles.pussbuttonCloseAll = uicontrol( ...
                 set(handles.vars(ii),'Value',value);
             end
         end
-        
+
     end
 
     function value = variablesSelected
         value=0;
-        
+
         for ii = 1:handles.numVars
             if get(handles.vars(ii),'Value')
                 value=1;
@@ -338,7 +338,7 @@ handles.pussbuttonCloseAll = uicontrol( ...
 
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
-        
+
     end
 
     function pussbuttonResults_Callback(hObject,evendata)

@@ -46,7 +46,7 @@ if (length(str_value)> max_width)
             text = '';
         end
         tt_text = sprintf('%s\n%s',tt_text, str);
-        
+
     end
 else
     tt_text = str_value;

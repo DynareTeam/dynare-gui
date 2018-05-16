@@ -3,7 +3,7 @@ function dynare_command_options_conditional_forecast()
 % creates Dynare_GUI internal structure which holds possible options for
 % conditional_forecast command
 %
-% Each command option has following four fields: name, default value (if any), type and description. 
+% Each command option has following four fields: name, default value (if any), type and description.
 %
 % INPUTS
 %   none
@@ -50,27 +50,27 @@ dynare_gui_.conditional_forecast.setup{num,3} = {'','calibration','prior_mode','
 dynare_gui_.conditional_forecast.setup{num,4} = 'Specify the parameter set to use for the forecasting. No default value, mandatory option.'; %additinal comment
 
 num = num+1;
-dynare_gui_.conditional_forecast.setup{num,1} = 'periods';    
-dynare_gui_.conditional_forecast.setup{num,2} = '40';     
-dynare_gui_.conditional_forecast.setup{num,3} = 'INTEGER';  
-dynare_gui_.conditional_forecast.setup{num,4} = 'Number of periods of the forecast. Default: 40. periods cannot be less than the number of constrained periods.';     
+dynare_gui_.conditional_forecast.setup{num,1} = 'periods';
+dynare_gui_.conditional_forecast.setup{num,2} = '40';
+dynare_gui_.conditional_forecast.setup{num,3} = 'INTEGER';
+dynare_gui_.conditional_forecast.setup{num,4} = 'Number of periods of the forecast. Default: 40. periods cannot be less than the number of constrained periods.';
 
 
 num = num+1;
-dynare_gui_.conditional_forecast.setup{num,1} = 'replic';    
-dynare_gui_.conditional_forecast.setup{num,2} = '5000';     
-dynare_gui_.conditional_forecast.setup{num,3} = 'INTEGER';  
-dynare_gui_.conditional_forecast.setup{num,4} = 'Number of simulations. Default: 5000.';     
+dynare_gui_.conditional_forecast.setup{num,1} = 'replic';
+dynare_gui_.conditional_forecast.setup{num,2} = '5000';
+dynare_gui_.conditional_forecast.setup{num,3} = 'INTEGER';
+dynare_gui_.conditional_forecast.setup{num,4} = 'Number of simulations. Default: 5000.';
 
 num = num+1;
-dynare_gui_.conditional_forecast.setup{num,1} = 'conf_sig';    
-dynare_gui_.conditional_forecast.setup{num,2} = '0.80';     
-dynare_gui_.conditional_forecast.setup{num,3} = 'DOUBLE';  
-dynare_gui_.conditional_forecast.setup{num,4} = 'Level of significance for confidence interval. Default: 0.80';   
+dynare_gui_.conditional_forecast.setup{num,1} = 'conf_sig';
+dynare_gui_.conditional_forecast.setup{num,2} = '0.80';
+dynare_gui_.conditional_forecast.setup{num,3} = 'DOUBLE';
+dynare_gui_.conditional_forecast.setup{num,4} = 'Level of significance for confidence interval. Default: 0.80';
 
 num = num+1;
-dynare_gui_.conditional_forecast.setup{num,1} = 'plot_periods';    
-dynare_gui_.conditional_forecast.setup{num,2} = 'periods';   
+dynare_gui_.conditional_forecast.setup{num,1} = 'plot_periods';
+dynare_gui_.conditional_forecast.setup{num,2} = 'periods';
 dynare_gui_.conditional_forecast.setup{num,3} = 'INTEGER';
 dynare_gui_.conditional_forecast.setup{num,4} = 'Number of periods to be plotted. Default: equal to periods in conditional_ forecast. The number of periods declared in plot_conditional_forecast cannot be greater than the one declared in conditional_forecast.';
 

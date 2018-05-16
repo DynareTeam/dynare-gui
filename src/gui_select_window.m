@@ -4,8 +4,8 @@ function fHandle= gui_select_window(field_name, base_field_name, window_title, s
 %
 % INPUTS
 %   field_name:         name of the structure where selected items are saved(varobs or estim_params)
-%   base_field_name:    name of the model_settings strucure from which items are selected (all_varobs, params or shocks) 
-%   window_title:       title for Matlab figure which displays the interface 
+%   base_field_name:    name of the model_settings strucure from which items are selected (all_varobs, params or shocks)
+%   window_title:       title for Matlab figure which displays the interface
 %   subtitle:           title for the interface
 %   column_names:       name of columns (sub-fields) that will be displayed on the interface
 %
@@ -86,7 +86,7 @@ handles.table = uitable(handles.uipanel,'Data',base_items,...
         r = callbackdata.Indices(1);
         c = callbackdata.Indices(2);
         base_items{r,c} = val;
-        
+
     end
 
 % --- PUSHBUTTONS -------------------------------------
@@ -118,7 +118,7 @@ handles.pussbuttonClose = uicontrol( ...
     function set_initial()
         num_items = size(base_items,1);
         num_selected = size(selected_items,1);
-        
+
         switch base_field_name
             case 'all_varobs'
                 name_column_id = 1;
@@ -136,12 +136,12 @@ handles.pussbuttonClose = uicontrol( ...
                     base_items{i,4}= true;
                 end
             end
-            
+
         end
     end
 
     function pussbuttonSave_Callback(hObject,callbackdata)
-        
+
         selected = find(cell2mat(base_items(:,4)));
         switch base_field_name
             case 'all_varobs'
@@ -161,11 +161,11 @@ handles.pussbuttonClose = uicontrol( ...
                 %selected_(:,6)= {''};
                 %selected_(:,7:8)= {0};
                 selected_(:,13)= {false};
-                
+
                 n = size(selected_items,1);
                 %copy estim_param vlaues if parameter was not changes
                 i=1;
-                
+
                 while(i <= n && strcmp(selected_items{i,1},'param'))
                     index = strfind(base_items(selected,1),selected_items{i,3});
                     j=1;
@@ -176,10 +176,10 @@ handles.pussbuttonClose = uicontrol( ...
                         end
                         j=j+1;
                     end
-                    
+
                     i=i+1;
                 end
-                
+
                 ii = 1;
                 while(ii<=size(selected_,1))
                     if(selected_{ii,2}==0)
@@ -191,26 +191,26 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                     ii=ii+1;
                 end
-                
+
                if(i <=n )
                     selected_items = [selected_; selected_items(i:n,:)];
                 else
                     selected_items = selected_;
                end
-               
+
             case 'shocks'
                 selected_ = base_items(selected,1);
                 selected_(:,3)= selected_(:,1);
                 selected_(:,1)= {'var_exo'}
                 selected_(:,2)= {0}; %id
-                
+
                 selected_(:,4)= {NaN};
                 selected_(:,5)= {-inf};
                 selected_(:,6)= {inf};
                 selected_(:,7)= {''};
                 selected_(:,8:12)= {NaN};
                 selected_(:,13)= {false};
-                
+
                 n = size(selected_items,1);
                 i=1;
                 last_param_id = 0;
@@ -218,7 +218,7 @@ handles.pussbuttonClose = uicontrol( ...
                     last_param_id = i;
                     i=i+1;
                 end
-                
+
                 while(i <= n)
                     index = strfind(base_items(selected,1),selected_items{i,3});
                     j=1;
@@ -231,7 +231,7 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                     i=i+1;
                 end
-                
+
                 ii = 1;
                 while(ii<=size(selected_,1))
                     if(selected_{ii,2}==0)
@@ -243,21 +243,21 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                     ii=ii+1;
                 end
-                
-                
+
+
                 if(last_param_id > 0)
                     selected_items = [selected_items(1:last_param_id,:); selected_];
                 else
                     selected_items = selected_;
                 end
-                
+
             otherwise
                 gui_tools.show_error(sprintf('Error while saving selected items - unsupported field name: %s',base_field_name));
-                
+
         end
         setappdata(0,field_name,selected_items);
         close;
-        
+
     end
 
     function id = find_id(item_name)
@@ -272,11 +272,11 @@ handles.pussbuttonClose = uicontrol( ...
             end
             j=j+1;
         end
-        
+
     end
 
     function pussbuttonReset_Callback(hObject,callbackdata)
-        
+
         set_initial();
         set(handles.table, 'Data', base_items);
     end

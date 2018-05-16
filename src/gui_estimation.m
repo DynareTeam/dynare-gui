@@ -90,14 +90,14 @@ if(isfield(model_settings,'estimation'))
     if(isfield(comm,'consider_all_endogenous'))
         set_all_endogenous(comm.consider_all_endogenous);
     end
-    
+
     if(isfield(comm,'consider_only_observed'))
         if(comm.consider_only_observed)
             select_only_observed();
         end
     end
-    
-    
+
+
 else
     comm_str = '';
     model_settings.estimation = struct();
@@ -170,34 +170,34 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
 
     function uipanelResults_CreateFcn()
         results = dynare_gui_.est_results;
-        
+
         names = fieldnames(results);
         num_groups = size(names,1);
         current_result = 1;
         maxDisplayed = 12;
-        
+
         % Create tabs
         handles.result_tab_group = uitabgroup(handles.uipanelResults,'Position',[0 0 1 1]);
-        
+
         for i=1:num_groups
             create_tab(i, names{i});
         end
-        
+
         function create_tab(num,group_name)
-            
+
             new_tab = uitab(handles.result_tab_group, 'Title',group_name , 'UserData', num);
             tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-            
+
             tabs_panel.Units = 'characters';
             pos = tabs_panel.Position;
             tabs_panel.Units = 'Normalized';
-            
+
             maxDisplayed = floor(pos(4)/2) - 3 ;
             top_position = pos(4) - 6;
-    
+
             group = getfield(results, group_name);
             numTabResults = size(group,1);
-            
+
             % Create slider
             if(numTabResults > maxDisplayed)
                 sld = uicontrol('Style', 'slider',...
@@ -206,16 +206,16 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                     'Units','normalized','Position',[0.968 0 .03 1],...
                     'Callback', {@scrollPanel_Callback,num,numTabResults} );
             end
-            
-            
-            
+
+
+
             ii=1;
             while ii <= numTabResults
                 visible = 'on';
                 if(ii> maxDisplayed)
                     visible = 'off';
                 end
-                
+
                 tt_string = combine_desriptions(group{ii,3});
                 handles.tab_results(num,ii) = uicontrol('Parent', tabs_panel , 'style','checkbox',...  %new_tab
                     'Units','characters',...  %'Units','normalized',...
@@ -225,22 +225,22 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                     'BackgroundColor', special_color,...
                     'Visible', visible,...
                     'Callback',{@checkbox_Callback,group{ii,3}} );
-                
+
                 handles.results(current_result)= handles.tab_results(num,ii);
-                
+
                 ii = ii+1;
                 current_result = current_result + 1; %all results on all tabs
-                
+
             end
-            
+
             handles.num_results=current_result-1;
-            
+
             function checkbox_Callback(hObject, callbackdata, comm_option)
                 value = get(hObject, 'Value');
                 if(isempty(comm_option))
                     return;
                 end
-                
+
                 num_options = size(comm_option,2);
                 if(isfield(model_settings,'estimation'))
                     user_options = model_settings.estimation;
@@ -254,18 +254,18 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                         if(~isempty(indx))
                             option_value = option_value(1:indx(1)-1);
                         end
-                        
+
                         if(comm_option(i).flag)
-                            
+
                             if(comm_option(i).used)
                                 user_options = setfield(user_options, option_value, 1); %flags
-                                
-                                
+
+
                             else
                                 if(isfield(user_options, comm_option(i).option))
                                     user_options = rmfield(user_options, option_value);
                                 end
-                                
+
                             end
                         else
                             user_options = setfield(user_options, option_value, comm_option(i).value_if_selected );
@@ -288,23 +288,23 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                             else
                                 user_options = rmfield(user_options, option_value);
                             end
-                            
+
                         end
                     end
                 end
-                
+
                 model_settings.estimation =  user_options;
                 comm_str = gui_tools.command_string('estimation', user_options);
-                
+
                 set(handles.estimation, 'String', comm_str);
                 set(handles.estimation, 'TooltipString', comm_str);
-                
+
                 if(~do_not_check_all_results)
                     check_all_result_option();
                 end
-                
+
             end
-            
+
             function str = combine_desriptions(comm_option)
                 num_options = size(comm_option,2);
                 str='';
@@ -313,13 +313,13 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
             function scrollPanel_Callback(hObject,callbackdata,tab_index, num_results)
-                
+
                 value = get(hObject, 'Value');
-                
+
                 value = floor(value);
-                
+
                 move = num_results - maxDisplayed - value;
-                
+
                 for ii=1: num_results
                     if(ii <= move || ii> move+maxDisplayed)
                         visible = 'off';
@@ -329,10 +329,10 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                         set(handles.tab_results(tab_index, ii), 'Visible', visible);
                         set(handles.tab_results(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
                         %set(handles.tab_results(tab_index, ii), 'Position', [0.03 0.98-(ii-move)*0.08 0.90 .08]);
-                        
+
                     end
-                    
-                    
+
+
                 end
             end
         end
@@ -344,12 +344,12 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         names = fieldnames(results);
         num_groups = size(names,1);
         do_not_check_all_results = 1;
-        
+
         for num=1:num_groups
-            
+
             group = getfield(results, names{num});
             numTabResults = size(group,1);
-            
+
             ii=1;
             while ii <= numTabResults
                 comm_option = group{ii,3};
@@ -382,7 +382,7 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                                 selected = 0;
                             end
                         end
-                        
+
                     end
                     jj = jj+1;
                 end
@@ -396,23 +396,23 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
 
     function pussbuttonEstimation_Callback(hObject,evendata)
         set(handles.pussbuttonResults, 'Enable', 'off');
-        
+
         user_options = model_settings.estimation;
         old_options = options_;
         old_oo = oo_;
-        
+
         if(~variablesSelected)
             gui_tools.show_warning('Please select variables!');
             uicontrol(hObject);
             return;
         end
-        
+
         if(~isempty(user_options))
-            
+
             names = fieldnames(user_options);
             for ii=1: size(names,1)
                 value = getfield(user_options, names{ii});
-                
+
                 if(isempty(value))
                     gui_auxiliary.set_command_option(names{ii}, 1, 'check_option');
                 else
@@ -420,11 +420,11 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
         end
-        
+
         gui_tools.project_log_entry('Doing estimation','...');
 
         var_list_=[];
-        
+
         num_selected = 0;
         for ii = 1:handles.numVars
             if get(handles.vars(ii),'Value')
@@ -437,27 +437,27 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 end
             end
         end
-        
+
         model_settings.varlist_.estimation = var_list_;
-        
+
         [jObj, guiObj] = gui_tools.create_animated_screen('I am doing estimation... Please wait...', tabId);
-        
+
         % computations take place here
         try
             %TODO Check with Dynare team/Ratto!!!
             %gui_tools.clear_dynare_oo_structure();
-            
+
             oo_recursive_ = dynare_estimation(var_list_);
-            
+
             jObj.stop;
             jObj.setBusyText('All done!');
-            
+
             uiwait(msgbox('Estimation executed successfully!', 'DynareGUI','modal'));
             %enable menu options
             gui_tools.menu_options('output','On');
             set(handles.pussbuttonResults, 'Enable', 'on');
             project_info.modified = 1;
-            
+
         catch ME
             jObj.stop;
             jObj.setBusyText('Done with errors!');
@@ -466,11 +466,11 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
             %TODO  Check with Dynare team/Ratto!!!
             options_ = old_options;
             oo_ = old_oo;
-            
+
         end
-        
+
         delete(guiObj);
-        
+
     end
 
 
@@ -488,30 +488,30 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
     end
 
     function pushbuttonCommandDefinition_Callback(hObject,evendata)
-        
+
         old_comm = model_settings.estimation;
-        
+
         h = gui_define_comm_options(dynare_gui_.estimation,'estimation');
-        
+
         uiwait(h);
-        
+
         try
             new_comm = getappdata(0,'estimation');
-            
+
             if(isfield(new_comm,'consider_all_endogenous'))
                 set_all_endogenous(new_comm.consider_all_endogenous);
              end
-            
+
             if(isfield(new_comm,'consider_only_observed'))
                 if(new_comm.consider_only_observed)
                     select_only_observed();
                 end
             end
-            
+
             if(~isempty(new_comm))
                 model_settings.estimation = new_comm;
             end
-            
+
             comm_str = gui_tools.command_string('estimation', new_comm);
             set(handles.estimation, 'String', comm_str);
             set(handles.estimation, 'TooltipString', comm_str);
@@ -520,15 +520,15 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
         catch ME
             gui_tools.show_error('Error in defining estimation command', ME, 'basic');
         end
-        
+
     end
 
     function set_all_endogenous(value)
         for ii = 1:handles.numVars
             set(handles.vars(ii),'Value',value);
-            
+
         end
-        
+
     end
 
     function select_only_observed
@@ -539,12 +539,12 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 set(handles.vars(ii),'Value',1);
             end
         end
-        
+
     end
 
     function value = variablesSelected
         value=0;
-        
+
         for ii = 1:handles.numVars
             if get(handles.vars(ii),'Value')
                 value=1;
@@ -562,12 +562,12 @@ handles.pushbuttonCommandDefinition = uicontrol( ...
                 vars(num) = cellstr(varName);
             end
         end
-        
+
     end
 
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
-        
+
     end
 
     function pussbuttonResults_Callback(hObject,evendata)

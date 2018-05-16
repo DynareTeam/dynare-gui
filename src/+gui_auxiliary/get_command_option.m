@@ -34,7 +34,7 @@ global project_info;
 
 try
     switch(name)
-        
+
         % estimation command options
         case 'lyapunov'
             if(options_.lyapunov_fp)
@@ -46,7 +46,7 @@ try
             else
                 value = 'default';
             end
-            
+
             % estimation and stoch_simul command options
         case 'sylvester'
             if(options_.sylvester_fp)
@@ -54,7 +54,7 @@ try
             else
                 value = 'default';
             end
-            
+
             % stoch_simul command options
         case 'dr'
             if(options_.dr_cycle_reduction)
@@ -64,14 +64,14 @@ try
             else
                 value = 'default';
             end
-            
+
         case 'bandpass_filter'
             if(strcmp(type, 'check_option'))
                 value = options_.bandpass.indicator;
             else %'[HIGHEST_PERIODICITY LOWEST_PERIODICITY]'
                 value = options_.bandpass.passband;
             end
-            
+
         case 'graph_format'
             temp = options_.graph_format;
             value = temp{1};
@@ -80,7 +80,7 @@ try
                     value = [value,',' temp{i}];
                 end
             end
-            
+
         case 'first_obs'
             value = options_.first_obs;
             %         mapping = gui_auxiliary.command_option_mapping(name);
@@ -90,16 +90,16 @@ try
             %             %value is in date format
             %             value = gui_tools.dates2str(value);
             %         end
-            
+
         otherwise
-            
+
             %options_ = setfield(options_, name, value);
             mapping = gui_auxiliary.command_option_mapping(name);
             value = eval(sprintf('options_.%s;',mapping ));
-            
+
     end
 catch ME
-    
+
     if(strcmp(type, 'check_option'))
         value = 0;
     else

@@ -1,6 +1,6 @@
 function project_log_entry(oid, data)
 % function project_log_entry(oid, data)
-% creates entry in the Dynare_GUI log file 
+% creates entry in the Dynare_GUI log file
 %
 % INPUTS
 %   oid:        short description of logged operation
@@ -37,6 +37,6 @@ fileName = [project_name, '.log'];
 logFile = fopen(fileName, 'at');
 fprintf(logFile,'%s %s: %s\n',datestr(now), oid, strtrim(data));
 fclose(logFile);
-  
+
 end
 

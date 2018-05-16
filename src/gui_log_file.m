@@ -1,6 +1,6 @@
 function gui_log_file(hObject)
 % function gui_log_file(hObject)
-% interface for displaying Dynare_GUI log file 
+% interface for displaying Dynare_GUI log file
 %
 % INPUTS
 %   hObject:    handle of main application window
@@ -56,25 +56,25 @@ fullFileName = [project_info.project_folder,filesep, project_info.project_name,'
 load_file(fullFileName);
 
     function load_file(fullFileName)
-        
+
         fileId = fopen(fullFileName,'rt');
         if fileId~=-1 %if the file doesn't exist ignore the reading code
             logFileText = fscanf(fileId,'%c');
             set(textBoxId,'String',logFileText); %%c
             fclose(fileId);
         end
-        
-       
+
+
     end
 
     function reload_file(hObject,event, hTab)
        load_file(fullFileName);
-        
+
     end
 
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
-        
+
     end
 end
 

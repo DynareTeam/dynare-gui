@@ -753,7 +753,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin) %#ok<
                 % Return just the children (the parent panels are uninteresting)
                 foundIdx(1:2:end) = [];
             end
-            
+
             % If several possible handles were found and the first is the container of the second
             if length(foundIdx) == 2 && isequal(handles(foundIdx(1)).java, handles(foundIdx(2)).getParent)
                 % Discard the uninteresting component container
@@ -1990,7 +1990,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin) %#ok<
                             % Use JideTable if available on this system
                             list = getTreeData(cbData);  %#ok
                             callbacksTableModel = eval('com.jidesoft.grid.PropertyTableModel(list);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
-                            
+
                             % Expand if only one category
                             if length(callbacksTableModel.getCategories)==1
                                 callbacksTableModel.expandFirstLevel;
@@ -2111,7 +2111,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin) %#ok<
                             % Use JideTable if available on this system
                             list = getTreeData(cbData);  %#ok
                             callbacksTableModel = eval('com.jidesoft.grid.PropertyTableModel(list);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
-                            
+
                             % Expand if only one category
                             if length(callbacksTableModel.getCategories)==1
                                 callbacksTableModel.expandFirstLevel;
@@ -2814,7 +2814,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin) %#ok<
                             end
 
                             % ...and now run it...
-                            %pause(0.1); 
+                            %pause(0.1);
                             drawnow;
                             dummy = which('uiinspect');  %#ok used only to load into memory
                             uiinspect(object);

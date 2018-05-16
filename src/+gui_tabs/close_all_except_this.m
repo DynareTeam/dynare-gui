@@ -1,6 +1,6 @@
 function close_all_except_this(tab_id)
 % function close_all_except_this(tab_id)
-% closes all opened tabs except for the tab with specified handle 
+% closes all opened tabs except for the tab with specified handle
 %
 % INPUTS
 %   tab_id: handle of the GUI tab element
@@ -30,7 +30,7 @@ function close_all_except_this(tab_id)
 
 tabGroup = getappdata(0, 'tabGroup');
 if isvalid(tabGroup)
-    
+
     tabs = get(tabGroup,'Children');
     num = length(tabs);
     for i=1:num
@@ -38,6 +38,6 @@ if isvalid(tabGroup)
             gui_tabs.delete_tab(tabs(i));
         end
     end
-    
+
 end
 end

@@ -1,6 +1,6 @@
 function create_dynare_gui_structure()
 % function create_dynare_gui_structure()
-% creates Dynare_GUI internal structure: dynare_gui_ 
+% creates Dynare_GUI internal structure: dynare_gui_
 %
 % INPUTS
 %   none

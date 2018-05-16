@@ -52,7 +52,7 @@ if(isnumeric(value))
         otherwise
             str_value = '...';
     end
-    
+
 else
     switch value
         case 'beta_pdf'

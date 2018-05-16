@@ -37,7 +37,7 @@ if(fileName ==0)
 end
 try
     fullFileName = [ pathName, fileName];
-    
+
     % All relevant model information is laoded
     load(fullFileName, '-mat');
     gui_tools.project_log_entry('Loading model snapshot: ',fullFileName);

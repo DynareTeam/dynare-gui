@@ -1,7 +1,7 @@
 function []=graph_decomp(z,shock_names,endo_names,i_var,initial_date,DynareModel,DynareOptions)
 %function []=graph_decomp(z,shock_names,endo_names,i_var,initial_date,DynareModel,DynareOptions)
 % Plots the results from the shock_decomposition command
-% 
+%
 % Inputs
 %   z               [n_var*(nshock+2)*nperiods]     shock decomposition array, see shock_decomposition.m for details
 %   shock_names     [endo_nbr*string length]        shock names from M_.exo_names
@@ -59,7 +59,7 @@ for j=1:nvar
         [~,idx] = unique(  strcat(shocks(:,8) , 'rows'));
         shock_groups = shocks(idx,8);
         num_shock_groups = length(shock_groups);
-        
+
         for i=1:num_shock_groups
             g_name = shock_groups{i};
             members = ismember(shocks(:,8), g_name);
@@ -74,12 +74,12 @@ for j=1:nvar
         z1 = new_z;
         shock_names = char(shock_groups);
         comp_nbr = num_shock_groups+1;
-        
+
     else  % EndOfModification
-    
+
         z1 = squeeze(z(i_var(j),:,:));
     end
-    
+
     xmin = x(1);
     xmax = x(end);
     ix = z1 > 0;
@@ -90,7 +90,7 @@ for j=1:nvar
         continue
     end
     fhandle = dyn_figure(DynareOptions,'Name',['Shock decomposition: ',endo_names(i_var(j),:)]);
-    
+
     % Modyfed by M.Labus
     fhandle.Units = 'characters';
     fhandle.Position = [46 12 180 38];
@@ -98,7 +98,7 @@ for j=1:nvar
     set(hdt,'UpdateFcn',@myupdatefcn,'SnapToDataVertex','off');
     datacursormode on;
     % EndOfModification
-    
+
     ax=axes('Position',[0.1 0.1 0.6 0.8]);
     plot(ax,x(2:end),z1(end,:),'k-','LineWidth',2)
     axis(ax,[xmin xmax ymin ymax]);
@@ -153,7 +153,7 @@ for j=1:nvar
         fprintf(fidTeX,'\\caption{Historical shock decomposition: $ %s $}\n',deblank(DynareModel.endo_names_tex(i_var(j),:)));
         fprintf(fidTeX,'\\end{figure}\n');
         fprintf(fidTeX,' \n');
-    end    
+    end
 end
 
 

@@ -32,7 +32,7 @@ function str = dates2str(date)
 str = '';
 
 if(isempty(date))
-   return; 
+   return;
 end
 
 switch date.freq
@@ -44,7 +44,7 @@ switch date.freq
         str = sprintf('%dM%d',date.time(1),date.time(2));
     case 52
         str = sprintf('%dW%d',date.time(1),date.time(2));
-        
+
 end
 
 end

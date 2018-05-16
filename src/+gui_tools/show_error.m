@@ -3,8 +3,8 @@ function show_error(error_msg, ME, mode)
 % interface for displaying Dynare_GUI error message in Matlab error dialog box
 %
 % INPUTS
-%   error_msg:  error message which is displayed    
-%   ME:         Matlab MException object which holds information about what caused the error 
+%   error_msg:  error message which is displayed
+%   ME:         Matlab MException object which holds information about what caused the error
 %   mode:       indicator for error details level (basic or extended)
 %
 % OUTPUTS
@@ -36,13 +36,13 @@ if nargin == 1
 else
     errosrStr = [sprintf('%s:\n\n', error_msg),...
         sprintf('%s\n\n', ME.message)];
-    
+
     if(strcmp(mode, 'extended'))
         errosrStr = [errosrStr, sprintf('Full error report:\n %s\n', getReport(ME,'extended', 'hyperlinks','off'))];
     end
-    
+
     errordlg(errosrStr,'Dynare_GUI Error','modal');
-    
+
     gui_tools.project_log_entry(error_msg, ME.message);
 end
 end

@@ -45,18 +45,18 @@ comm_str = sprintf('%s( ',comm_name);
 if(strcmp(comm_name, 'dynare'))
     comm_str = sprintf('%s %s ',comm_name, project_info.mod_file);
 end
-    
+
 first_option = 1;
 
 for ii = 1:num_options
-    
+
     value = eval(sprintf('comm.%s',names{ii}));
     option_type = gui_tools.get_option_type(comm_name, names{ii});
     option = '';
-    
+
     if(isempty(value))
         option = sprintf('%s',names{ii});
-        
+
     elseif(iscell(option_type))
         option = sprintf('%s=%s',names{ii},value);
     elseif(~isempty(option_type) && strcmp(option_type,'check_option'))
@@ -64,7 +64,7 @@ for ii = 1:num_options
             option = sprintf('%s',names{ii});
         end
     elseif(isa(value,'double'))
-       
+
         option = sprintf('%s=%g',names{ii},value);
     elseif(~isempty(option_type) && strcmp(option_type,'INPUT'))
         if(strcmp(names{ii}, 'IPATH'))
@@ -72,8 +72,8 @@ for ii = 1:num_options
         else
             option = sprintf('%s',value);
         end
-        
-        
+
+
     else
         if(~isempty(strfind(value,',')))
             option = sprintf('%s=(%s)',names{ii},value);
@@ -81,13 +81,13 @@ for ii = 1:num_options
             option = sprintf('%s=%s',names{ii},value);
         end
     end
-    
+
     if(~isempty(option))
         if(first_option || strcmp(comm_name, 'dynare') )
-            
+
             comm_str = strcat(comm_str, sprintf(' %s ', option));
             first_option = 0;
-            
+
         else
             comm_str = strcat(comm_str, sprintf(', %s ',option));
         end

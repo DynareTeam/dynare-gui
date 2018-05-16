@@ -73,12 +73,12 @@ uicontrol(tabId, 'Style','pushbutton','String','Save changes','Units','normalize
 uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*5+gui_size.button_width*4 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function save_changes(hObject,event, hTab)
-        
+
         try
             if(check_values())
                 remove_selected();
                 model_settings.estim_params = estim_params;
-                
+
                 % save in dynare structure estim_params_
                 estim_params_.param_vals  = [];
                 estim_params_.var_exo = [];
@@ -99,7 +99,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                     data_(i,8) =  estim_params{i,10};
                     data_(i,9) =  estim_params{i,11};
                     data_(i,10) =  estim_params{i,12};
-                    
+
                 end
                 if(num_p>0)
                     estim_params_.param_vals  = data_(1:num_p,:);
@@ -107,7 +107,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 if(num_p<size(estim_params,1))
                     estim_params_.var_exo  = data_(num_p+1:end,:);
                 end
-                
+
                 msgbox('Changes saved successfully', 'Dynare_GUI');
                 gui_tools.project_log_entry('Saving estim_params','...');
                 project_info.modified = 1;
@@ -115,72 +115,72 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         catch ME
             gui_tools.show_error('Error while saving estimated parameters & shocks', ME, 'extended');
         end
-        
+
     end
 
     function close_tab(hObject,event, hTab)
         gui_tabs.delete_tab(hTab);
-        
+
     end
 
     function select_params(hObject,event)
         setappdata(0,'estim_params',estim_params);
-        
+
         window_title = 'Dynare GUI - Select parameters for estimation';
         subtitle = 'Select estimated parameters out of complete list of parameters:';
         field_name = 'estim_params';  %model_settings filed name
         base_field_name = 'params';
         column_names = {'Parameter','LATEX name ', 'Long name ', 'Set for estimation '};
-        
+
         h = gui_select_window(field_name, base_field_name, window_title, subtitle, column_names);
-        
+
         uiwait(h);
-        
+
         try
             estim_params = getappdata(0,'estim_params');
             set(handles.estim_table, 'Data',  [estim_params(:,1),estim_params(:,3:13)] );
         catch
-            
+
         end
-        
+
     end
 
     function select_vars(hObject,event)
         setappdata(0,'estim_params',estim_params);
-        
+
         window_title = 'Dynare GUI - Select shocks for which standard error will be estimated';
         subtitle = 'Select shocks for which standard error will be estimated out of complete list of exogenous variables:';
         field_name = 'estim_params';  %model_settings filed name
         base_field_name = 'shocks';
         column_names = {'Shock','LATEX name ', 'Long name ', 'Set for estimation '};
-        
+
         h = gui_select_window(field_name, base_field_name, window_title, subtitle, column_names);
-        
+
         uiwait(h);
-        
+
         try
             estim_params = getappdata(0,'estim_params');
             set(handles.estim_table, 'Data',  [estim_params(:,1),estim_params(:,3:13)]);
         catch
-            
+
         end
-        
+
     end
 
     function remove_selected(hObject,event)
         %data = estim_params;
-        
+
         data = get(handles.estim_table, 'Data');
         selected = find(cell2mat(data(:,12)));
-        
+
         data = estim_params;
         data(selected,:)= [];
         estim_params = data;
-        
+
         setappdata(0,'estim_params',estim_params);
-        
+
         set(handles.estim_table, 'Data',  [estim_params(:,1),estim_params(:,3:13)]);
-        
+
     end
 
     function result = priors_not_specified()
@@ -214,14 +214,14 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 status = 0;
                 return;
             end
-            
+
             value = data{i,9};
             if(isempty(value) || isnan(value))
                 gui_tools.show_warning(['prior std is not specified for ', name]);
                 status = 0;
                 return;
             end
-            
+
         end
     end
 
@@ -231,17 +231,17 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
         v_space = 2;
         h_space = 5;
         v_size = 1.5;
-        
+
         prior_shapes = { 'Select...', 'beta_pdf', 'gamma_pdf', 'normal_pdf', 'inv_gamma_pdf /inv_gamma1_pdf', 'uniform_pdf', 'inv_gamma2_pdf', 'Weibull'};
         column_names = {'Param/var_exo','Name ', 'Initial value', 'Lower bound ', 'Upper bound ','Prior shape ','Prior mean ','Prior std ', 'Prior 3rd param.', 'Prior 4th param.', 'Scale param.','Remove from estimation'};
         column_format = {'char','char','numeric','numeric', 'numeric', prior_shapes,'numeric','numeric', 'numeric','numeric','numeric','logical'};
-        
+
         if (isempty(estim_params)) % || isempty(fieldnames(estim_params)))
             data = estim_params;
         else
             data = [estim_params(:,1),estim_params(:,3:13)];
         end
-        
+
         handles.estim_table = uitable(panel_id,'Data',data,...
             'Units','normalized',...%'Units','characters',...
             'ColumnName', column_names,...
@@ -251,8 +251,8 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
             'RowName',[],...
             'Position',[0.01,0.05,.98,0.9],...%'Position',[1, 1,175,28],...
             'CellEditCallback',@savedata);
-        
-        
+
+
         function savedata(hObject,callbackdata)
             %val = callbackdata.EditData;
             val = callbackdata.NewData;
@@ -278,62 +278,62 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 %                callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:9)];
             end
             callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:13)];
-            
+
         end
     end
 
     function cellArray = create_estim_params_cell_array(param_names, exo_names, data)
-        
+
         params  = data.param_vals;
         var_exo = data.var_exo;
         n = size(params,1);
         m = size(var_exo,1);
-        
+
         for i = 1:n
             cellArray{i,1} = 'param';
             cellArray{i,2} = params(i,1); %id
             name = deblank(param_names(params(i,1),:));
             cellArray{i,3} = name;
             [LB, UB] = gui_tools.prior_range_defaults(params(i,5));
-            
+
             cellArray{i,4} = params(i,2);% initial value !!!
-            
+
             cellArray{i,5} = params(i,3);% lower bound
             cellArray{i,6} = params(i,4);% upper bound
-            
+
             cellArray{i,7} = gui_tools.prior_shape(params(i,5));% prior shape
-            
+
             cellArray{i,8} = params(i,6);% prior mean
             cellArray{i,9} = params(i,7);% prior std
-            
+
             cellArray{i,10} = params(i,8);% Prior 3rd parameter
             cellArray{i,11} = params(i,9);% Prior 4rd parameter
             cellArray{i,12} = params(i,10);% scale parameter
-            
-            
-            
+
+
+
             cellArray{i,13} = false;% remove flag
-            
-            
+
+
         end
-        
+
         for i = 1:m
             cellArray{n+i,1} = 'var_exo';
             cellArray{n+i,2} = var_exo(i,1); %id
             name = deblank(exo_names(var_exo(i,1),:));
             cellArray{n+i,3} = name;
             [LB, UB] = gui_tools.prior_range_defaults(var_exo(i,5));
-            
+
             cellArray{n+i,4} = var_exo(i,2);% initial value !!!
-            
+
             cellArray{n+i,5} = var_exo(i,3);% lower bound
             cellArray{n+i,6} = var_exo(i,4);% upper bound
-            
+
             cellArray{n+i,7} = gui_tools.prior_shape(var_exo(i,5));% prior shape
-            
+
             cellArray{n+i,8} = var_exo(i,6);% prior mean
             cellArray{n+i,9} = var_exo(i,7);% prior std
-            
+
             cellArray{n+i,10} = var_exo(i,8);% Prior 3rd parameter
             cellArray{n+i,11} = var_exo(i,9);% Prior 4rd parameter
             cellArray{n+i,12} = var_exo(i,10);% scale parameter

@@ -39,21 +39,21 @@ dynare_gui_.calib_smoother_results = {};
 
 % Group 1: results
 num = 1;
-dynare_gui_.calib_smoother_results.results{num,1} = 'Smoothed variables & shocks';    
-dynare_gui_.calib_smoother_results.results{num,2} = 'Smoothed variables & shocks';    
-dynare_gui_.calib_smoother_results.results{num,3} = [];   
-dynare_gui_.calib_smoother_results.results{num,4} = {'oo_.SmoothedVariables', 'oo_.SmoothedShocks'}; 
-dynare_gui_.calib_smoother_results.results{num,5} = '/Output/';     
-dynare_gui_.calib_smoother_results.results{num,6} = {'_SmoothedVariables{1}', '_SmoothedShocks{1}'}; 
+dynare_gui_.calib_smoother_results.results{num,1} = 'Smoothed variables & shocks';
+dynare_gui_.calib_smoother_results.results{num,2} = 'Smoothed variables & shocks';
+dynare_gui_.calib_smoother_results.results{num,3} = [];
+dynare_gui_.calib_smoother_results.results{num,4} = {'oo_.SmoothedVariables', 'oo_.SmoothedShocks'};
+dynare_gui_.calib_smoother_results.results{num,5} = '/Output/';
+dynare_gui_.calib_smoother_results.results{num,6} = {'_SmoothedVariables{1}', '_SmoothedShocks{1}'};
 
 num = num+1;
-dynare_gui_.calib_smoother_results.results{num,1} = 'Updated variables';    
-dynare_gui_.calib_smoother_results.results{num,2} = 'The estimation of the expected value of variables given the information available at the current date.';    
-dynare_gui_.calib_smoother_results.results{num,3} = [];      
-dynare_gui_.calib_smoother_results.results{num,4} = {'oo_.UpdatedVariables'}; 
-dynare_gui_.calib_smoother_results.results{num,5} = '/Output/';     
+dynare_gui_.calib_smoother_results.results{num,1} = 'Updated variables';
+dynare_gui_.calib_smoother_results.results{num,2} = 'The estimation of the expected value of variables given the information available at the current date.';
+dynare_gui_.calib_smoother_results.results{num,3} = [];
+dynare_gui_.calib_smoother_results.results{num,4} = {'oo_.UpdatedVariables'};
+dynare_gui_.calib_smoother_results.results{num,5} = '/Output/';
 dynare_gui_.calib_smoother_results.results{num,6} = '_UpdatedVariables{1}';
 
-end 
+end
 
 

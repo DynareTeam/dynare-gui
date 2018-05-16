@@ -3,8 +3,8 @@ function show_warning(warning_msg, log_msg)
 % interface for displaying Dynare_GUI warning message in Matlab warning dialog box
 %
 % INPUTS
-%   warning_msg:  warning message which is displayed    
-%   log_msg:      entry in the Dynare_GUI log file     
+%   warning_msg:  warning message which is displayed
+%   log_msg:      entry in the Dynare_GUI log file
 %
 % OUTPUTS
 %   none

@@ -47,7 +47,7 @@ if(isnumeric(value))
             LB = 0;
             UB = 1;
     end
-    
+
 else
     switch value
         case 'beta_pdf'

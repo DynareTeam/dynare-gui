@@ -37,11 +37,11 @@ shock_matrix_array = {};
 % Create two matrices for anticipated and unexpected shocks
 
 for i = 1:num
-    aux = data(i,1:5);    
+    aux = data(i,1:5);
     if aux{1,2} == 1
         aux{1,5} = true;
     end
-    
+
     if ~aux{1,5}
             ant = sortrows([ant;aux],2);
     else

@@ -4,9 +4,9 @@ function s = required_command_option( used, flag, option, value_if_selected, val
 % result type
 %
 % INPUTS
-%   used:   indicator if this command option should be used or musn't be used 
+%   used:   indicator if this command option should be used or musn't be used
 %   flag:   indicatior if command option is check_option
-%   option: name of the option 
+%   option: name of the option
 %   value_if_selected:  default value if option is selected
 %   value_if_not_selected:  default value if option is selected
 %   description:  description of requred option usage

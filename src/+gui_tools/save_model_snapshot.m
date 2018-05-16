@@ -37,7 +37,7 @@ if(fileName ==0)
 end
 try
     fullFileName = [ pathName, fileName];
-    
+
     % All relevant model information is saved
     save(fullFileName, 'oo_', 'M_', 'options_');
     if exist('estim_params_', 'var') == 1
@@ -55,7 +55,7 @@ try
     % if exist('oo_recursive_', 'var') == 1
     %   save(fullFileName, 'oo_recursive_', '-append');
     % end
-    
+
     gui_tools.project_log_entry('Saving model snapshot',fullFileName);
     uiwait(msgbox('Model snapshot saved successfully!', 'DynareGUI','modal'));
 catch

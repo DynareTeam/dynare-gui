@@ -5,7 +5,7 @@ function fHandle= gui_define_comm_options(comm, comm_name)
 %
 % INPUTS
 %   comm:         dynare_gui_ structure where options for command are saved
-%   comm_name:    command name (dynare, stoch_simul, simul, estimation or conditional dorecast) 
+%   comm_name:    command name (dynare, stoch_simul, simul, estimation or conditional dorecast)
 %
 % OUTPUTS
 %   fHandle:    handle of Matlab figure which displays the interface
@@ -136,7 +136,7 @@ handles.pussbuttonClose = uicontrol( ...
 
     function create_tab(num,group_name)
         new_tab = uitab(handles.tab_group, 'Title', group_name, 'UserData', num);
-        
+
         tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
         group = getfield(comm, group_name);
         numOptions = size(group,1);
@@ -146,7 +146,7 @@ handles.pussbuttonClose = uicontrol( ...
         width_default = 20; %22;
         width_description = 55; %84;
         h_space = 3;
-        
+
         % Create slider
         if(numOptions > maxDisplayed)
             sld = uicontrol('Style', 'slider',...
@@ -163,7 +163,7 @@ handles.pussbuttonClose = uicontrol( ...
             'FontWeight', 'bold', ...
             'String', 'Command option:', ...
             'HorizontalAlignment', 'left');
-        
+
         uicontrol( ...
             'Parent',  tabs_panel, ...
             'Style', 'text', ...
@@ -172,7 +172,7 @@ handles.pussbuttonClose = uicontrol( ...
             'FontWeight', 'bold', ...
             'String', 'Define new value:', ...
             'HorizontalAlignment', 'left');
-        
+
         uicontrol( ...
             'Parent',  tabs_panel, ...
             'Style', 'text', ...
@@ -181,7 +181,7 @@ handles.pussbuttonClose = uicontrol( ...
             'FontWeight', 'bold', ...
             'String', 'Current value:', ...
             'HorizontalAlignment', 'left');
-        
+
         uicontrol( ...
             'Parent',  tabs_panel, ...
             'Style', 'text', ...
@@ -190,7 +190,7 @@ handles.pussbuttonClose = uicontrol( ...
             'FontWeight', 'bold', ...
             'String', 'Default value:', ...
             'HorizontalAlignment', 'left');
-        
+
         uicontrol( ...
             'Parent',  tabs_panel, ...
             'Style', 'text', ...
@@ -199,11 +199,11 @@ handles.pussbuttonClose = uicontrol( ...
             'FontWeight', 'bold', ...
             'String', 'Description:', ...
             'HorizontalAlignment', 'left');
-        
-        
+
+
         new_top = top - 9.5;
         visible = 'on';
-        
+
         for ii=1: size(group,1)
             if(ii> maxDisplayed)
                 visible = 'off';
@@ -216,10 +216,10 @@ handles.pussbuttonClose = uicontrol( ...
                 'String', group{ii,1}, ... %'UserData', group{ii,5}, ...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
-            
+
             option_type = group{ii,3};
-            
-            
+
+
             if(isfield(user_options,  group{ii,1}))
                 userDefaultValue = getfield(user_options, group{ii,1});
                 if(strcmp(option_type, 'INTEGER'))
@@ -227,7 +227,7 @@ handles.pussbuttonClose = uicontrol( ...
                 elseif(strcmp(option_type, 'DOUBLE'))
                     userDefaultValue = num2str(userDefaultValue);
                 end
-                
+
             else
                 if(strcmp(option_type, 'check_option'))
                     userDefaultValue= 0;
@@ -237,10 +237,10 @@ handles.pussbuttonClose = uicontrol( ...
                     userDefaultValue='';
                 end
             end
-            
-            
+
+
             if(strcmp(option_type, 'check_option'))
-                
+
                 tab_handles.values(ii)=uicontrol( ...
                     'Parent', tabs_panel, ...
                     'Style', 'checkbox', ...
@@ -250,19 +250,19 @@ handles.pussbuttonClose = uicontrol( ...
                     'TooltipString', option_type,...
                     'HorizontalAlignment', 'left',...
                     'Visible', visible);
-                
-                
+
+
             else
                 if(iscell(option_type))
                     if(~isnumeric(userDefaultValue))
-                        
+
                         ind  = find(ismember(option_type, userDefaultValue));
                         if(~isempty(ind))
                             userDefaultValue = ind;
                         else
-                            userDefaultValue = 1;    
+                            userDefaultValue = 1;
                         end
-                       
+
                     end
                     tab_handles.values(ii)=  uicontrol('Parent',  tabs_panel, ...
                         'Style', 'popup',...
@@ -274,7 +274,7 @@ handles.pussbuttonClose = uicontrol( ...
                         'Visible', visible);
                else
                     tool_tip_string = option_type;
-                    
+
                     tab_handles.values(ii)=uicontrol( ...
                         'Parent',  tabs_panel, ...
                         'Style', 'edit', ...
@@ -294,7 +294,7 @@ handles.pussbuttonClose = uicontrol( ...
                         'Callback',{@select_file, group{ii,1},tab_handles.values(ii)});
                 end
             end
-            
+
             try
                 if(strcmp(comm_name,'conditional_forecast'))
                     current_value= getfield(model_settings.conditional_forecast_options, group{ii,1});
@@ -311,7 +311,7 @@ handles.pussbuttonClose = uicontrol( ...
                    end
                    current_value = actual_value;
                 end
-                
+
                 if(ismatrix(current_value) && ~ischar(current_value) && length(current_value)>1)
                     if iscellstr(current_value)
                         current_value = char(current_value);
@@ -323,7 +323,7 @@ handles.pussbuttonClose = uicontrol( ...
                         end
                     end
                 end
-                
+
                 if(islogical(current_value))
                    if(current_value)
                       actual_value = 1;
@@ -345,7 +345,7 @@ handles.pussbuttonClose = uicontrol( ...
                     'Enable', 'off',...
                     'HorizontalAlignment', 'left',...
                     'Visible', visible);
-            
+
             defaultString = group{ii,2};
             if (length(defaultString)> width_default)
                 defaultString = strcat(defaultString(1:width_default-3),'...');
@@ -358,7 +358,7 @@ handles.pussbuttonClose = uicontrol( ...
                 'String', defaultString, 'TooltipString', group{ii,2},...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
-            
+
             textDesc = group{ii,4};
             if (length(textDesc)> width_description)
                 textDesc = strcat(textDesc(1:width_description-5),'...');
@@ -377,17 +377,17 @@ handles.pussbuttonClose = uicontrol( ...
                         str = text;
                         i = s;
                         text = '';
-                        
+
                     end
                     tool_tip_string = sprintf('%s\n%s',tool_tip_string, str);
-                    
+
                 end
             else
                 tool_tip_string = textDesc;
-                
+
             end
-            
-            
+
+
             tab_handles.description(ii)=uicontrol( ...
                 'Parent',  tabs_panel, ...
                 'Style', 'text', ...
@@ -397,14 +397,14 @@ handles.pussbuttonClose = uicontrol( ...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
             set(tab_handles.description(ii), 'TooltipString', tool_tip_string);
-            
+
             handles.options(current_option) = tab_handles.options(ii);
             handles.values(current_option) = tab_handles.values(ii);
             handles.current_values(current_option) = tab_handles.current_values(ii);
             current_option = current_option +1;
-            
+
         end
-        
+
         function select_file(hObject,callbackdata, option_name, uicontrol)
             try
                 file_types = {'*.*'};
@@ -413,17 +413,17 @@ handles.pussbuttonClose = uicontrol( ...
                         file_types = {'*.m';'*.mat';'*.xls';'*.xlsx';'*.csv'};
                     case 'mode_file'
                         file_types = {'*.mat'}
-                        
+
                 end
-                
+
                 [fileName,pathName] = uigetfile(file_types,sprintf('Select %s ...', option_name));
-                
+
                 if(fileName ==0)
                     return;
                 end
                 project_folder= project_info.project_folder;
                 if(strcmp([pathName,fileName],[project_folder,filesep,fileName])~=1)
-                    
+
                     [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
                     if(status)
                         uiwait(msgbox('File copied to project folder', 'DynareGUI','modal'));
@@ -432,12 +432,12 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                 end
                 set(uicontrol, 'String', fileName);
-                
+
             catch ME
                 gui_tools.show_error(['Error while selecting ',option_name], ME, 'basic');
             end
         end
-        
+
         function checkUserInput_Callback(hObject,callbackdata, option_name, option_type)
             value = get(hObject, 'String');
             if isempty(value)
@@ -467,7 +467,7 @@ handles.pussbuttonClose = uicontrol( ...
                             status = 0;
                         end
                     end
-                    
+
                     if(~status)
                         warnStr = sprintf('Not valid input! Please define option %s as %s',option_name, option_type );
                         gui_tools.show_warning(warnStr);
@@ -475,19 +475,19 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                 case '(NAME, VALUE, ...)'
                    %TODO optim
-                    
+
             end
-            
+
         end
-        
+
         function scrollPanel_Callback(hObject,callbackdata)
-            
+
             value = get(hObject, 'Value');
-            
+
             value = floor(value);
-            
+
             move = numOptions - maxDisplayed - value;
-            
+
             for ii=1: numOptions
                 if(ii <= move || ii> move+maxDisplayed)
                     visible = 'off';
@@ -496,7 +496,7 @@ handles.pussbuttonClose = uicontrol( ...
                     set(tab_handles.current_values(ii), 'Visible', visible);
                     set(tab_handles.defaults(ii), 'Visible', visible);
                     set(tab_handles.description(ii), 'Visible', visible);
-                    
+
                 else
                     visible = 'on';
                     set(tab_handles.options(ii), 'Visible', visible);
@@ -510,8 +510,8 @@ handles.pussbuttonClose = uicontrol( ...
                     set(tab_handles.description(ii), 'Visible', visible);
                     set(tab_handles.description(ii), 'Position',[h_space*4+width_name+width_value*3 new_top-(ii-move)*2 width_description 1.5]);
                 end
-                
-                
+
+
             end
         end
     end
@@ -527,7 +527,7 @@ handles.pussbuttonClose = uicontrol( ...
         new_user_options = struct();
         numOptions = size(handles.values,2);
         for ii = 1:numOptions
-            
+
             option_type = get(handles.values(ii),'TooltipString');
             if(strcmp(option_type, 'check_option'))
                 value = get(handles.values(ii),'Value');
@@ -536,62 +536,62 @@ handles.pussbuttonClose = uicontrol( ...
                     comm_option = get(handles.options(ii),'String');
                     new_user_options = setfield(new_user_options,comm_option,value);
                 end
-               
-            else 
+
+            else
                 value = strtrim(get(handles.values(ii),'String'));
-                
+
                 if(~isempty(value))
                     comm_option = get(handles.options(ii),'String');
                     if(~isempty(strfind(option_type, 'INTEGER')))
                         new_user_options = setfield(new_user_options,comm_option,str2double(value));
-                        
+
                     elseif(strcmp(option_type, 'DOUBLE'))
                         new_user_options = setfield(new_user_options,comm_option,str2double(value));
-                        
+
                      elseif(strcmp(option_type, 'popup_value')) %elseif(iscell(value))
                         selected_value = get(handles.values(ii),'Value');
                         user_value = value{selected_value};
                         current_value = get(handles.current_values(ii),'String');
-                        
+
                         if(~isempty(user_value) && ~strcmp(user_value,current_value))
                             new_user_options = setfield(new_user_options,comm_option,user_value);
                         end
-                        
+
                     else%we save it as a string
                         new_user_options = setfield(new_user_options,comm_option,value);
                     end
                 end
             end
-            
+
         end
-        
+
     end
 
     function pushbuttonSaveDefaults_Callback(hObject,callbackdata)
         numOptions = size(handles.values,2);
         defaults = struct();
-        
+
         for ii = 1:numOptions
-            
+
             option_type = get(handles.values(ii),'TooltipString');
             if(strcmp(option_type, 'check_option'))
                 value = get(handles.values(ii),'Value');
             else
                 value = strtrim(get(handles.values(ii),'String'));
                 if(iscell(value))
-                   user_value = value {get(handles.values(ii),'Value')}; 
+                   user_value = value {get(handles.values(ii),'Value')};
                    value = user_value;
                 end
             end
             defaults = setfield(defaults,get(handles.options(ii),'String'),value);
         end
-        
+
         if(~isfield(model_settings, 'defaults'))
             model_settings.defaults = struct();
         end
         model_settings.defaults = setfield(model_settings.defaults,comm_name,defaults);
         msgbox('Default values saved successfully', 'DynareGUI');
-        
+
         gui_tools.project_log_entry(sprintf('Defining %s command', comm_name),'Default values saved successfully');
     end
 
@@ -600,19 +600,19 @@ handles.pussbuttonClose = uicontrol( ...
             msgbox('There are no saved default values. Please save them first for future use.', 'DynareGUI');
             return;
         end
-        
-        defaults = getfield(model_settings.defaults,comm_name); 
+
+        defaults = getfield(model_settings.defaults,comm_name);
         numOptions = size(handles.values,2);
          for ii = 1:numOptions
             field_name = get(handles.options(ii),'String');
             value= getfield(defaults,field_name);
             option_type = get(handles.values(ii),'TooltipString');
-           
+
             if(strcmp(option_type, 'check_option'))
                 if(~isnumeric(value))
                     value = 0;
                 end
-                
+
                 set(handles.values(ii),'Value', value);
             elseif(strcmp(option_type, 'popup_value'))
                 if(~isnumeric(value))
@@ -624,14 +624,14 @@ handles.pussbuttonClose = uicontrol( ...
                 else
                     userValue = value;
                 end
-                
+
                 set(handles.values(ii),'Value', userValue);
             else
                 set(handles.values(ii),'String', value);
             end
         end
         msgbox('Default values loaded successfully', 'DynareGUI');
-        
+
         gui_tools.project_log_entry(sprintf('Defining %s command', comm_name),'Default values loaded successfully');
     end
 

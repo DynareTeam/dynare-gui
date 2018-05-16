@@ -5,7 +5,7 @@ function varargout = dynare_gui(varargin)
 %      singleton*.
 %
 %      H = DYNARE_GUI returns the handle to a new DYNARE_GUI or the handle to
-%      the existing singleton*.interface for the DYNARE estimation command 
+%      the existing singleton*.interface for the DYNARE estimation command
 %
 %      DYNARE_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
 %      function named CALLBACK in DYNARE_GUI.M with the given input arguments.
@@ -132,8 +132,8 @@ function project_new_Callback(hObject, eventdata, handles)
 global project_info;
 
 % Close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1) 
-    
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1)
+
     try
         gui_close_project();
     catch
@@ -154,7 +154,7 @@ function project_open_Callback(hObject, eventdata, handles)
 global project_info;
 
 % Close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1) 
+if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1)
     try
        gui_close_project();
     catch
@@ -206,9 +206,9 @@ if(strcmp(answer,'Yes'))
         elseif (strcmp(answer,'Cancel'))
             return;
         end
-        
+
     end
-    
+
     %evalin('base','diary off;');
     appdata = getappdata(0);
     fns = fieldnames(appdata);
@@ -465,7 +465,7 @@ function newTab = addTab(hObject, title, handles)
 end
 
 
-% --- Creates and returns a handle to the GUI figure. 
+% --- Creates and returns a handle to the GUI figure.
 function h1 = dynare_gui_LayoutFcn(policy)
 % policy - create a new figure or use a singleton. 'new' or 'reuse'.
 
@@ -805,7 +805,7 @@ h26 = uipanel(...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
 
 
-% 
+%
 % h26 = uipanel(...
 %     'Parent',h1,...
 %     'FontUnits',get(0,'defaultuipanelFontUnits'),...
@@ -831,7 +831,7 @@ h_test = uicontrol(...
 default_char_size = get(h_test,'extent');
 set(h_test, 'Visible', 'Off');
 
-c_width = default_char_size(3); 
+c_width = default_char_size(3);
 c_height = default_char_size(4);
 
 appdata = [];
@@ -910,7 +910,7 @@ set(h28,'Units','normalized');
 
 % appdata = [];
 % appdata.lastValidTag = 'text_re';
-% 
+%
 % h29 = uicontrol(...
 %     'Parent',h26,...
 %     'FontUnits',get(0,'defaultuicontrolFontUnits'),...
@@ -929,10 +929,10 @@ set(h28,'Units','normalized');
 %     'FontSize',28,...
 %     'FontName','Tahoma',...
 %     'FontWeight','bold');
-% 
+%
 % appdata = [];
 % appdata.lastValidTag = 'text_gui';
-% 
+%
 % h30 = uicontrol(...
 %     'Parent',h26,...
 %     'FontUnits',get(0,'defaultuicontrolFontUnits'),...
@@ -1074,12 +1074,12 @@ h38 = uimenu(...
             % Get figure width and height
             figwidth = hObject.Position(3);
             figheight = hObject.Position(4);
-            
-           
+
+
 %             if(figwidth < 180 )
 %                 hObject.Position(3) = 180;
 %             end
-%             
+%
 %             if(figheight < 40 )
 %                 hObject.Position(4) = 40;
 %             end
@@ -1164,14 +1164,14 @@ if ~gui_Create
         while ~isempty(fig) && ~ishghandle(fig,'figure')
             fig = get(fig,'parent');
         end
-        
+
         designEval = isappdata(0,'CreatingGUIDEFigure') || (isscalar(fig)&&isprop(fig,'GUIDEFigure'));
     end
-    
+
     if designEval
         beforeChildren = findall(fig);
     end
-    
+
     % evaluate the callback now
     varargin{1} = gui_State.gui_Callback;
     if nargout
@@ -1179,7 +1179,7 @@ if ~gui_Create
     else
         feval(varargin{:});
     end
-    
+
     % Set serializable of objects created in the above callback to off in
     % design time. Need to check whether figure handle is still valid in
     % case the figure is deleted during the callback dispatching.
@@ -1192,7 +1192,7 @@ else
     else
         gui_SingletonOpt = 'new';
     end
-    
+
     % Check user passing 'visible' P/V pair first so that its value can be
     % used by oepnfig to prevent flickering
     gui_Visible = 'auto';
@@ -1201,7 +1201,7 @@ else
         if length(varargin) == index || ~ischar(varargin{index})
             break;
         end
-        
+
         % Recognize 'visible' P/V pair
         len1 = min(length('visible'),length(varargin{index}));
         len2 = min(length('off'),length(varargin{index+1}));
@@ -1215,11 +1215,11 @@ else
             end
         end
     end
-    
+
     % Open fig file with stored settings.  Note: This executes all component
     % specific CreateFunctions with an empty HANDLES structure.
-    
-    
+
+
     % Do feval on layout code in m-file if it exists
     gui_Exported = ~isempty(gui_State.gui_LayoutFcn);
     % this application data is used to indicate the running mode of a GUIDE
@@ -1228,14 +1228,14 @@ else
     setappdata(0,genvarname(['OpenGuiWhenRunning_', gui_State.gui_Name]),1);
     if gui_Exported
         gui_hFigure = feval(gui_State.gui_LayoutFcn, gui_SingletonOpt);
-        
+
         % make figure invisible here so that the visibility of figure is
         % consistent in OpeningFcn in the exported GUI case
         if isempty(gui_VisibleInput)
             gui_VisibleInput = get(gui_hFigure,'Visible');
         end
         set(gui_hFigure,'Visible','off')
-        
+
         % openfig (called by local_openfig below) does this for guis without
         % the LayoutFcn. Be sure to do it here so guis show up on screen.
         movegui(gui_hFigure,'onscreen');
@@ -1251,21 +1251,21 @@ else
     if isappdata(0, genvarname(['OpenGuiWhenRunning_', gui_State.gui_Name]))
         rmappdata(0,genvarname(['OpenGuiWhenRunning_', gui_State.gui_Name]));
     end
-    
+
     % Set flag to indicate starting GUI initialization
     setappdata(gui_hFigure,'InGUIInitialization',1);
-    
+
     % Fetch GUIDE Application options
     gui_Options = getappdata(gui_hFigure,'GUIDEOptions');
     % Singleton setting in the GUI M-file takes priority if different
     gui_Options.singleton = gui_State.gui_Singleton;
-    
+
     if ~isappdata(gui_hFigure,'GUIOnScreen')
         % Adjust background color
         if gui_Options.syscolorfig
             set(gui_hFigure,'Color', get(0,'DefaultUicontrolBackgroundColor'));
         end
-        
+
         % Generate HANDLES structure and store with GUIDATA. If there is
         % user set GUI data already, keep that also.
         data = guidata(gui_hFigure);
@@ -1282,36 +1282,36 @@ else
         end
         guidata(gui_hFigure, data);
     end
-    
+
     % Apply input P/V pairs other than 'visible'
     for index=1:2:length(varargin)
         if length(varargin) == index || ~ischar(varargin{index})
             break;
         end
-        
+
         len1 = min(length('visible'),length(varargin{index}));
         if ~strncmpi(varargin{index},'visible',len1)
             try set(gui_hFigure, varargin{index}, varargin{index+1}), catch break, end
         end
     end
-    
+
     % If handle visibility is set to 'callback', turn it on until finished
     % with OpeningFcn
     gui_HandleVisibility = get(gui_hFigure,'HandleVisibility');
     if strcmp(gui_HandleVisibility, 'callback')
         set(gui_hFigure,'HandleVisibility', 'on');
     end
-    
+
     feval(gui_State.gui_OpeningFcn, gui_hFigure, [], guidata(gui_hFigure), varargin{:});
-    
+
     if isscalar(gui_hFigure) && ishghandle(gui_hFigure)
         % Handle the default callbacks of predefined toolbar tools in this
         % GUI, if any
         guidemfile('restoreToolbarToolPredefinedCallback',gui_hFigure);
-        
+
         % Update handle visibility
         set(gui_hFigure,'HandleVisibility', gui_HandleVisibility);
-        
+
         % Call openfig again to pick up the saved visibility or apply the
         % one passed in from the P/V pairs
         if ~gui_Exported
@@ -1321,17 +1321,17 @@ else
         end
         if strcmpi(get(gui_hFigure, 'Visible'), 'on')
             figure(gui_hFigure);
-            
+
             if gui_Options.singleton
                 setappdata(gui_hFigure,'GUIOnScreen', 1);
             end
         end
-        
+
         % Done with GUI initialization
         if isappdata(gui_hFigure,'InGUIInitialization')
             rmappdata(gui_hFigure,'InGUIInitialization');
         end
-        
+
         % If handle visibility is set to 'callback', turn it on until
         % finished with OutputFcn
         gui_HandleVisibility = get(gui_hFigure,'HandleVisibility');
@@ -1342,13 +1342,13 @@ else
     else
         gui_Handles = [];
     end
-    
+
     if nargout
         [varargout{1:nargout}] = feval(gui_State.gui_OutputFcn, gui_hFigure, [], gui_Handles);
     else
         feval(gui_State.gui_OutputFcn, gui_hFigure, [], gui_Handles);
     end
-    
+
     if isscalar(gui_hFigure) && ishghandle(gui_hFigure)
         set(gui_hFigure,'HandleVisibility', gui_HandleVisibility);
     end

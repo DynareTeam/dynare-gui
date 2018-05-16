@@ -117,7 +117,7 @@ for j=2:gend,
         if j>1,
             deco(:,iexo,j) = deco(:,iexo,j) +  TM*deco(:,iexo,j-1);%+CONST;
         end
-        
+
     end
 end
 as=as(oo_.dr.inv_order_var,:);
@@ -128,14 +128,14 @@ deco=deco(oo_.dr.inv_order_var,:,:);
 
 Ti = 0:(options_.first_obs+options_.nobs-1);
 %Ti = 0:(t_1 - t_0 +1);
-Ti = Ti/4; 
+Ti = Ti/4;
 % % % if ~isempty(T0)
-% % %     TT = T0.double(1)+ Ti; 
+% % %     TT = T0.double(1)+ Ti;
 % % % else
 % % %     TT=[0:0.25:ceil(size(ss_.etahat,2)/4)];
 % % % end
 if ~isempty(T0)
-    TT = T0.double(1)+Ti(options_.first_obs:end); 
+    TT = T0.double(1)+Ti(options_.first_obs:end);
 else
     TT=[0:0.25:ceil(size(ss_.etahat,2)/4)];
 end
@@ -182,19 +182,19 @@ nrow=ceil(ngroups/ncol);
 
 for j=1:length(vname),
     clear sdec  sdec2,
-    
+
     indx = (strmatch(vname{j},M_.endo_names,'exact'));
-    
+
     inno = inn(indx,kpoint);
     %   inno2 = inn(indx,kpoint2);
     %   inno3 = inn(indx,kpoint3);
     %   inno4 = inn(indx,kpoint4);
-    
+
     sdec0 = squeeze(deco(indx,:,kpoint));
     %   sdec2 = squeeze(deco(indx,:,kpoint2));
     %   sdec3 = squeeze(deco(indx,:,kpoint3));
     %   sdec4 = squeeze(deco(indx,:,kpoint4));
-    
+
     for i=1:size(ex_names_,1),
         clear index,
         for ii=1:size(ex_names_,2),
@@ -215,8 +215,8 @@ for j=1:length(vname),
     sdec2=[sdec; as(indx,kpoint)-inno+sum(sdec0)-as0(indx,kpoint)];
     sdec=[sdec; sum(sdec0)];
     nbcmpts=size(sdec,1);
-    
-    
+
+
     % %
     % %     colorrange=linspace(0,1,nbcmpts);
     % %     MAP0=zeros(nbcmpts,3);
@@ -248,19 +248,19 @@ for j=1:length(vname),
         MAP(end,:) = [0.7 0.7 0.7];
     else
         colours=leg(:,2);
-        
+
         for i=1:length(colours); MAP(i,:)=rgb(colours{i,:}); end
     end
-    
-    
+
+
     leg0=leg(:,1);
-    
+
     ipos=sdec>0;
     ineg=sdec<0;
     ipos2=sdec2>0;
     ineg2=sdec2<0;
     if no_initial_effect,
-        
+
         %%% h = dyn_figure(options_,'name',vname{j}, 'PaperPositionMode', 'auto','PaperType','A4','PaperOrientation','landscape','renderermode','auto');
         h = dyn_figure(options_,'name',vname{j},'PaperUnits','points','Units','characters', 'Position',[46 12 180 38]);
         colormap(MAP);
@@ -271,12 +271,12 @@ for j=1:length(vname),
         hold on, hn=bar((sdec.*ineg)','stacked');
         shading faceted;
         %   set(get(hn(end),'children'),'Facecolor',[1 1 1]);
-        
+
         set(gca,'position',[0.05 0.4 0.9 0.55],'units','normalized')
         hleg=legend(leg0,'interpreter','none','location','Best');
         shading faceted;
         set(hleg,'position',[0.35 0.05 0.3 0.3],'units','normalized')
-        
+
         hleg2 = get(hleg,'children');
         child = get(hleg2(1:2:end),'children');
         for ichild = 1:length(child),
@@ -313,7 +313,7 @@ for j=1:length(vname),
         end
         set(gca,'yticklabel',num2str(get(gca,'ytick')'+gui_shocks.get_mean(vname{j}),'%4.2g'))
         dyn_saveas(gcf,[M_.fname,'_shock_dec_qoq_',vname{j},'_vs_',num2str(size(ex_names_,1)),'Shocks',file_name],options_)
-        
+
     else
         %%% hinit = dyn_figure(options_,'name',vname{j}, 'PaperPositionMode', 'auto','PaperType','A4','PaperOrientation','landscape','renderermode','auto');
         hinit = dyn_figure(options_,'name',vname{j},'PaperUnits','points','Units','characters', 'Position',[46 12 180 38]);
@@ -325,12 +325,12 @@ for j=1:length(vname),
         hold on, hn=bar((sdec2.*ineg2)','stacked');
         shading faceted;
         %   set(get(hn(end),'children'),'Facecolor',[1 1 1]);
-        
+
         set(gca,'position',[0.05 0.4 0.9 0.55],'units','normalized')
         hleg=legend(leg0,'interpreter','none','location','Best');
         shading faceted;
         set(hleg,'position',[0.35 0.05 0.3 0.3],'units','normalized')
-        
+
         hleg2 = get(hleg,'children');
         child = get(hleg2(1:2:end),'children');
         for ichild = 1:length(child),
@@ -367,7 +367,7 @@ for j=1:length(vname),
     end
     %%% hdetail = dyn_figure(options_,'name',vname{j}, 'PaperPositionMode', 'auto','PaperType','A4','PaperOrientation','portrait','renderermode','auto','position',[200 100 650 850]);
     hdetail = dyn_figure(options_,'name',vname{j},'PaperUnits','points','Units','characters', 'Position',[46 12 180 38]);
-        
+
     a0=a*0;
     a0(3)=inf;
     a0(4)=-inf;
@@ -466,8 +466,8 @@ for j=1:length(vname),
     eval([tempshockdecom,'.TagName=TagName;']);
     SheetName = [vname{j}];
     eval([tempshockdecom,'.SheetName=SheetName;']);
-    
-    
+
+
     if nargout>0,
         out.shocks=ex_names_;
         out.names=leg;
@@ -475,17 +475,17 @@ for j=1:length(vname),
         eval(['out.decomp2',vname{j},'=sdec2;']);
         eval(['out.inno',vname{j},'=inno;']);
         eval(['out.smooth',vname{j},'=as(indx,kpoint);']);
-        
+
     end
-    
+
     if options_.TeX
-        
+
         if no_initial_effect,
             tempfilename=[M_.fname,'_shock_dec_qoq_',vname{j},'_vs_',num2str(size(ex_names_,1)),'Shocks',file_name];
-            
+
             [a,b,c]=fileparts(tempfilename);
-            
-            
+
+
             % % %             [a,b,c]=fileparts(shockfilename);
             % % %             %     quest3hlmr_shock_dec_qoqt_E_LCY_Init
             % % %             pos=findstr(b,'_');
@@ -494,7 +494,7 @@ for j=1:length(vname),
             % % %             varpos= strmatch(varname, M_.endo_names, 'exact');
             % % %             texname=M_.endo_names_tex(varpos,:);
             % % %
-            
+
             % TeX eps loader file
             fprintf(fidTeX,'\\begin{figure}[H]\n');
             fprintf(fidTeX,'\\psfrag{%s}[1][][0.8][0]{%s}\n',tit1,['quarter on quarter $' deblank(texvname{j}) '$ innovations']);
@@ -504,13 +504,13 @@ for j=1:length(vname),
             fprintf(fidTeX,'\\label{Fig:Shock Decomposition:%s}\n',int2str(j));
             fprintf(fidTeX,'\\end{figure}\n');
             fprintf(fidTeX,' \n');
-            
-            
+
+
             tempfilename=[M_.fname,'_shock_dec_qoq_',vname{j},'_vs_',num2str(size(ex_names_,1)),'Shocks','_Detail',file_name];
-            
+
             [a,b,c]=fileparts(tempfilename);
-            
-            
+
+
             % % %             [a,b,c]=fileparts(shockfilename);
             % % %             %     quest3hlmr_shock_dec_qoqt_E_LCY_Init
             % % %             pos=findstr(b,'_');
@@ -519,7 +519,7 @@ for j=1:length(vname),
             % % %             varpos= strmatch(varname, M_.endo_names, 'exact');
             % % %             texname=M_.endo_names_tex(varpos,:);
             % % %
-            
+
             % TeX eps loader file
             fprintf(fidTeX,'\\begin{figure}[H]\n');
             %%%TODO - get tit2
@@ -531,13 +531,13 @@ for j=1:length(vname),
             fprintf(fidTeX,'\\end{figure}\n');
             fprintf(fidTeX,' \n');
         else
-            
-            
+
+
             tempfilename=[M_.fname,'_shock_dec_qoq_',vname{j},'_vs_',num2str(size(ex_names_,1)),'Shocks','_Init',file_name];
-            
+
             [a,b,c]=fileparts(tempfilename);
-            
-            
+
+
             % % %             [a,b,c]=fileparts(shockfilename);
             % % %             %     quest3hlmr_shock_dec_qoqt_E_LCY_Init
             % % %             pos=findstr(b,'_');
@@ -546,7 +546,7 @@ for j=1:length(vname),
             % % %             varpos= strmatch(varname, M_.endo_names, 'exact');
             % % %             texname=M_.endo_names_tex(varpos,:);
             % % %
-            
+
             % TeX eps loader file
             fprintf(fidTeX,'\\begin{figure}[H]\n');
             fprintf(fidTeX,'\\psfrag{%s}[1][][0.8][0]{%s}\n',tit2,['quarter on quarter $' deblank(texvname{j}) '$']);
@@ -556,13 +556,13 @@ for j=1:length(vname),
             fprintf(fidTeX,'\\label{Fig:Shock Decomposition:%s}\n',int2str(j));
             fprintf(fidTeX,'\\end{figure}\n');
             fprintf(fidTeX,' \n');
-            
-            
+
+
             tempfilename=[M_.fname,'_shock_dec_qoq_',vname{j},'_vs_',num2str(size(ex_names_,1)),'Shocks','_Init_Detail',file_name];
-            
+
             [a,b,c]=fileparts(tempfilename);
-            
-            
+
+
             % % %             [a,b,c]=fileparts(shockfilename);
             % % %             %     quest3hlmr_shock_dec_qoqt_E_LCY_Init
             % % %             pos=findstr(b,'_');
@@ -571,7 +571,7 @@ for j=1:length(vname),
             % % %             varpos= strmatch(varname, M_.endo_names, 'exact');
             % % %             texname=M_.endo_names_tex(varpos,:);
             % % %
-            
+
             % TeX eps loader file
             fprintf(fidTeX,'\\begin{figure}[H]\n');
             fprintf(fidTeX,'\\psfrag{%s}[1][][0.8][0]{%s}\n',tit2,['quarter on quarter $' deblank(texvname{j}) '$']);
@@ -583,7 +583,7 @@ for j=1:length(vname),
             fprintf(fidTeX,' \n');
         end
     end
-    
+
     if flag_init && j==1
         %         delete  *shock_dec*qoq*.fig
         %         delete  *shock_dec*qoq*.eps

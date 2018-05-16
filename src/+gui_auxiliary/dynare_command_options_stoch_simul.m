@@ -139,13 +139,13 @@ num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'aim_solver';
 dynare_gui_.stoch_simul.solver{num,2} = '';
 dynare_gui_.stoch_simul.solver{num,3} = 'check_option';
-dynare_gui_.stoch_simul.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) to compute the decision rules, instead of using Dynare’s default method based on a generalized Schur decomposition. This option is only valid for first order approximation. See AIM website for more details on the algorithm.';
+dynare_gui_.stoch_simul.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) to compute the decision rules, instead of using DynareÂ’s default method based on a generalized Schur decomposition. This option is only valid for first order approximation. See AIM website for more details on the algorithm.';
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'pruning';
 dynare_gui_.stoch_simul.solver{num,2} = '';
 dynare_gui_.stoch_simul.solver{num,3} = 'check_option';
-dynare_gui_.stoch_simul.solver{num,4} = 'Discard higher order terms when iteratively computing simulations of the solution. At second order, Dynare uses the algorithm of Kim, Kim, Schaumburg and Sims (2008), while at third order its generalization by Andreasen, Fern´andez-Villaverde and Rubio-Ram´?rez (2013) is used.';
+dynare_gui_.stoch_simul.solver{num,4} = 'Discard higher order terms when iteratively computing simulations of the solution. At second order, Dynare uses the algorithm of Kim, Kim, Schaumburg and Sims (2008), while at third order its generalization by Andreasen, FernÂ´andez-Villaverde and Rubio-RamÂ´?rez (2013) is used.';
 
 num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'partial_information';

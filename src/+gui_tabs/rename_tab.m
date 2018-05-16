@@ -38,17 +38,17 @@ if(index)
     return;
 end
 
- function index = getIndex(tabGroup,tabId)
-        tabs = get(tabGroup,'Children');
-        num = length(tabs);
-        index = 0;
-        for i=1:num
-            hTab = tabs(i);
-            
-            if(hTab==tabId)
-                index = i;
-                return;
-            end
+    function index = getIndex(tabGroup,tabId)
+    tabs = get(tabGroup,'Children');
+    num = length(tabs);
+    index = 0;
+    for i=1:num
+        hTab = tabs(i);
+
+        if(hTab==tabId)
+            index = i;
+            return;
         end
+    end
     end
 end

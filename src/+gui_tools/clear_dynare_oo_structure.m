@@ -36,9 +36,8 @@ clear_field('UpdatedVariables');
 clear_field('FilteredVariables');
 
     function clear_field(fname)
-        if(isfield(oo_, fname))
-            oo_ = rmfield(oo_, fname);
-        end
+    if(isfield(oo_, fname))
+        oo_ = rmfield(oo_, fname);
+    end
     end
 end
-

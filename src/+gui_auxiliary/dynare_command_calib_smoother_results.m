@@ -55,5 +55,3 @@ dynare_gui_.calib_smoother_results.results{num,5} = '/Output/';
 dynare_gui_.calib_smoother_results.results{num,6} = '_UpdatedVariables{1}';
 
 end
-
-

@@ -59,6 +59,6 @@ try
     gui_tools.project_log_entry('Saving model snapshot',fullFileName);
     uiwait(msgbox('Model snapshot saved successfully!', 'DynareGUI','modal'));
 catch
-     gui_tools.show_error('Error while saving model snapshot', ME, 'basic');
+    gui_tools.show_error('Error while saving model snapshot', ME, 'basic');
 end
 end

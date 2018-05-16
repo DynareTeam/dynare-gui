@@ -42,4 +42,3 @@ s = setfield(s, 'value_if_selected', value_if_selected);
 s = setfield(s, 'value_if_not_selected', value_if_not_selected);
 s = setfield(s, 'description', description);
 end
-

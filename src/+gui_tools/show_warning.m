@@ -32,8 +32,7 @@ function show_warning(warning_msg, log_msg)
 uiwait(warndlg(warning_msg,'Dynare_GUI Warning','modal'));
 
 if nargin == 2
-   gui_tools.project_log_entry('Warning',log_msg);
+    gui_tools.project_log_entry('Warning',log_msg);
 end
 
 end
-

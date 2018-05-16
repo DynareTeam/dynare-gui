@@ -49,7 +49,7 @@ for ii=1:num
         lname = data{ii,c_long_name};
         return;
     end
-    
+
 end
 
 end

@@ -34,15 +34,15 @@ function [newTab, created] = add_tab(hObject, title)
 handles = guidata(hObject);
 
 if(isfield(handles, 'tabGroup') == 0)
-    
+
     hTabGroup = uitabgroup(handles.figure1,'Position',[0 0 1 1]); %, 'SelectionChangeFcn', {@selection_tab_changed});
     panel = handles.uipanel_welcome;
     set(panel,'Visible','off');
-    
+
     drawnow;
     handles.tabGroup = hTabGroup;
     setappdata(0,'tabGroup', hTabGroup);
-    
+
     % Update handles structure
     guidata(hObject, handles);
 end
@@ -70,18 +70,18 @@ guidata(hObject, handles);
 setappdata(0,'tabGroup', tabGroup);
 
     function tab = checkIfExistsTab(tabGroup,tabTitle)
-        tabs = get(tabGroup,'Children');
-        num = length(tabs);
-        tab = [];
-        for i=1:num
-            hTab = tabs(i);
-            tit = get(hTab, 'Title');
-            if(strcmp(tit, tabTitle))
-                tab=hTab;
-                return;
-            end
+    tabs = get(tabGroup,'Children');
+    num = length(tabs);
+    tab = [];
+    for i=1:num
+        hTab = tabs(i);
+        tit = get(hTab, 'Title');
+        if(strcmp(tit, tabTitle))
+            tab=hTab;
+            return;
         end
-        
+    end
+
     end
 
 end

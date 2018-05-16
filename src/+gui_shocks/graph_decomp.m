@@ -69,7 +69,7 @@ for j=1:nvar
             else
                 new_z(i,:) = sum(squeeze(z(i_var(j),members,:)));
             end
-       end
+        end
         new_z(num_shock_groups+1:num_shock_groups+2,:) = squeeze(z(i_var(j),num_shocks+1:num_shocks+2,:));
         z1 = new_z;
         shock_names = char(shock_groups);
@@ -165,9 +165,9 @@ if DynareOptions.TeX && any(strcmp('eps',cellstr(DynareOptions.graph_format)))
 end
 
 % Modyfed by M.Labus
-function [txt] = myupdatefcn(obj,event_obj)
+    function [txt] = myupdatefcn(obj,event_obj)
     src = get(event_obj,'Target');
     txt = get(src, 'Tag');
-end
+    end
 end
 % EndOfModification

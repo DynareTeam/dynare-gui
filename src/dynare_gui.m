@@ -36,11 +36,11 @@ function varargout = dynare_gui(varargin)
 
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-    'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @dynare_gui_OpeningFcn, ...
-    'gui_OutputFcn',  @dynare_gui_OutputFcn, ...
-    'gui_LayoutFcn',  @dynare_gui_LayoutFcn, ...
-    'gui_Callback',   []);
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @dynare_gui_OpeningFcn, ...
+                   'gui_OutputFcn',  @dynare_gui_OutputFcn, ...
+                   'gui_LayoutFcn',  @dynare_gui_LayoutFcn, ...
+                   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -156,7 +156,7 @@ global project_info;
 % Close existing project
 if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1)
     try
-       gui_close_project();
+        gui_close_project();
     catch
     end
 end
@@ -479,12 +479,12 @@ appdata = [];
 appdata.GUIDEOptions = struct(...
     'active_h', [], ...
     'taginfo', struct(...
-    'figure', 2, ...
-    'uitoolbar', 2, ...
-    'uipushtool', 3, ...
-    'uipanel', 4, ...
-    'text', 5, ...
-    'axes', 2), ...
+        'figure', 2, ...
+        'uitoolbar', 2, ...
+        'uipushtool', 3, ...
+        'uipanel', 4, ...
+        'text', 5, ...
+        'axes', 2), ...
     'override', 1, ...
     'release', 13, ...
     'resize', 'none', ...
@@ -1070,23 +1070,23 @@ h38 = uimenu(...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
 
     function resizeui(hObject,callbackdata)
-        try
-            % Get figure width and height
-            figwidth = hObject.Position(3);
-            figheight = hObject.Position(4);
+    try
+        % Get figure width and height
+        figwidth = hObject.Position(3);
+        figheight = hObject.Position(4);
 
 
-%             if(figwidth < 180 )
-%                 hObject.Position(3) = 180;
-%             end
-%
-%             if(figheight < 40 )
-%                 hObject.Position(4) = 40;
-%             end
-%             movegui(hObject,'center');
+        %             if(figwidth < 180 )
+        %                 hObject.Position(3) = 180;
+        %             end
+        %
+        %             if(figheight < 40 )
+        %                 hObject.Position(4) = 40;
+        %             end
+        %             movegui(hObject,'center');
 
-        catch
-        end
+    catch
+    end
     end
 end
 
@@ -1114,11 +1114,11 @@ end
 function varargout = gui_mainfcn(gui_State, varargin)
 
 gui_StateFields =  {'gui_Name'
-    'gui_Singleton'
-    'gui_OpeningFcn'
-    'gui_OutputFcn'
-    'gui_LayoutFcn'
-    'gui_Callback'};
+                    'gui_Singleton'
+                    'gui_OpeningFcn'
+                    'gui_OutputFcn'
+                    'gui_LayoutFcn'
+                    'gui_Callback'};
 gui_Mfile = '';
 for i=1:length(gui_StateFields)
     if ~isfield(gui_State, gui_StateFields{i})
@@ -1386,7 +1386,7 @@ function result = local_isInvokeActiveXCallback(gui_State, varargin)
 
 try
     result = ispc && iscom(varargin{1}) ...
-        && isequal(varargin{1},gcbo);
+             && isequal(varargin{1},gcbo);
 catch
     result = false;
 end
@@ -1397,12 +1397,11 @@ function result = local_isInvokeHGCallback(gui_State, varargin)
 try
     fhandle = functions(gui_State.gui_Callback);
     result = ~isempty(findstr(gui_State.gui_Name,fhandle.file)) || ...
-        (ischar(varargin{1}) ...
-        && isequal(ishghandle(varargin{2}), 1) ...
-        && (~isempty(strfind(varargin{1},[get(varargin{2}, 'Tag'), '_'])) || ...
-        ~isempty(strfind(varargin{1}, '_CreateFcn'))) );
+             (ischar(varargin{1}) ...
+              && isequal(ishghandle(varargin{2}), 1) ...
+              && (~isempty(strfind(varargin{1},[get(varargin{2}, 'Tag'), '_'])) || ...
+                  ~isempty(strfind(varargin{1}, '_CreateFcn'))) );
 catch
     result = false;
 end
 end
-

@@ -39,11 +39,10 @@ if(size(tabs,1)==1)
     panel = handles.uipanel_welcome;
     set(panel,'Visible','on');
     guidata(handles.figure1, handles);
-    
+
     drawnow;
 else
     delete(hTab);
     drawnow;
 end
 end
-

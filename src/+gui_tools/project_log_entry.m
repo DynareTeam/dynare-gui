@@ -39,4 +39,3 @@ fprintf(logFile,'%s %s: %s\n',datestr(now), oid, strtrim(data));
 fclose(logFile);
 
 end
-

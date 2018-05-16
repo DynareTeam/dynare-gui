@@ -220,7 +220,7 @@ num = num+1;
 dynare_gui_.estimation.solver{num,1} = 'aim_solver';
 dynare_gui_.estimation.solver{num,2} = '';
 dynare_gui_.estimation.solver{num,3} = 'check_option';
-dynare_gui_.estimation.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) to compute the decision rules, instead of using Dynare’s default method based on a generalized Schur decomposition. This option is only valid for first order approximation. See AIM website for more details on the algorithm.';
+dynare_gui_.estimation.solver{num,4} = 'Use the Anderson-Moore Algorithm (AIM) to compute the decision rules, instead of using DynareÂ’s default method based on a generalized Schur decomposition. This option is only valid for first order approximation. See AIM website for more details on the algorithm.';
 
 num = num+1;
 dynare_gui_.estimation.solver{num,1} = 'sylvester';
@@ -281,7 +281,7 @@ num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_jscale';
 dynare_gui_.estimation.MH_options{num,2} = '0.2';
 dynare_gui_.estimation.MH_options{num,3} = 'DOUBLE';
-dynare_gui_.estimation.MH_options{num,4} = 'The scale parameter of the jumping distribution’s covariance matrix (Metropolis-Hastings algorithm). The default value is rarely satisfactory. This option must be tuned to obtain, ideally, an acceptance ratio of 25%-33% in the Metropolis-Hastings algorithm. Basically, the idea is to increase the variance of the jumping distribution if the acceptance ratio is too high, and decrease the same variance if the acceptance ratio is too low. In some situations in may help to consider parameter specific values for this scale parameter, this can be done in the [estimated params] block. Default: 0.2.';
+dynare_gui_.estimation.MH_options{num,4} = 'The scale parameter of the jumping distributionÂ’s covariance matrix (Metropolis-Hastings algorithm). The default value is rarely satisfactory. This option must be tuned to obtain, ideally, an acceptance ratio of 25%-33% in the Metropolis-Hastings algorithm. Basically, the idea is to increase the variance of the jumping distribution if the acceptance ratio is too high, and decrease the same variance if the acceptance ratio is too low. In some situations in may help to consider parameter specific values for this scale parameter, this can be done in the [estimated params] block. Default: 0.2.';
 
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_init_scale';
@@ -293,7 +293,7 @@ num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_recover';
 dynare_gui_.estimation.MH_options{num,2} = '';
 dynare_gui_.estimation.MH_options{num,3} = 'check_option';
-dynare_gui_.estimation.MH_options{num,4} = 'Attempts to recover a Metropolis-Hastings simulation that crashed prematurely. Shouldn’t be used together with load_mh_file.';
+dynare_gui_.estimation.MH_options{num,4} = 'Attempts to recover a Metropolis-Hastings simulation that crashed prematurely. ShouldnÂ’t be used together with load_mh_file.';
 
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mh_mode';
@@ -305,7 +305,7 @@ num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'load_mh_file';
 dynare_gui_.estimation.MH_options{num,2} = '';
 dynare_gui_.estimation.MH_options{num,3} = 'check_option';
-dynare_gui_.estimation.MH_options{num,4} = 'Tells Dynare to add to previous Metropolis-Hastings simulations instead of starting from scratch. Shouldn’t be used together with mh_recover.';
+dynare_gui_.estimation.MH_options{num,4} = 'Tells Dynare to add to previous Metropolis-Hastings simulations instead of starting from scratch. ShouldnÂ’t be used together with mh_recover.';
 
 num = num+1;
 dynare_gui_.estimation.MH_options{num,1} = 'mcmc_jumping_covariance';

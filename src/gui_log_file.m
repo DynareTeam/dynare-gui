@@ -39,15 +39,15 @@ top = 35;
 gui_size = gui_tools.get_gui_elements_size(tabId);
 
 uicontrol(tabId,'Style','text',...
-    'String','Log file:',...
-    'FontWeight', 'bold', ...
-    'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-    'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
+          'String','Log file:',...
+          'FontWeight', 'bold', ...
+          'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
+          'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
 
 textBoxId = uicontrol(tabId, 'style','edit', 'Max',200,'Min',0,...
-    'String', 'Loading...',...
-    'Units','normalized','Position',[0.01 0.09 0.98 0.82], ...%'Units','characters', 'Position',[2 5 170 30],...
-    'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
+                      'String', 'Loading...',...
+                      'Units','normalized','Position',[0.01 0.09 0.98 0.82], ...%'Units','characters', 'Position',[2 5 170 30],...
+                      'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
 uicontrol(tabId, 'Style','pushbutton','String','Reload file','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@reload_file,tabId} );
 uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
@@ -57,24 +57,23 @@ load_file(fullFileName);
 
     function load_file(fullFileName)
 
-        fileId = fopen(fullFileName,'rt');
-        if fileId~=-1 %if the file doesn't exist ignore the reading code
-            logFileText = fscanf(fileId,'%c');
-            set(textBoxId,'String',logFileText); %%c
-            fclose(fileId);
-        end
+    fileId = fopen(fullFileName,'rt');
+    if fileId~=-1 %if the file doesn't exist ignore the reading code
+        logFileText = fscanf(fileId,'%c');
+        set(textBoxId,'String',logFileText); %%c
+        fclose(fileId);
+    end
 
 
     end
 
     function reload_file(hObject,event, hTab)
-       load_file(fullFileName);
+    load_file(fullFileName);
 
     end
 
     function close_tab(hObject,event, hTab)
-        gui_tabs.delete_tab(hTab);
+    gui_tabs.delete_tab(hTab);
 
     end
 end
-

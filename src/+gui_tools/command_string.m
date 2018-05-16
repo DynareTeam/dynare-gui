@@ -99,7 +99,3 @@ if(~strcmp(comm_name, 'dynare'))
 end
 
 end
-
-
-
-

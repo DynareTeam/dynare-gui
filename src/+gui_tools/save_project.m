@@ -48,16 +48,16 @@ project_structures ='';
 if(isfield(project_info,'old_project_folder') && ~strcmp(project_info.project_folder, project_info.old_project_folder))
     if(isfield(project_info,'mod_file') && ~isempty(project_info.mod_file))
         [status, message] = copyfile([project_info.old_project_folder,filesep,project_info.mod_file],[project_info.project_folder,filesep,project_info.mod_file]);
-        
+
         if(~status)
             uiwait(warndlg(['.mod file could not be copied to new project folder: ', message] ,'Dynare_GUI Warning','modal'));
             project_info.mod_file = '';
         end
     end
-    
+
     if(isfield(project_info,'data_file') && ~isempty(project_info.data_file))
         [status, message] = copyfile([project_info.old_project_folder,filesep,project_info.data_file],[project_info.project_folder,filesep,project_info.data_file]);
-        
+
         if(~status)
             uiwait(warndlg(['Data file could not be copied to new project folder: ', message] ,'Dynare_GUI Warning','modal'));
             project_info.data_file = '';
@@ -83,18 +83,18 @@ project_data = [project_data, ', ', project_structures]
 gui_tools.project_log_entry('Saving project',project_data);
 
     function save_structure(svalue, sname)
-        try
-            if(~isempty(svalue))
-                save(fullFileName,sname, '-append');
-                if(isempty(project_structures))
-                    project_structures = ['project_structures = ' sname];
-                else
-                    project_structures = [project_structures, ', ', sname];
-                end
-                
+    try
+        if(~isempty(svalue))
+            save(fullFileName,sname, '-append');
+            if(isempty(project_structures))
+                project_structures = ['project_structures = ' sname];
+            else
+                project_structures = [project_structures, ', ', sname];
             end
-        catch
+
         end
+    catch
+    end
     end
 
 end

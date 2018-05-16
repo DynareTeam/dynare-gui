@@ -40,7 +40,7 @@ if(project_info.modified)
     elseif (strcmp(answer,'Cancel'))
         return;
     end
-    
+
 end
 
 %close all openned tabs
@@ -59,7 +59,7 @@ if exist('bayestopt_', 'var') == 1
     bayestopt_ = struct();
 end
 if exist('dataset_', 'var') == 1
-   dataset_ = struct();
+    dataset_ = struct();
 end
 if exist('dataset_info', 'var') == 1
     dataset_info = struct();
@@ -68,12 +68,12 @@ if exist('estimation_info', 'var') == 1
     estimation_info = struct();
 end
 if exist('ys0_', 'var') == 1
-   ys0_ = struct();
+    ys0_ = struct();
 end
 if exist('ex0_', 'var') == 1
     ex0_ = struct();
 end
-      
+
 
 %disable menu options
 gui_tools.menu_options('project','Off');
@@ -83,7 +83,7 @@ gui_tools.menu_options('stohastic','Off');
 gui_tools.menu_options('deterministic','Off');
 gui_tools.menu_options('output','Off');
 
- 
+
 % remova appdata
 if(~isempty(getappdata(0,'estimation')))
     rmappdata(0,'estimation');
@@ -104,4 +104,3 @@ end
 evalin('base','diary off;');
 
 end
-

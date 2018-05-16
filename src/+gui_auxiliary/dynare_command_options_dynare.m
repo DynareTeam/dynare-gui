@@ -105,7 +105,7 @@ num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'fast';
 dynare_gui_.dynare.setup{num,2} = '';
 dynare_gui_.dynare.setup{num,3} = 'check_option';
-dynare_gui_.dynare.setup{num,4} = 'Only useful with model option use_dll. Don’t recompile the MEX files when running again the same model file and the lists of variables and the equations haven’t changed. We use a 32 bit checksum, stored in <model filename>/checksum. There is a very small probability that the preprocessor misses a change in the model. In case of doubt, re-run without the fast option.';
+dynare_gui_.dynare.setup{num,4} = 'Only useful with model option use_dll. DonÂ’t recompile the MEX files when running again the same model file and the lists of variables and the equations havenÂ’t changed. We use a 32 bit checksum, stored in <model filename>/checksum. There is a very small probability that the preprocessor misses a change in the model. In case of doubt, re-run without the fast option.';
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'minimal_workspace';

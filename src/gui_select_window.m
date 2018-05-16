@@ -38,8 +38,8 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 fHandle = figure('Name',window_title ,  ...
-    'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
-    'Position', [10 10 138 36], 'Visible', 'off', 'Resize', 'off', 'WindowStyle','modal');
+                 'NumberTitle', 'off', 'Units', 'characters','Color', [.941 .941 .941], ...
+                 'Position', [10 10 138 36], 'Visible', 'off', 'Resize', 'off', 'WindowStyle','modal');
 movegui(fHandle,'center');
 set(fHandle, 'Visible', 'on');
 
@@ -72,20 +72,20 @@ handles.uipanel = uipanel( ...
 
 column_format = {'char','char','char', 'logical'};
 handles.table = uitable(handles.uipanel,'Data',base_items,...
-    'Units','characters',...
-    'ColumnName', column_names,...
-    'ColumnFormat', column_format,...
-    'ColumnEditable', [ false false false  true],...
-    'ColumnWidth', {150, 150, 200, 150}, ...
-    'RowName',[],...
-    'Position',[1,1,131,25],...
-    'CellEditCallback',@savedata);
+                        'Units','characters',...
+                        'ColumnName', column_names,...
+                        'ColumnFormat', column_format,...
+                        'ColumnEditable', [ false false false  true],...
+                        'ColumnWidth', {150, 150, 200, 150}, ...
+                        'RowName',[],...
+                        'Position',[1,1,131,25],...
+                        'CellEditCallback',@savedata);
 
     function savedata(hObject,callbackdata)
-        val = callbackdata.EditData;
-        r = callbackdata.Indices(1);
-        c = callbackdata.Indices(2);
-        base_items{r,c} = val;
+    val = callbackdata.EditData;
+    r = callbackdata.Indices(1);
+    c = callbackdata.Indices(2);
+    base_items{r,c} = val;
 
     end
 
@@ -116,173 +116,173 @@ handles.pussbuttonClose = uicontrol( ...
     'Callback', @pussbuttonClose_Callback);
 
     function set_initial()
-        num_items = size(base_items,1);
-        num_selected = size(selected_items,1);
+    num_items = size(base_items,1);
+    num_selected = size(selected_items,1);
 
-        switch base_field_name
-            case 'all_varobs'
-                name_column_id = 1;
-            case 'params'
-                name_column_id = 3;
-            case 'shocks'
-                name_column_id = 3;
-            otherwise
-                gui_tools.show_error(sprintf('Error while initializing the selection window - unsupported field name: %s',base_field_name));
-        end
-        for i=1:num_items
-            base_items{i,4}= false;
-            for j= 1:num_selected
-                if(strcmp( base_items{i,1}, selected_items{j,name_column_id}))
-                    base_items{i,4}= true;
-                end
+    switch base_field_name
+      case 'all_varobs'
+        name_column_id = 1;
+      case 'params'
+        name_column_id = 3;
+      case 'shocks'
+        name_column_id = 3;
+      otherwise
+        gui_tools.show_error(sprintf('Error while initializing the selection window - unsupported field name: %s',base_field_name));
+    end
+    for i=1:num_items
+        base_items{i,4}= false;
+        for j= 1:num_selected
+            if(strcmp( base_items{i,1}, selected_items{j,name_column_id}))
+                base_items{i,4}= true;
             end
-
         end
+
+    end
     end
 
     function pussbuttonSave_Callback(hObject,callbackdata)
 
-        selected = find(cell2mat(base_items(:,4)));
-        switch base_field_name
-            case 'all_varobs'
-                selected_items = base_items(selected,:);
-                selected_items(:,4)= {false};
-            case 'params'
-                selected_ = base_items(selected,1);
-                selected_(:,3)= selected_(:,1);
-                selected_(:,1)= {'param'}
-                selected_(:,2)= {0}; %id
-                selected_(:,4)= {NaN};
-                selected_(:,5)= {-inf};
-                selected_(:,6)= {inf};
-                selected_(:,7)= {''};
-                selected_(:,8:12)= {NaN};
-                %selected_(:,5)= {''};
-                %selected_(:,6)= {''};
-                %selected_(:,7:8)= {0};
-                selected_(:,13)= {false};
+    selected = find(cell2mat(base_items(:,4)));
+    switch base_field_name
+      case 'all_varobs'
+        selected_items = base_items(selected,:);
+        selected_items(:,4)= {false};
+      case 'params'
+        selected_ = base_items(selected,1);
+        selected_(:,3)= selected_(:,1);
+        selected_(:,1)= {'param'}
+        selected_(:,2)= {0}; %id
+        selected_(:,4)= {NaN};
+        selected_(:,5)= {-inf};
+        selected_(:,6)= {inf};
+        selected_(:,7)= {''};
+        selected_(:,8:12)= {NaN};
+        %selected_(:,5)= {''};
+        %selected_(:,6)= {''};
+        %selected_(:,7:8)= {0};
+        selected_(:,13)= {false};
 
-                n = size(selected_items,1);
-                %copy estim_param vlaues if parameter was not changes
-                i=1;
+        n = size(selected_items,1);
+        %copy estim_param vlaues if parameter was not changes
+        i=1;
 
-                while(i <= n && strcmp(selected_items{i,1},'param'))
-                    index = strfind(base_items(selected,1),selected_items{i,3});
-                    j=1;
-                    while(j<=size(selected_,1))
-                        if(index{j})
-                            selected_(j,:)= selected_items(i,:);
-                            break;
-                        end
-                        j=j+1;
-                    end
-
-                    i=i+1;
+        while(i <= n && strcmp(selected_items{i,1},'param'))
+            index = strfind(base_items(selected,1),selected_items{i,3});
+            j=1;
+            while(j<=size(selected_,1))
+                if(index{j})
+                    selected_(j,:)= selected_items(i,:);
+                    break;
                 end
+                j=j+1;
+            end
 
-                ii = 1;
-                while(ii<=size(selected_,1))
-                    if(selected_{ii,2}==0)
-                        id = find_id(selected_{ii,3});
-                        if(id==0)
-                            gui_tools.show_error('Error while saving selected parameters');
-                        end
-                        selected_(ii,2)= {id}; %id
-                    end
-                    ii=ii+1;
-                end
-
-               if(i <=n )
-                    selected_items = [selected_; selected_items(i:n,:)];
-                else
-                    selected_items = selected_;
-               end
-
-            case 'shocks'
-                selected_ = base_items(selected,1);
-                selected_(:,3)= selected_(:,1);
-                selected_(:,1)= {'var_exo'}
-                selected_(:,2)= {0}; %id
-
-                selected_(:,4)= {NaN};
-                selected_(:,5)= {-inf};
-                selected_(:,6)= {inf};
-                selected_(:,7)= {''};
-                selected_(:,8:12)= {NaN};
-                selected_(:,13)= {false};
-
-                n = size(selected_items,1);
-                i=1;
-                last_param_id = 0;
-                while(i <= n && strcmp(selected_items{i,1},'param'))
-                    last_param_id = i;
-                    i=i+1;
-                end
-
-                while(i <= n)
-                    index = strfind(base_items(selected,1),selected_items{i,3});
-                    j=1;
-                    while(j<=size(selected_,1))
-                        if(index{j})
-                            selected_(j,:)= selected_items(i,:);
-                            break;
-                        end
-                        j=j+1;
-                    end
-                    i=i+1;
-                end
-
-                ii = 1;
-                while(ii<=size(selected_,1))
-                    if(selected_{ii,2}==0)
-                        id = find_id(selected_{ii,3});
-                        if(id==0)
-                            gui_tools.show_error('Error while saving selected shocks');
-                        end
-                        selected_(ii,2)= {id}; %id
-                    end
-                    ii=ii+1;
-                end
-
-
-                if(last_param_id > 0)
-                    selected_items = [selected_items(1:last_param_id,:); selected_];
-                else
-                    selected_items = selected_;
-                end
-
-            otherwise
-                gui_tools.show_error(sprintf('Error while saving selected items - unsupported field name: %s',base_field_name));
-
+            i=i+1;
         end
-        setappdata(0,field_name,selected_items);
-        close;
+
+        ii = 1;
+        while(ii<=size(selected_,1))
+            if(selected_{ii,2}==0)
+                id = find_id(selected_{ii,3});
+                if(id==0)
+                    gui_tools.show_error('Error while saving selected parameters');
+                end
+                selected_(ii,2)= {id}; %id
+            end
+            ii=ii+1;
+        end
+
+        if(i <=n )
+            selected_items = [selected_; selected_items(i:n,:)];
+        else
+            selected_items = selected_;
+        end
+
+      case 'shocks'
+        selected_ = base_items(selected,1);
+        selected_(:,3)= selected_(:,1);
+        selected_(:,1)= {'var_exo'}
+        selected_(:,2)= {0}; %id
+
+        selected_(:,4)= {NaN};
+        selected_(:,5)= {-inf};
+        selected_(:,6)= {inf};
+        selected_(:,7)= {''};
+        selected_(:,8:12)= {NaN};
+        selected_(:,13)= {false};
+
+        n = size(selected_items,1);
+        i=1;
+        last_param_id = 0;
+        while(i <= n && strcmp(selected_items{i,1},'param'))
+            last_param_id = i;
+            i=i+1;
+        end
+
+        while(i <= n)
+            index = strfind(base_items(selected,1),selected_items{i,3});
+            j=1;
+            while(j<=size(selected_,1))
+                if(index{j})
+                    selected_(j,:)= selected_items(i,:);
+                    break;
+                end
+                j=j+1;
+            end
+            i=i+1;
+        end
+
+        ii = 1;
+        while(ii<=size(selected_,1))
+            if(selected_{ii,2}==0)
+                id = find_id(selected_{ii,3});
+                if(id==0)
+                    gui_tools.show_error('Error while saving selected shocks');
+                end
+                selected_(ii,2)= {id}; %id
+            end
+            ii=ii+1;
+        end
+
+
+        if(last_param_id > 0)
+            selected_items = [selected_items(1:last_param_id,:); selected_];
+        else
+            selected_items = selected_;
+        end
+
+      otherwise
+        gui_tools.show_error(sprintf('Error while saving selected items - unsupported field name: %s',base_field_name));
+
+    end
+    setappdata(0,field_name,selected_items);
+    close;
 
     end
 
     function id = find_id(item_name)
-        all_items = eval(sprintf('model_settings.%s',base_field_name));
-        id=0;
-        index = strfind(all_items(:,2),item_name);
-        j=1;
-        while(j<=size(index,1))
-            if(index{j})
-                id = j;
-                break;
-            end
-            j=j+1;
+    all_items = eval(sprintf('model_settings.%s',base_field_name));
+    id=0;
+    index = strfind(all_items(:,2),item_name);
+    j=1;
+    while(j<=size(index,1))
+        if(index{j})
+            id = j;
+            break;
         end
+        j=j+1;
+    end
 
     end
 
     function pussbuttonReset_Callback(hObject,callbackdata)
 
-        set_initial();
-        set(handles.table, 'Data', base_items);
+    set_initial();
+    set(handles.table, 'Data', base_items);
     end
 
     function pussbuttonClose_Callback(hObject,callbackdata)
-        close;
+    close;
     end
 
 end

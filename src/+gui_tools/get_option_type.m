@@ -33,7 +33,7 @@ global dynare_gui_;
 type = [];
 
 if(~isfield(dynare_gui_, comm_name))
-   return;
+    return;
 end
 
 comm = getfield(dynare_gui_, comm_name);

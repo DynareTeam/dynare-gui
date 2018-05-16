@@ -43,9 +43,9 @@ for i = 1:num
     end
 
     if ~aux{1,5}
-            ant = sortrows([ant;aux],2);
+        ant = sortrows([ant;aux],2);
     else
-            unant = sortrows([unant;aux],2);
+        unant = sortrows([unant;aux],2);
     end
 end
 
@@ -72,7 +72,7 @@ for i = 1:rows(unant)
         exo_id = find(ismember(M_.exo_names, det_aux{n,1}, 'rows'));
         if(~isempty(exo_id))
             det_shocks_prov = [det_shocks_prov; struct('exo_det',0,'exo_id',exo_id,'multiplicative',0,...
-                                   'periods',det_aux{n,2},'value',det_aux{n,3})];
+                                                       'periods',det_aux{n,2},'value',det_aux{n,3})];
         else
             gui_tools.show_error('Error while saving deterministic shocks!');
         end
@@ -88,10 +88,10 @@ perfect_foresight_solver;
 yy = [yy, oo_.endo_simul(:,shock_matrix_array{1,1}(end).periods - 1)];
 
 for i = 2:rows(shock_matrix_array)
-   M_.det_shocks = shock_matrix_array{i,1};
-   oo_.endo_simul(:,1) = yy(:,end);
-   perfect_foresight_solver;
-   yy = [yy, oo_.endo_simul(:,shock_matrix_array{i,1}(end).periods - 1)];
+    M_.det_shocks = shock_matrix_array{i,1};
+    oo_.endo_simul(:,1) = yy(:,end);
+    perfect_foresight_solver;
+    yy = [yy, oo_.endo_simul(:,shock_matrix_array{i,1}(end).periods - 1)];
 end
 
 end

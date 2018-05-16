@@ -172,5 +172,3 @@ dynare_gui_.est_results.diagnostics{num,5} = '';
 dynare_gui_.est_results.diagnostics{num,6} = ''; %?????
 
 end
-
-

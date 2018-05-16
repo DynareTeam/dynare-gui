@@ -48,5 +48,3 @@ dynare_gui_.forecast_results.results{num,5} = '/graphs/';
 dynare_gui_.forecast_results.results{num,6} = 'forcst{1}';
 
 end
-
-

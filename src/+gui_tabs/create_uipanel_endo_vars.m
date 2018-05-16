@@ -86,10 +86,10 @@ while ii <= numVars
         num_vars_in_group = size(cell2mat(vars_in_group),1);
 
         sld = uicontrol('Style', 'slider',...
-            'Parent', currentPanel, ...
-            'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
-            'Units','normalized','Position',[0.968 0 .03 1],...%'Units', 'characters','Position', [81 -0.2 3 26],...
-            'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
+                        'Parent', currentPanel, ...
+                        'Min',0,'Max',num_vars_in_group - maxDisplayed,'Value',num_vars_in_group - maxDisplayed ,...
+                        'Units','normalized','Position',[0.968 0 .03 1],...%'Units', 'characters','Position', [81 -0.2 3 26],...
+                        'Callback', {@scrollPanel_Callback,tabIndex,num_vars_in_group} );
     end
 
     visible = 'on';
@@ -103,11 +103,11 @@ while ii <= numVars
 
 
     handles.vars(currentVar) = uicontrol('Parent', currentPanel , 'style','checkbox',...  %new_tab
-        'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...
-        'TooltipString', char(gui_vars(ii,1)),...
-        'string',var_name,...
-        'BackgroundColor', special_color,...
-        'Visible', visible);
+                                         'unit','characters','position',[3 top_position-(2*position(tabIndex)) 60 2],...
+                                         'TooltipString', char(gui_vars(ii,1)),...
+                                         'string',var_name,...
+                                         'BackgroundColor', special_color,...
+                                         'Visible', visible);
 
     handles.grouped_vars(tabIndex, currenGroupedVar(tabIndex))= handles.vars(currentVar);
     currenGroupedVar(tabIndex) = currenGroupedVar(tabIndex) + 1;
@@ -120,35 +120,35 @@ new_handles = handles;
 
     function scrollPanel_Callback(hObject,callbackdata,tab_index, num_variables)
 
-        value = get(hObject, 'Value');
+    value = get(hObject, 'Value');
 
-        value = floor(value);
+    value = floor(value);
 
-        move = num_variables - maxDisplayed - value;
+    move = num_variables - maxDisplayed - value;
 
-        for ii=1: num_variables
-            if(ii <= move || ii> move+maxDisplayed)
-                visible = 'off';
-                set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-            else
-                visible = 'on';
-                set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
-                set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
-            end
+    for ii=1: num_variables
+        if(ii <= move || ii> move+maxDisplayed)
+            visible = 'off';
+            set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+        else
+            visible = 'on';
+            set(handles.grouped_vars(tab_index, ii), 'Visible', visible);
+            set(handles.grouped_vars(tab_index, ii), 'Position', [3 top_position-(ii-move)*2 60 2]);
         end
+    end
     end
 
     function index = checkIfExistsTab(tabGroup,tabTitle)
-        tabs = get(tabGroup,'Children');
-        num = length(tabs);
-        index = 0;
-        for i=1:num
-            hTab = tabs(i);
-            tit = get(hTab, 'Title');
-            if(strcmp(tit, tabTitle))
-                index = i;
-                return;
-            end
+    tabs = get(tabGroup,'Children');
+    num = length(tabs);
+    index = 0;
+    for i=1:num
+        hTab = tabs(i);
+        tit = get(hTab, 'Title');
+        if(strcmp(tit, tabTitle))
+            index = i;
+            return;
         end
+    end
     end
 end

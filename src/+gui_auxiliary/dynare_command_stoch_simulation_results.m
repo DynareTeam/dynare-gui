@@ -55,5 +55,3 @@ dynare_gui_.stoch_simulation_results.results{num,5} = '';
 dynare_gui_.stoch_simulation_results.results{num,6} = {''};
 
 end
-
-

@@ -29,7 +29,7 @@ License: GPL-3+
  along with the Dynare GUI.  If not, see <http://www.gnu.org/licenses/>.
 
 Files: src/+gui_external/*
-Copyright: 2007-2016 Yair Altman
+Copyright: 2007-2017 Yair Altman
 License:
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are

@@ -436,7 +436,13 @@ function help_dynare_manual_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global dynareroot;
 ind = strfind(dynareroot, [filesep,'matlab']);
-open([dynareroot(1:ind), 'doc', filesep, 'dynare.html', filesep, 'index.html']);
+html_man_file = [dynareroot(1:ind), 'doc', filesep, 'dynare.html', filesep, 'index.html'];
+if exist(html_man_file, 'file') == 2
+    open(html_man_file);
+else
+    disp('I looked for the dynare manual but couldn''t find it.')
+    disp(['Here''s where I looked: ' html_man_file])
+end
 end
 
 % --------------------------------------------------------------------

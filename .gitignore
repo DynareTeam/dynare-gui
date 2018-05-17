@@ -12,3 +12,7 @@
 
 # MacOS stuff
 .DS_Store
+
+*.dproj
+examples/fs2000*
+

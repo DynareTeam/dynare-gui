@@ -1,30 +1,30 @@
 // See fs2000.mod in the examples/ directory for details on the model
 
-var 
+var
 m  $m$   (long_name='Money growth rate')
-P  $P$   (long_name='Prices') 
-c  $c$   (long_name='Consumption') 
-e  $e$   (long_name='e') 
-W  $W$   (long_name='Wages') 
-R  $R$   (long_name='Interest rate') 
-k  $k$   (long_name='Capital') 
-d  $d$   (long_name='Bank deposits') 
-n  $n$   (long_name='Labor') 
-l  $l$   (long_name='Bank loans') 
-gy_obs $gy_obs$   (long_name='Output growth rate') 
-gp_obs $gp_obs$   (long_name='Inflation') 
-y $y$   (long_name='Output') 
-dA $dA$   (long_name='dA') 
+P  $P$   (long_name='Prices')
+c  $c$   (long_name='Consumption')
+e  $e$   (long_name='e')
+W  $W$   (long_name='Wages')
+R  $R$   (long_name='Interest rate')
+k  $k$   (long_name='Capital')
+d  $d$   (long_name='Bank deposits')
+n  $n$   (long_name='Labor')
+l  $l$   (long_name='Bank loans')
+gy_obs $gy_obs$   (long_name='Output growth rate')
+gp_obs $gp_obs$   (long_name='Inflation')
+y $y$   (long_name='Output')
+dA $dA$   (long_name='dA')
 ;
 
-varexo 
-e_a $e_a$   (long_name='Technology shock') 
-e_m $e_m$   (long_name='Monetary shock') 
+varexo
+e_a $e_a$   (long_name='Technology shock')
+e_m $e_m$   (long_name='Monetary shock')
 ;
 
-parameters 
-alp $alpha$           
-bet $beta$            
+parameters
+alp $alpha$
+bet $beta$
 gam $gama$
 mst $mst$
 rho $rho$

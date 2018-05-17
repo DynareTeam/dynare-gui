@@ -830,11 +830,11 @@ P_obs           =[
 % % Write empirical series to an excel file
 % try
 %     filename = 'fs2000_output.xls';
-% 
+%
 %     Data=[gy_obs(end-41:end), gp_obs(end-41:end), Y_obs(end-41:end), P_obs(end-41:end)];
 %     x1Range = 'A2:D42';
 %     xlswrite(filename,Data,x1Range);
-% 
+%
 %     Labels = {'gy_obs','gp_obs','Y_obs','P_obs'};
 %     x2Range = 'A1:D1';
 %     xlswrite(filename,Labels,x2Range);

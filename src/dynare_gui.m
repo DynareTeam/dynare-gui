@@ -81,7 +81,7 @@ setappdata(0, 'bg_color', 'default');
 setappdata(0, 'special_color', 'white');
 setappdata(0, 'main_figure', hObject);
 
-dynareroot = dynare_config;
+dynareroot = dynare_config('', false);
 
 warning_config();
 

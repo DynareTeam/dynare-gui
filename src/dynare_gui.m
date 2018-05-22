@@ -129,13 +129,14 @@ function project_new_Callback(hObject, eventdata, handles)
 global project_info;
 
 % Close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1)
-
+if isstruct(project_info) ...
+        && ~isempty(fieldnames(project_info)) ...
+        && isfield(project_info, 'project_name') ...
+        && ~isempty(project_info.project_name)
     try
         gui_close_project();
     catch
     end
-
 end
 
 tabId = addTab(hObject, 'New project');
@@ -151,7 +152,10 @@ function project_open_Callback(hObject, eventdata, handles)
 global project_info;
 
 % Close existing project
-if(isstruct(project_info) && ~isempty(fieldnames(project_info)) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name))%if(exist('project_info', 'var') == 1)
+if isstruct(project_info) ...
+        && ~isempty(fieldnames(project_info)) ...
+        && isfield(project_info, 'project_name') ...
+        && ~isempty(project_info.project_name)
     try
         gui_close_project();
     catch
@@ -194,14 +198,18 @@ function project_exit_Callback(hObject, eventdata, handles)
 global project_info;
 
 answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No');
-if(strcmp(answer,'Yes'))
+if strcmp(answer,'Yes')
     % Before quitting check if current project have been modified and ask 'Save changes to current project?'
-    if(isstruct(project_info) && isfield(project_info, 'project_name') && ~isempty(project_info.project_name) && isfield(project_info, 'modified') && project_info.modified)
+    if isstruct(project_info) ...
+            && isfield(project_info, 'project_name') ...
+            && ~isempty(project_info.project_name) ...
+            && isfield(project_info, 'modified') ...
+            && project_info.modified
         answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
-        if(strcmp(answer,'Yes'))
+        if strcmp(answer,'Yes')
             gui_tools.save_project();
-        elseif (strcmp(answer,'Cancel'))
-            return;
+        elseif strcmp(answer,'Cancel')
+            return
         end
 
     end

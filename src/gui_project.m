@@ -335,9 +335,11 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
 
     function select_folder(hObject,event)
     try
-        folder_name = uigetdir('.','Select project folder')
-        set(handles.project_folder,'String',folder_name);
-
+        folder_name = uigetdir('.','Select project folder');
+        if folder_name ~= 0
+            disp(['Project folder set to ' folder_name])
+            set(handles.project_folder,'String',folder_name);
+        end
     catch ME
         gui_tools.show_error('Error while selecting project folder', ME, 'basic');
     end

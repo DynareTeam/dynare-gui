@@ -57,10 +57,39 @@ dynare_gui_.simul.solver{num,3} = 'INTEGER';
 dynare_gui_.simul.solver{num,4} = 'Determines the maximum number of iterations used in the non-linear solver. The default value of maxit is 50.';
 
 num = num+1;
+dynare_gui_.simul.solver{num,1} = 'tolf';
+dynare_gui_.simul.solver{num,2} = '1e-5';
+dynare_gui_.simul.solver{num,3} = 'DOUBLE';
+dynare_gui_.simul.solver{num,4} = ['Convergence criterion for termination ' ...
+                    'based on function value'];
+
+num = num+1;
+dynare_gui_.simul.solver{num,1} = 'tolx';
+dynare_gui_.simul.solver{num,2} = '1e-5';
+dynare_gui_.simul.solver{num,3} = 'DOUBLE';
+dynare_gui_.simul.solver{num,4} = ['Convergence criterion for termination ' ...
+                    'based on change in function argument'];
+
+num = num+1;
 dynare_gui_.simul.solver{num,1} = 'stack_solve_algo';
 dynare_gui_.simul.solver{num,2} = '0';
 dynare_gui_.simul.solver{num,3} = 'INTEGER';
-dynare_gui_.simul.solver{num,4} = 'Algorithm used for computing the solution. Possible values are: 0, 1, 2, 3, 4, 5 and 6. Default value is 0.';
+dynare_gui_.simul.solver{num,4} = ['Algorithm used for computing the solution. ' ...
+                    'Possible values are: 0-7. Default value is 0.'];
+
+num = num+1;
+dynare_gui_.simul.solver{num,1} = 'robust_lin_solve';
+dynare_gui_.simul.solver{num,2} = '';
+dynare_gui_.simul.solver{num,3} = 'check_option';
+dynare_gui_.simul.solver{num,4} = 'Uses robust linear solver when `stack_solve_algo==0`';
+
+num = num+1;
+dynare_gui_.simul.solver{num,1} = 'solve_algo';
+dynare_gui_.simul.solver{num,2} = '0';
+dynare_gui_.simul.solver{num,3} = 'INTEGER';
+dynare_gui_.simul.solver{num,4} = ['Select the solver used when `' ...
+                    'stack_solve_algo==7`. Possible values are 0-11. Default ' ...
+                    'is 4.'];
 
 num = num+1;
 dynare_gui_.simul.solver{num,1} = 'no_homotopy';
@@ -79,6 +108,13 @@ dynare_gui_.simul.solver{num,1} = 'minimal_solving_periods';
 dynare_gui_.simul.solver{num,2} = '1';
 dynare_gui_.simul.solver{num,3} = 'INTEGER';
 dynare_gui_.simul.solver{num,4} = 'Specify the minimal number of periods where the model has to be solved, before using a constant set of operations for the remaining periods. Only used when stack_solve_algo = 5. Default: 1.';
+
+num = num+1;
+dynare_gui_.simul.solver{num,1} = 'lmmcp';
+dynare_gui_.simul.solver{num,2} = '';
+dynare_gui_.simul.solver{num,3} = 'check_option';
+dynare_gui_.simul.solver{num,4} = ['Solves with a Levenberg-Marquardt mixed ' ...
+                    'complementarity problem solver.'];
 
 num = num+1;
 dynare_gui_.simul.solver{num,1} = 'endogenous_terminal_period';

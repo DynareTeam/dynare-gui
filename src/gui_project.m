@@ -59,9 +59,9 @@ else
     project_properties(panel_id, 'Off');
 end
 
-uicontrol(tabId, 'Style','pushbutton','String','Save project & Close Tab','Units','normalized','Position',[gui_size.space gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@save_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Reset Form','Units','normalized','Position',[gui_size.space*2+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@reset_settings} );
-uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized','Position',[gui_size.space*3+gui_size.button_width*2 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
+uicontrol(tabId, 'Style','pushbutton','String','Save Project & Open .mod file','Units','normalized','Position',[gui_size.space gui_size.bottom 1.5*gui_size.button_width gui_size.button_height], 'Callback',{@save_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Reset Form','Units','normalized','Position',[gui_size.space*2+gui_size.button_width*1.5 gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@reset_settings} );
+uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized','Position',[gui_size.space*3+gui_size.button_width*1.5+gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',{@close_tab,tabId} );
 
     function save_settings(hObject,event)
     try
@@ -142,6 +142,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized',
 
             end
             % close tab on successful save and prompt to load .mod file
+            gui_load_mod_file(tabId)
             close_tab('', '', tabId);
         end
     catch ME

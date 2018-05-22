@@ -163,7 +163,15 @@ num = num+1;
 dynare_gui_.stoch_simul.solver{num,1} = 'sylvester_fixed_point_tol';
 dynare_gui_.stoch_simul.solver{num,2} =  '1e-12';
 dynare_gui_.stoch_simul.solver{num,3} = 'DOUBLE';
-dynare_gui_.stoch_simul.solver{num,4} = 'It is the convergence criterion used in the fixed point Sylvester solver. Its default value is 1e-12.';
+dynare_gui_.stoch_simul.solver{num,4} = ['It is the convergence criterion ' ...
+                    'used in the fixed point Sylvester solver. Its default value is 1e-12.'];
+
+num = num+1;
+dynare_gui_.stoch_simul.solver{num,1} = 'spectral_density';
+dynare_gui_.stoch_simul.solver{num,2} =  '';
+dynare_gui_.stoch_simul.solver{num,3} = 'check_option';
+dynare_gui_.stoch_simul.solver{num,4} = ['Compute theoretical spectral density ' ...
+                    'of model variables'];
 
 
 %% Group 4: DR
@@ -205,7 +213,14 @@ num = 1;
 dynare_gui_.stoch_simul.filter{num,1} = 'hp_filter';
 dynare_gui_.stoch_simul.filter{num,2} = '';
 dynare_gui_.stoch_simul.filter{num,3} = 'DOUBLE';
-dynare_gui_.stoch_simul.filter{num,4} = 'Uses HP filter with lambda = DOUBLE before computing moments. Default: no filter.';
+dynare_gui_.stoch_simul.filter{num,4} = ['Uses HP filter with lambda = ' ...
+                    'DOUBLE before computing moments. Default: no filter.'];
+
+dynare_gui_.stoch_simul.filter{num,1} = 'one_sided_hp_filter';
+dynare_gui_.stoch_simul.filter{num,2} = '';
+dynare_gui_.stoch_simul.filter{num,3} = 'DOUBLE';
+dynare_gui_.stoch_simul.filter{num,4} = ['Uses one-sided HP filter with lambda ' ...
+                    '= DOUBLE before computing moments. Default: no filter.'];
 
 num = num+1;
 dynare_gui_.stoch_simul.filter{num,1} = 'hp_ngrid';
@@ -274,12 +289,6 @@ dynare_gui_.stoch_simul.output{num,1} = 'noprint';
 dynare_gui_.stoch_simul.output{num,2} = '';
 dynare_gui_.stoch_simul.output{num,3} = 'check_option';
 dynare_gui_.stoch_simul.output{num,4} = 'Don''t print anything. Useful for loops.';
-
-% num = num+1;
-% dynare_gui_.stoch_simul.output{num,1} = 'print';
-% dynare_gui_.stoch_simul.output{num,2} = '';
-% dynare_gui_.stoch_simul.output{num,3} = 'check_option';
-% dynare_gui_.stoch_simul.output{num,4} = 'Print results (opposite of noprint).';
 
 num = num+1;
 dynare_gui_.stoch_simul.output{num,1} = 'tex';

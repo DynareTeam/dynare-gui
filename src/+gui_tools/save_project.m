@@ -39,7 +39,7 @@ end
 fullFileName = [ project_info.project_folder, filesep, project_info.project_name,'.dproj'];
 project_info.modified = 0;
 save(fullFileName,'project_info');
-project_data = sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder)
+project_data = sprintf('project_name=%s; project_folder=%s',project_info.project_name,project_info.project_folder);
 project_structures ='';
 
 % If project folder has been changed, copy also project mod file and
@@ -79,7 +79,7 @@ save_structure(estimation_info, 'estimation_info');
 save_structure(ys0_, 'ys0_');
 save_structure(ex0_, 'ex0_');
 
-project_data = [project_data, ', ', project_structures]
+project_data = [project_data, ', ', project_structures];
 gui_tools.project_log_entry('Saving project',project_data);
 
     function save_structure(svalue, sname)

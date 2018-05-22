@@ -28,32 +28,26 @@ function gui_load_mod_file(hObject)
 % You should have received a copy of the GNU General Public License
 % along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
-global project_info;
-global model_settings;
-global options_;
-global estim_params_;
-global dynare_gui_;
+global project_info model_settings dynare_gui_
 
 bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
 
-top = 35;
 new_project = false;
 mod_file_specified = false;
 % first check if .mod file already specified
 if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
     tab_title = '.mod file';
     status_msg = 'Please specify .mod/.dyn file ...';
-
 else
     mod_file_specified = true;
     tab_title = project_info.mod_file;
     status_msg = 'Loading...';
 end
 
-[tabId,created] = gui_tabs.add_tab(hObject, tab_title);
+[tabId, junk] = gui_tabs.add_tab(hObject, tab_title);
 
 uicontrol(tabId,'Style','text',...
           'String','Main .mod/.dyn file:',...
@@ -101,23 +95,30 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
 uicontrol(tabId, 'Style','pushbutton','String','Define command options ...','Units','normalized','Position',[1-gui_size.space-gui_size.button_width gui_size.bottom gui_size.button_width gui_size.button_height], 'Callback',@pushbuttonCommandDefinition_Callback);
 
 % first check if .mod file already specified
-if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
+if ~isfield(project_info, 'mod_file') || isempty(project_info.mod_file)
     handles.runModFile.Enable = 'Off';
     new_project = true;
-    msgText = 'Please specify main .mod/.dyn file for your project. If you have multiple .dyn files or file includes, please specify main file only and copy manually additional files to project folder.';
-    uiwait(msgbox(msgText, 'DynareGUI','modal'));
-    status = specify_file(new_project);
-    if(status == 0)
-        return;
+    if length([dir('*.mod'); dir('*.dyn')]) == 1
+        fileName = [dir('*.mod'); dir('*.dyn')];
+        project_info.mod_file = fileName.name;
+        index = strfind(project_info.mod_file, '.mod');
+        if ~index
+            index = strfind(project_info.mod_file, '.dyn');
+        end
+        project_info.model_name = project_info.mod_file(1:index-1);
     else
-        handles.runModFile.Enable = 'On';
-        gui_tabs.rename_tab(tabId, project_info.mod_file);
-        comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
-
-        set(handles.dynare, 'String', comm_str);
-        set(handles.dynare, 'TooltipString', comm_str);
+        status = specify_file(true);
+        if status == 0 || status == -1
+            return
+        end
     end
 
+    handles.runModFile.Enable = 'On';
+    gui_tabs.rename_tab(tabId, project_info.mod_file);
+    comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
+
+    set(handles.dynare, 'String', comm_str);
+    set(handles.dynare, 'TooltipString', comm_str);
 end
 
 
@@ -236,52 +237,35 @@ end
     function status = specify_file(new_project)
     status = 0;
 
-    [fileName,pathName] = uigetfile({'*.mod';'*.dyn'},'Select Dynare MOD/DYN file');
-
-    if(fileName ==0)
-        return;
+    [fileName, pathName] = uigetfile({'*.mod';'*.dyn'}, 'Select Dynare .mod or .dyn file');
+    if fileName == 0
+        return
     end
 
-    if(~new_project)
-        old_mod_file =project_info.mod_file;
+    if ~new_project
+        old_mod_file = project_info.mod_file;
     end
     project_info.mod_file = fileName;
 
-    index1 = strfind(fileName,'.mod');
-    index2 = strfind(fileName,'.dyn');
-    mod_file = 0;
-    if(index1)
-        index = index1;
-    elseif(index2)
-        index = index2;
+    index = strfind(fileName,'.mod');
+    if ~index
+        index = strfind(fileName,'.dyn');
     end
-
-    if(index)
-        model_name = fileName(1:index-1);
-        %setappdata(0,'model_name',model_name);
-        mod_file = 1;
-        project_info.model_name = model_name;
-    else
-        % TODO wrong .mod file
-    end
+    project_info.model_name = fileName(1:index-1);
 
     %copy .mod file to project folder
     project_folder= project_info.project_folder;
-    if(strcmp([pathName,fileName],[project_folder,filesep,fileName])~=1)
-
+    if strcmp([pathName,fileName], [project_folder,filesep,fileName]) ~= 1 
         [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
-        if(status)
+        if status
             uiwait(msgbox('.mod/.dyn file is copied to project folder', 'DynareGUI','modal'));
         else
             gui_tools.show_error(['Error while copying .mod/.dyn file to project folder: ', message]);
         end
-    elseif(new_project)
-        status = 1;
-    elseif(strcmp(old_mod_file, fileName))
-        uiwait(msgbox('.mod/.dyn file has not been changed.', 'DynareGUI','modal'));
-        status = -1;
+    elseif ~new_project && strcmp(old_mod_file, fileName)
+        status = -1; % selected file didn't change
     else
-        status = 1; % TODO ???
+        status = 1;
     end
     end
 

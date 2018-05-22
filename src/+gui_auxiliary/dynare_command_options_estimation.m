@@ -574,7 +574,7 @@ dynare_gui_.estimation.Particle_filter{num,4} = 'Sets the resampling method. Pos
 
 
 num = num+1;
-dynare_gui_.estimation.Particle_filter{num,1} = 'filter_algorithm'
+dynare_gui_.estimation.Particle_filter{num,1} = 'filter_algorithm';
 dynare_gui_.estimation.Particle_filter{num,2} = '';
 dynare_gui_.estimation.Particle_filter{num,3} = {'','sis','apf','gf','gmf','cpf'};
 dynare_gui_.estimation.Particle_filter{num,4} = 'Sets the particle filter algorithm. Possible values for OPTION are: sis, apf, gf, gmf and cpf.';

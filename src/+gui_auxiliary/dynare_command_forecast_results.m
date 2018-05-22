@@ -43,7 +43,7 @@ num = 1;
 dynare_gui_.forecast_results.results{num,1} = 'Forecasts';
 dynare_gui_.forecast_results.results{num,2} = 'Forecasts';
 dynare_gui_.forecast_results.results{num,3} = [];
-dynare_gui_.forecast_results.results{num,4} = {'oo_.SmoothedVariables'}
+dynare_gui_.forecast_results.results{num,4} = {'oo_.SmoothedVariables'};
 dynare_gui_.forecast_results.results{num,5} = '/graphs/';
 dynare_gui_.forecast_results.results{num,6} = 'forcst{1}';
 

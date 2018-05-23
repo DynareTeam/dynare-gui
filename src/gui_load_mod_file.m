@@ -188,13 +188,11 @@ end
 
         end
 
-        if(project_info.latex)
-            latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
-            if isempty(latexCommandExists)
-                changed_mod_file = true;
-                modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
-                set(textBoxId,'String',modFileText);
-            end
+        latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
+        if isempty(latexCommandExists)
+            changed_mod_file = true;
+            modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
+            set(textBoxId,'String',modFileText);
         end
 
         if changed_mod_file

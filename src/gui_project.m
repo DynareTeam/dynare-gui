@@ -72,7 +72,6 @@ uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized',
 
             % These don't belong in the project definition
             project_info.model_type = 1;
-            project_info.latex = 1;
             project_info.default_forecast_periods = 20;
 
             if isempty(project_info.project_name)

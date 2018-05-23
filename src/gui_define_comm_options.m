@@ -60,7 +60,7 @@ end
 
 if(isempty(fieldnames(user_options)))
     %default values
-    user_options.tex = project_info.latex;
+    user_options.tex = 1;
     user_options.graph_format = 'fig,eps';
     user_options.order = 1;
     options_.plot_priors = 0;

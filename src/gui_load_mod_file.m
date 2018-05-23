@@ -132,19 +132,14 @@ if(new_project)
 end
 
     function read_file()
-        fileId = fopen(fullFileName,'rt');
-
-        if fileId~=-1 %if the file doesn't exist ignore the reading code
-            modFileText = fscanf(fileId,'%c');
-
-            set(textBoxId,'String',modFileText); %%c
-
-            fclose(fileId);
-        else
+        fileId = fopen(fullFileName, 'rt');
+        if fileId == -1
             gui_tools.show_error('Specified file doesn''t exist!', ME, 'basic');
-            return;
-
+            return
         end
+        modFileText = fscanf(fileId, '%c');
+        set(textBoxId, 'String', modFileText);
+        fclose(fileId);
     end
 
     function load_file()

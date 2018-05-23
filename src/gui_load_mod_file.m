@@ -50,15 +50,15 @@ end
 [tabId, junk] = gui_tabs.add_tab(hObject, tab_title);
 
 uicontrol(tabId,'Style','text',...
-          'String','Main .mod/.dyn file:',...
-          'FontWeight', 'bold', ...
-          'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
-          'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
+    'String','Main .mod/.dyn file:',...
+    'FontWeight', 'bold', ...
+    'HorizontalAlignment', 'left','BackgroundColor', bg_color,...
+    'Units','normalized','Position',[0.01 0.92 1 0.05] ); %'Units','characters','Position',[1 top 50 2] );
 
 textBoxId = uicontrol(tabId, 'style','edit', 'Max',30,'Min',0,...
-                      'String', status_msg ,...
-                      'Units','normalized','Position',[0.01 0.20 0.98 0.71], ...%'Units','characters','Position',[2 5 170 30], ...
-                      'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
+    'String', status_msg ,...
+    'Units','normalized','Position',[0.01 0.20 0.98 0.71], ...%'Units','characters','Position',[2 5 170 30], ...
+    'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
 gui_size = gui_tools.get_gui_elements_size(tabId);
 
@@ -132,294 +132,282 @@ if(new_project)
 end
 
     function read_file()
-    fileId = fopen(fullFileName,'rt');
+        fileId = fopen(fullFileName,'rt');
 
-    if fileId~=-1 %if the file doesn't exist ignore the reading code
-        modFileText = fscanf(fileId,'%c');
+        if fileId~=-1 %if the file doesn't exist ignore the reading code
+            modFileText = fscanf(fileId,'%c');
 
-        set(textBoxId,'String',modFileText); %%c
+            set(textBoxId,'String',modFileText); %%c
 
-        fclose(fileId);
-    else
-        gui_tools.show_error('Specified file doesn''t exist!', ME, 'basic');
-        return;
+            fclose(fileId);
+        else
+            gui_tools.show_error('Specified file doesn''t exist!', ME, 'basic');
+            return;
 
-    end
+        end
     end
 
     function load_file()
-    % First we check if.mod file has estimation or any other DYNARE
-    % commands outside of commented block or di
-    if(check_for_command('estimation'))
-        gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without estimaton command.');
-        %handles.runModFile.Enable = 'Off';
-        %return;
-    end
-
-    if(check_for_command('stoch_simul'))
-        gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without stoch_simul command.');
-        %handles.runModFile.Enable = 'Off';
-        %return;
-    end
-
-    % Then we check if .mod file has steady and check commands
-    steadyExists = regexp(modFileText, 'steady[(;]{1}');
-    checkExists = regexp(modFileText, 'check[(;]{1}');
-
-    change_mod_file = 0;
-    if(isempty(steadyExists) || isempty(checkExists))
-        change_mod_file = 1;
-        if(isempty(steadyExists) && isempty(checkExists))
-            msgText = '.mod/.dyn file is not valid! I will add steady and check commands and change the .mod/.dyn file.';
-            modFileText = sprintf('%s\nsteady; \ncheck;\n', modFileText);
-        elseif(isempty(steadyExists))
-            msgText = '.mod/.dyn file is not valid! I will add steady command and change the .mod/.dyn file.';
-            modFileText = sprintf('%s\nsteady;\n%s', modFileText(1:checkExists-1),...
-                                  modFileText(checkExists:end));
-        else
-            msgText = '.mod/.dyn file is not valid! I will add check command and change the .mod/.dyn file.';
-            modFileText = sprintf('%s\ncheck;\n%s', modFileText(1:steadyExists+length('steady;')-1),...
-                                  modFileText(steadyExists+length('steady;'):end));
-
+        % First we check if.mod file has estimation or any other DYNARE
+        % commands outside of commented block or di
+        if(check_for_command('estimation'))
+            gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without estimaton command.');
+            %handles.runModFile.Enable = 'Off';
+            %return;
         end
 
-        uiwait(msgbox(msgText, 'DynareGUI','modal'));
-        set(textBoxId,'String',modFileText);
+        if(check_for_command('stoch_simul'))
+            gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without stoch_simul command.');
+            %handles.runModFile.Enable = 'Off';
+            %return;
+        end
 
-    end
+        % Then we check if .mod file has steady and check commands
+        steadyExists = regexp(modFileText, 'steady[(;]{1}');
+        checkExists = regexp(modFileText, 'check[(;]{1}');
 
-    %Than we check for write_latex_original_model command
-    if(project_info.latex)
-        latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;');
-        if(isempty(latexCommandExists))
+        change_mod_file = 0;
+        if(isempty(steadyExists) || isempty(checkExists))
             change_mod_file = 1;
-            msgText = '.mod/.dyn file does not contain write_latex_original_model command! I will add it and change the .mod/.dyn file.';
+            if(isempty(steadyExists) && isempty(checkExists))
+                msgText = '.mod/.dyn file is not valid! I will add steady and check commands and change the .mod/.dyn file.';
+                modFileText = sprintf('%s\nsteady; \ncheck;\n', modFileText);
+            elseif(isempty(steadyExists))
+                msgText = '.mod/.dyn file is not valid! I will add steady command and change the .mod/.dyn file.';
+                modFileText = sprintf('%s\nsteady;\n%s', modFileText(1:checkExists-1),...
+                    modFileText(checkExists:end));
+            else
+                msgText = '.mod/.dyn file is not valid! I will add check command and change the .mod/.dyn file.';
+                modFileText = sprintf('%s\ncheck;\n%s', modFileText(1:steadyExists+length('steady;')-1),...
+                    modFileText(steadyExists+length('steady;'):end));
+
+            end
+
             uiwait(msgbox(msgText, 'DynareGUI','modal'));
-            modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
             set(textBoxId,'String',modFileText);
-        end
-    end
 
-    if(change_mod_file)
-        try
-            file_new = fopen(fullFileName,'wt');
-            fprintf(file_new, '%s',modFileText );
-            fclose(file_new);
-            uiwait(msgbox('.mod/.dyn file changed successfully!', 'DynareGUI','modal'));
-        catch ME
-            gui_tools.show_error('Error while saving new .mod/.dyn file', ME, 'basic');
         end
 
-    end
-    gui_tools.project_log_entry('Loading .mod/.dyn file',sprintf('mod_file=%s',project_info.mod_file));
+        %Than we check for write_latex_original_model command
+        if(project_info.latex)
+            latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;');
+            if(isempty(latexCommandExists))
+                change_mod_file = 1;
+                msgText = '.mod/.dyn file does not contain write_latex_original_model command! I will add it and change the .mod/.dyn file.';
+                uiwait(msgbox(msgText, 'DynareGUI','modal'));
+                modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
+                set(textBoxId,'String',modFileText);
+            end
+        end
 
+        if(change_mod_file)
+            try
+                file_new = fopen(fullFileName,'wt');
+                fprintf(file_new, '%s',modFileText );
+                fclose(file_new);
+                uiwait(msgbox('.mod/.dyn file changed successfully!', 'DynareGUI','modal'));
+            catch ME
+                gui_tools.show_error('Error while saving new .mod/.dyn file', ME, 'basic');
+            end
 
+        end
+        gui_tools.project_log_entry('Loading .mod/.dyn file',sprintf('mod_file=%s',project_info.mod_file));
     end
 
     function status = check_for_command(comm_str)
-    status = 0;
+        status = 0;
 
-    if(isempty(regexp(modFileText, [comm_str,'[\s*(]'])))
-        return;
-    else
-        status = 1;
-        if(~isempty(regexp(modFileText, ['//\s*',comm_str,'[\s*(]'])))
-            status = 0;
-        elseif(~isempty(regexp(modFileText, ['(?!(/\*)(.*)(\*/)(.*)',comm_str,')(/\*)(.*)',comm_str])))
-            status = 0;
+        if(isempty(regexp(modFileText, [comm_str,'[\s*(]'])))
+            return;
+        else
+            status = 1;
+            if(~isempty(regexp(modFileText, ['//\s*',comm_str,'[\s*(]'])))
+                status = 0;
+            elseif(~isempty(regexp(modFileText, ['(?!(/\*)(.*)(\*/)(.*)',comm_str,')(/\*)(.*)',comm_str])))
+                status = 0;
 
-        elseif(~isempty(regexp(modFileText, ['(?!(@#ifndef GUI)(.*)(@#endif)(.*)',comm_str,')(@#ifndef GUI)(.*)',comm_str])))
-            status = 0;
+            elseif(~isempty(regexp(modFileText, ['(?!(@#ifndef GUI)(.*)(@#endif)(.*)',comm_str,')(@#ifndef GUI)(.*)',comm_str])))
+                status = 0;
+            end
         end
-    end
     end
 
     function status = specify_file(new_project)
-    status = 0;
+        status = 0;
 
-    [fileName, pathName] = uigetfile({'*.mod';'*.dyn'}, 'Select Dynare .mod or .dyn file');
-    if fileName == 0
-        return
-    end
-
-    if ~new_project
-        old_mod_file = project_info.mod_file;
-    end
-    project_info.mod_file = fileName;
-
-    index = strfind(fileName,'.mod');
-    if ~index
-        index = strfind(fileName,'.dyn');
-    end
-    project_info.model_name = fileName(1:index-1);
-
-    %copy .mod file to project folder
-    project_folder= project_info.project_folder;
-    if strcmp([pathName,fileName], [project_folder,filesep,fileName]) ~= 1 
-        [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
-        if status
-            uiwait(msgbox('.mod/.dyn file is copied to project folder', 'DynareGUI','modal'));
-        else
-            gui_tools.show_error(['Error while copying .mod/.dyn file to project folder: ', message]);
+        [fileName, pathName] = uigetfile({'*.mod';'*.dyn'}, 'Select Dynare .mod or .dyn file');
+        if fileName == 0
+            return
         end
-    elseif ~new_project && strcmp(old_mod_file, fileName)
-        status = -1; % selected file didn't change
-    else
-        status = 1;
-    end
+
+        if ~new_project
+            old_mod_file = project_info.mod_file;
+        end
+        project_info.mod_file = fileName;
+
+        index = strfind(fileName,'.mod');
+        if ~index
+            index = strfind(fileName,'.dyn');
+        end
+        project_info.model_name = fileName(1:index-1);
+
+        %copy .mod file to project folder
+        project_folder= project_info.project_folder;
+        if strcmp([pathName,fileName], [project_folder,filesep,fileName]) ~= 1
+            [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
+            if status
+                uiwait(msgbox('.mod/.dyn file is copied to project folder', 'DynareGUI','modal'));
+            else
+                gui_tools.show_error(['Error while copying .mod/.dyn file to project folder: ', message]);
+            end
+        elseif ~new_project && strcmp(old_mod_file, fileName)
+            status = -1; % selected file didn't change
+        else
+            status = 1;
+        end
     end
 
 
     function change_file(hObject,event, hTab)
-    answer = questdlg({'Do you want to specify/change .mod/.dyn file for this project?'; '';...
-                       'If yes, please run it with Dynare command afterwords.'},...
-                      'Dynare_GUI','Yes','No','No');
-    if(strcmp(answer,'No'))
-        return;
-    end
-    handles.runModFile.Enable = 'Off';
-    project_info.mod_file = [];
-
-    status = specify_file(new_project);
-
-    if (status~=0)
-        handles.runModFile.Enable = 'On';
-        set(textBoxId,'String','Loading ...');
-        gui_tabs.rename_tab(hTab, project_info.mod_file);
-        fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
-        modFileText = '';
-        read_file();
-        if(status ~= -1)
-            model_settings = struct();
-        end
-        load_file();
-        comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
-
-        set(handles.dynare, 'String', comm_str);
-        set(handles.dynare, 'TooltipString', comm_str);
-        project_info.mod_file_runned = false;
-        %disable menu options
-        gui_tools.menu_options('model_special','Off');
-        gui_tools.menu_options('estimation','Off');
-        gui_tools.menu_options('stohastic','Off');
-        gui_tools.menu_options('deterministic','Off');
-        gui_tools.menu_options('output','Off');
-        % close other tabs
-        gui_tabs.close_all_except_this(tabId);
-
-    end
-    end
-
-    function close_tab(hObject,event, hTab)
-    gui_tabs.delete_tab(hTab);
-
-    end
-
-    function run_file(hObject,event, hTab)
-    if(project_info.mod_file_runned)
-
-        answer = questdlg({'Do you want to run .mod/.dyn file with Dynare?'; '';...
-                           'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
-                          'Dynare_GUI','Yes','No','No');
+        answer = questdlg({'Do you want to specify/change .mod/.dyn file for this project?'; '';...
+            'If yes, please run it with Dynare command afterwords.'},...
+            'Dynare_GUI','Yes','No','No');
         if(strcmp(answer,'No'))
             return;
         end
-    end
+        handles.runModFile.Enable = 'Off';
+        project_info.mod_file = [];
 
-    %save globals
-    glob_project_info = project_info;
-    glob_model_settings = model_settings;
-    glob_dynare_gui_ = dynare_gui_;
+        status = specify_file(new_project);
 
-    [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod/.dyn file... Please wait...', tabId);
-
-    try
-        %eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
-
-        %dynare_comm_str = sprintf ('%s noclearall -DGUI',comm_str);
-
-
-        dynare_comm_str = sprintf ('%s -DGUI',comm_str);
-        eval(dynare_comm_str);
-
-        jObj.stop;
-        jObj.setBusyText('All done!');
-        uiwait(msgbox('.mod/.dyn file executed successfully!', 'DynareGUI','modal'));
-
-        %restore globals
-        evalin('base','global dynare_gui_ project_info model_settings');
-        project_info = glob_project_info;
-        model_settings = glob_model_settings;
-        dynare_gui_ = glob_dynare_gui_;
-
-        project_info.modified = 1;
-
-        %enable menu options
-        gui_tools.menu_options('model','On');
-
-        if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
-
-            % reset model structures
-            if(isfield(model_settings, 'estim_params'))
-                model_settings = rmfield(model_settings, 'estim_params');
+        if (status~=0)
+            handles.runModFile.Enable = 'On';
+            set(textBoxId,'String','Loading ...');
+            gui_tabs.rename_tab(hTab, project_info.mod_file);
+            fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
+            modFileText = '';
+            read_file();
+            if(status ~= -1)
+                model_settings = struct();
             end
+            load_file();
+            comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
 
-            if(isfield(model_settings, 'varobs'))
-                model_settings = rmfield(model_settings, 'varobs');
-            end
-
-            if(project_info.model_type==1)
-                gui_tools.menu_options('estimation','On');
-                gui_tools.menu_options('stohastic','On');
-            else
-                gui_tools.menu_options('deterministic','On');
-            end
-        else
+            set(handles.dynare, 'String', comm_str);
+            set(handles.dynare, 'TooltipString', comm_str);
+            project_info.mod_file_runned = false;
+            %disable menu options
+            gui_tools.menu_options('model_special','Off');
             gui_tools.menu_options('estimation','Off');
             gui_tools.menu_options('stohastic','Off');
             gui_tools.menu_options('deterministic','Off');
+            gui_tools.menu_options('output','Off');
+            % close other tabs
+            gui_tabs.close_all_except_this(tabId);
+
         end
-        project_info.mod_file_runned  = true;
-        gui_tools.project_log_entry('Running .mod/.dyn file',sprintf('mod_file=%s',project_info.mod_file));
-
-    catch ME
-        %restore globals
-        evalin('base','global dynare_gui_ project_info model_settings');
-        project_info = glob_project_info;
-        model_settings = glob_model_settings;
-        dynare_gui_ = glob_dynare_gui_;
-
-        jObj.stop;
-        jObj.setBusyText('Done with errors!');
-        gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
     end
-    delete(guiObj);
 
-
+    function close_tab(hObject, event, hTab)
+        gui_tabs.delete_tab(hTab);
 
     end
 
-    function pushbuttonCommandDefinition_Callback(hObject,evendata)
+    function run_file(hObject, event, hTab)
+        if(project_info.mod_file_runned)
 
-    h = gui_define_comm_options(dynare_gui_.dynare,'dynare');
-
-    uiwait(h);
-
-    try
-        new_comm = getappdata(0,'dynare');
-        if(~isempty(new_comm))
-            project_info.dynare_command = new_comm;
-            comm_str = gui_tools.command_string('dynare', new_comm);
-            set(handles.dynare, 'String', comm_str);
-            set(handles.dynare, 'TooltipString', comm_str);
-            gui_tools.project_log_entry('Defined command dynare',comm_str);
+            answer = questdlg({'Do you want to run .mod/.dyn file with Dynare?'; '';...
+                'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
+                'Dynare_GUI','Yes','No','No');
+            if(strcmp(answer,'No'))
+                return;
+            end
         end
 
+        %save globals
+        glob_project_info = project_info;
+        glob_model_settings = model_settings;
+        glob_dynare_gui_ = dynare_gui_;
 
-    catch ME
-        gui_tools.show_error('Error in defining dynare command', ME, 'basic');
+        [jObj, guiObj] = gui_tools.create_animated_screen('I am running .mod/.dyn file... Please wait...', tabId);
+
+        try
+            %eval(sprintf('dynare %s noclearall -DGUI',project_info.mod_file));
+
+            %dynare_comm_str = sprintf ('%s noclearall -DGUI',comm_str);
+
+
+            dynare_comm_str = sprintf ('%s -DGUI',comm_str);
+            eval(dynare_comm_str);
+
+            jObj.stop;
+            jObj.setBusyText('All done!');
+            uiwait(msgbox('.mod/.dyn file executed successfully!', 'DynareGUI','modal'));
+
+            %restore globals
+            evalin('base','global dynare_gui_ project_info model_settings');
+            project_info = glob_project_info;
+            model_settings = glob_model_settings;
+            dynare_gui_ = glob_dynare_gui_;
+
+            project_info.modified = 1;
+
+            %enable menu options
+            gui_tools.menu_options('model','On');
+
+            if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
+
+                % reset model structures
+                if(isfield(model_settings, 'estim_params'))
+                    model_settings = rmfield(model_settings, 'estim_params');
+                end
+
+                if(isfield(model_settings, 'varobs'))
+                    model_settings = rmfield(model_settings, 'varobs');
+                end
+
+                if(project_info.model_type==1)
+                    gui_tools.menu_options('estimation','On');
+                    gui_tools.menu_options('stohastic','On');
+                else
+                    gui_tools.menu_options('deterministic','On');
+                end
+            else
+                gui_tools.menu_options('estimation','Off');
+                gui_tools.menu_options('stohastic','Off');
+                gui_tools.menu_options('deterministic','Off');
+            end
+            project_info.mod_file_runned  = true;
+            gui_tools.project_log_entry('Running .mod/.dyn file',sprintf('mod_file=%s',project_info.mod_file));
+
+        catch ME
+            %restore globals
+            evalin('base','global dynare_gui_ project_info model_settings');
+            project_info = glob_project_info;
+            model_settings = glob_model_settings;
+            dynare_gui_ = glob_dynare_gui_;
+
+            jObj.stop;
+            jObj.setBusyText('Done with errors!');
+            gui_tools.show_error('Error in execution of dynare command', ME, 'extended');
+        end
+        delete(guiObj);
     end
 
+    function pushbuttonCommandDefinition_Callback(hObject, evendata)
+        h = gui_define_comm_options(dynare_gui_.dynare,'dynare');
+        uiwait(h);
+        try
+            new_comm = getappdata(0,'dynare');
+            if(~isempty(new_comm))
+                project_info.dynare_command = new_comm;
+                comm_str = gui_tools.command_string('dynare', new_comm);
+                set(handles.dynare, 'String', comm_str);
+                set(handles.dynare, 'TooltipString', comm_str);
+                gui_tools.project_log_entry('Defined command dynare',comm_str);
+            end
+        catch ME
+            gui_tools.show_error('Error in defining dynare command', ME, 'basic');
+        end
     end
-
 end

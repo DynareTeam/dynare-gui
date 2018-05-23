@@ -188,7 +188,6 @@ end
 
         end
 
-        %Than we check for write_latex_original_model command
         if(project_info.latex)
             latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
             if isempty(latexCommandExists)

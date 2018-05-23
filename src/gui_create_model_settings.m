@@ -44,93 +44,94 @@ catch ME
 end
 
     function cellArray = create_var_cell_array(data, data_tex, data_long)
-        n = size(data,1);
+        n = size(data, 1);
+        cellArray = cell(n, 7);
         for i = 1:n
-            name = deblank(data(i,:));
-            cellArray{i,1} = name;
-            cellArray{i,2} = deblank(data_tex(i,:));
-            cellArray{i,3} = deblank(data_long(i,:));
-            cellArray{i,5} = 'All';
-            index = strfind(name, 'AUX');
-            if(isempty(index))
-                cellArray{i,4} = true;
-                cellArray{i,6} = true;
+            name            = data{i, :};
+            cellArray{i, 1} = name;
+            cellArray{i, 2} = data_tex{i, :};
+            cellArray{i, 3} = data_long{i, :};
+            cellArray{i, 5} = 'All';
+            if i <= M_.orig_endo_nbr
+                cellArray{i, 4} = true;
+                cellArray{i, 6} = true;
             else
-                cellArray{i,4} = false;
-                cellArray{i,5} = 'AUX';
-                cellArray{i,6} = false;
+                cellArray{i, 4} = false;
+                cellArray{i, 5} = 'AUX';
+                cellArray{i, 6} = false;
             end
-            cellArray{i,7} = '';
+            cellArray{i, 7}     = '';
         end
     end
 
     function cellArray = create_params_cell_array(data, data_tex, data_long)
-        n = size(data,1);
+        n = size(data, 1);
+        cellArray = cell(n, 10);
         for i = 1:n
-            name = deblank(data(i,:));
-            cellArray{i,1} = name;
-            cellArray{i,2} = deblank(data_tex(i,:));
-            cellArray{i,3} = deblank(data_long(i,:));
-
-            cellArray{i,4} = get_param_by_name(name);
-            if(project_info.model_type==1) %stohastic model
-                cellArray{i,5} = ''; %estimated value
-                cellArray{i,6} = ''; %STD
+            name            = data{i, :};
+            cellArray{i, 1} = name;
+            cellArray{i, 2} = data_tex{i, :};
+            cellArray{i, 3} = data_long{i, :};
+            cellArray{i, 4} = get_param_by_name(name);
+            next = 5;
+            if project_info.model_type == 1
+                % stohastic model
+                cellArray{i, 5} = '';         % estimated value
+                cellArray{i, 6} = '';         % STD
                 next = 7;
-            else
-                next = 5;
             end
 
-            index = strfind(name, 'AUX');
-            if(isempty(index))
-                cellArray{i,next} = true;
-                cellArray{i,next+1} = 'All';
-                cellArray{i,next+2} = true;
-                cellArray{i,next+3} = '';
+            if i <= M_.orig_endo_nbr
+                cellArray{i, next}   = true;
+                cellArray{i, next+1} = 'All';
+                cellArray{i, next+2} = true;
+                cellArray{i, next+3} = '';
             else
-                cellArray{i,next} = false;
-                cellArray{i,next+1} = 'AUX';
-                cellArray{i,next+2} = false;
-                cellArray{i,next+3} = '';
+                cellArray{i, next}   = false;
+                cellArray{i, next+1} = 'AUX';
+                cellArray{i, next+2} = false;
+                cellArray{i, next+3} = '';
             end
         end
     end
 
     function cellArray = create_shocks_cell_array(data, data_tex, data_long)
         n = size(data,1);
+        cellArray = cell(n, 10);
         for i = 1:n
-            name = deblank(data(i,:));
+            name           = data{i, :};
             cellArray{i,1} = name;
-            cellArray{i,2} = deblank(data_tex(i,:));
-            cellArray{i,3} = deblank(data_long(i,:));
+            cellArray{i,2} = data_tex{i, :};
+            cellArray{i,3} = data_long{i, :};
 
             %stderr for stohastic case or initval for deterministic case - read values from dynare structures
-            if(project_info.model_type==1) %stohastic model
-                cellArray{i,4} = sqrt(M_.Sigma_e(i,i)); %stderror
-                cellArray{i,5} = ''; %estimated value
-                cellArray{i,6} = ''; %STD
+            if project_info.model_type == 1
+                % stohastic model
+                cellArray{i,4} = sqrt(M_.Sigma_e(i,i)); % stderror
+                cellArray{i,5} = '';                    % estimated value
+                cellArray{i,6} = '';                    % STD
                 next = 7;
-            else %deterministic model
+            else
+                % deterministic model
                 %TODO: check with Dynare team - how to display initval for deterministic case
                 if(~isempty(ex0_))
-                    cellArray{i,4} =  ex0_(i);
+                    cellArray{i, 4} = ex0_(i);
                 else
-                    cellArray{i,4} = oo_.exo_steady_state(i); %initval
+                    cellArray{i, 4} = oo_.exo_steady_state(i); %initval
                 end
                 next = 5;
             end
 
-            index = strfind(name, 'AUX');
-            if(isempty(index))
-                cellArray{i,next} = true;
-                cellArray{i,next+1} = 'All';
-                cellArray{i,next+2} = true;
-                cellArray{i,next+3} = '';
+            if i <= M_.orig_endo_nbr
+                cellArray{i, next}   = true;
+                cellArray{i, next+1} = 'All';
+                cellArray{i, next+2} = true;
+                cellArray{i, next+3} = '';
             else
-                cellArray{i,next} = false;
-                cellArray{i,next+1} = 'AUX';
-                cellArray{i,next+2} = false;
-                cellArray{i,next+3} = '';
+                cellArray{i, next}   = false;
+                cellArray{i, next+1} = 'AUX';
+                cellArray{i, next+2} = false;
+                cellArray{i, next+3} = '';
             end
         end
     end

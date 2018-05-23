@@ -73,11 +73,15 @@ uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized',
         project_info.latex = str2double(get(handles.bg, 'Tag'));
         project_info.default_forecast_periods = str2double(get(handles.default_forecast_periods, 'String'));
 
-        if(isempty(project_info.project_name))
+        if isempty(project_info.project_name)
             gui_tools.show_warning('Project name is not specified!');
-        elseif(isempty(project_info.project_folder))
+        elseif isempty(project_info.project_folder)
             gui_tools.show_warning('Project folder is not specified!');
         else
+            [valid, msg] = CheckFileName(project_info.project_name)
+            if ~valid
+                gui_tools.show_warning(msg);
+            end
             fullFileName = [ project_info.project_folder, filesep, project_info.project_name,'.dproj'];
             if(strcmp(oid,'New') || strcmp(oid,'Save As'))
 
@@ -148,6 +152,47 @@ uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized',
     catch ME
         gui_tools.show_error('Error while saving the project', ME, 'extended');
     end
+
+    function [Valid, Msg] = CheckFileName(S)
+    % Taken from and modified from:
+    % https://fr.mathworks.com/matlabcentral/answers/363670-is-there-a-way-to-determine-illegal-characters-for-file-names-based-on-the-computer-operating-system
+        Msg = '';
+        if any(S == '.')
+            Msg = 'Invalid character in filename';
+            Valid = false;
+            return
+        end
+        if ispc
+            BadChar = '<>:"/\|?*';
+            BadName = {'CON', 'PRN', 'AUX', 'NUL', 'CLOCK$', ...
+                       'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', ...
+                       'COM7', 'COM8', 'COM9', ...
+                       'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', ...
+                       'LPT7', 'LPT8', 'LPT9'};
+            bad = ismember(BadChar, S);
+            if any(bad)
+                Msg = ['Name contains bad characters: ', BadChar(bad)];
+            elseif any(S < 32)
+                Msg = ['Name contains non printable characters, ASCII:', sprintf(' %d', S(S < 32))];
+            elseif ~isempty(S) && (S(end) == ' ' || S(end) == '.')
+                Msg = 'A trailing space or dot is forbidden';
+            else
+                % "AUX.txt" fails also, so extract the file name only:
+                [~, name] = fileparts(S);
+                if any(strcmpi(name, BadName))
+                    Msg = ['Name not allowed: ', name];
+                end
+            end
+        else  % Mac and Linux:
+            if any(S == '/')
+                Msg = '/ is forbidden in a file name';
+            elseif any(S == 0)
+                Msg = '\0 is forbidden in a file name';
+            end
+        end
+        Valid = isempty(Msg);
+    end
+
     end
 
 

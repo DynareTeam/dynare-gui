@@ -124,10 +124,9 @@ end
 
 fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
 modFileText = '';
-
 read_file();
 
-if(new_project)
+if new_project
     load_file();
 end
 
@@ -146,26 +145,15 @@ end
         % First we check if.mod file has estimation or any other DYNARE
         % commands outside of commented block.
         % If so, comment them out
-        if check_for_command('estimation')
-            gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without estimaton command.');
-            %handles.runModFile.Enable = 'Off';
-            %return;
-        end
-
-        if(check_for_command('stoch_simul'))
-            gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without stoch_simul command.');
-            %handles.runModFile.Enable = 'Off';
-            %return;
-        end
+        comment_command('estimation');
+        comment_command('stoch_simul');
 
         % Then we check if .mod file has steady and check commands
         steadyExists = regexp(modFileText, 'steady[(;]{1}');
         checkExists = regexp(modFileText, 'check[(;]{1}');
 
-        changed_mod_file = false;
-        if(isempty(steadyExists) || isempty(checkExists))
-            changed_mod_file = true;
-            if(isempty(steadyExists) && isempty(checkExists))
+        if isempty(steadyExists) || isempty(checkExists)
+            if isempty(steadyExists) && isempty(checkExists)
                 msgText = '.mod/.dyn file is not valid! I will add steady and check commands and change the .mod/.dyn file.';
                 modFileText = sprintf('%s\nsteady; \ncheck;\n', modFileText);
             elseif(isempty(steadyExists))
@@ -176,48 +164,30 @@ end
                 msgText = '.mod/.dyn file is not valid! I will add check command and change the .mod/.dyn file.';
                 modFileText = sprintf('%s\ncheck;\n%s', modFileText(1:steadyExists+length('steady;')-1),...
                     modFileText(steadyExists+length('steady;'):end));
-
             end
-
             uiwait(msgbox(msgText, 'DynareGUI','modal'));
-            set(textBoxId,'String',modFileText);
-
         end
 
         latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
         if isempty(latexCommandExists)
-            changed_mod_file = true;
             modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
-            set(textBoxId,'String',modFileText);
         end
 
-        if changed_mod_file
-            try
-                file_new = fopen(fullFileName,'wt');
-                fprintf(file_new, '%s',modFileText );
-                fclose(file_new);
-            catch ME
-                gui_tools.show_error('Error while saving new .mod/.dyn file', ME, 'basic');
-            end
-
+        try
+            set(textBoxId,'String',modFileText);
+            file_new = fopen(fullFileName,'wt');
+            fprintf(file_new, '%s',modFileText );
+            fclose(file_new);
+        catch ME
+            gui_tools.show_error('Error while saving new .mod/.dyn file', ME, 'basic');
         end
         gui_tools.project_log_entry('Loading .mod/.dyn file',sprintf('mod_file=%s',project_info.mod_file));
     end
 
-    function status = check_for_command(comm_str)
-        if isempty(regexp(modFileText, [comm_str '[\s*(]'], 'once'))
-            status = 0;
-            return
-        end
-
-        status = 1;
-        if ~isempty(regexp(modFileText, ['//\s*' comm_str,'[\s*(]']))
-            status = 0;
-        elseif ~isempty(regexp(modFileText, ['(?!(/\*)(.*)(\*/)(.*)' comm_str ')(/\*)(.*)' comm_str]))
-            status = 0;
-        elseif ~isempty(regexp(modFileText, ['(?!(@#ifndef GUI)(.*)(@#endif)(.*)' comm_str ')(@#ifndef GUI)(.*)' comm_str]))
-            status = 0;
-        end
+    function comment_command(comm_str)
+        modFileText = regexprep(modFileText, ...
+            ['\;\s*(' comm_str ')\s*(\([\w\,\s=_\.]*\))\s*\;'], ...
+            ';\n// - Commented out by GUI\n//   $1$2;', 'preservecase');
     end
 
     function status = specify_file(new_project)

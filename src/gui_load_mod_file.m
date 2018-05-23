@@ -166,9 +166,9 @@ end
         steadyExists = regexp(modFileText, 'steady[(;]{1}');
         checkExists = regexp(modFileText, 'check[(;]{1}');
 
-        change_mod_file = 0;
+        changed_mod_file = false;
         if(isempty(steadyExists) || isempty(checkExists))
-            change_mod_file = 1;
+            changed_mod_file = true;
             if(isempty(steadyExists) && isempty(checkExists))
                 msgText = '.mod/.dyn file is not valid! I will add steady and check commands and change the .mod/.dyn file.';
                 modFileText = sprintf('%s\nsteady; \ncheck;\n', modFileText);
@@ -191,13 +191,13 @@ end
         if(project_info.latex)
             latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
             if isempty(latexCommandExists)
-                change_mod_file = 1;
+                changed_mod_file = true;
                 modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
                 set(textBoxId,'String',modFileText);
             end
         end
 
-        if(change_mod_file)
+        if changed_mod_file
             try
                 file_new = fopen(fullFileName,'wt');
                 fprintf(file_new, '%s',modFileText );

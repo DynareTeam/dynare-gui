@@ -40,7 +40,6 @@ path = [dynare_gui_root, filesep,'+gui_external', filesep,'tablefilter-swing-5.2
 javaaddpath(path);
 
 if (isempty(model_settings) || isempty(fieldnames(model_settings)))
-    uiwait(msgbox('Model settings does not exist. I will create initial model settings.', 'DynareGUI'));
     status = gui_create_model_settings();
     if(status)
         if(project_info.model_type==1)

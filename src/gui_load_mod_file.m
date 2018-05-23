@@ -190,11 +190,9 @@ end
 
         %Than we check for write_latex_original_model command
         if(project_info.latex)
-            latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;');
-            if(isempty(latexCommandExists))
+            latexCommandExists = regexp(modFileText, 'write_latex_original_model\s*;', 'once');
+            if isempty(latexCommandExists)
                 change_mod_file = 1;
-                msgText = '.mod/.dyn file does not contain write_latex_original_model command! I will add it and change the .mod/.dyn file.';
-                uiwait(msgbox(msgText, 'DynareGUI','modal'));
                 modFileText = sprintf('%s\nwrite_latex_original_model;\n', modFileText);
                 set(textBoxId,'String',modFileText);
             end
@@ -205,7 +203,6 @@ end
                 file_new = fopen(fullFileName,'wt');
                 fprintf(file_new, '%s',modFileText );
                 fclose(file_new);
-                uiwait(msgbox('.mod/.dyn file changed successfully!', 'DynareGUI','modal'));
             catch ME
                 gui_tools.show_error('Error while saving new .mod/.dyn file', ME, 'basic');
             end

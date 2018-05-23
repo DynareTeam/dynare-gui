@@ -298,7 +298,6 @@ end
 
             jObj.stop;
             jObj.setBusyText('All done!');
-            uiwait(msgbox('.mod/.dyn file executed successfully!', 'DynareGUI','modal'));
 
             %restore globals
             evalin('base','global dynare_gui_ project_info model_settings');

@@ -149,8 +149,9 @@ end
 
     function load_file()
         % First we check if.mod file has estimation or any other DYNARE
-        % commands outside of commented block or di
-        if(check_for_command('estimation'))
+        % commands outside of commented block.
+        % If so, comment them out
+        if check_for_command('estimation')
             gui_tools.show_warning('.mod/.dyn file might be invalid! Please specify .mod/.dyn file without estimaton command.');
             %handles.runModFile.Enable = 'Off';
             %return;
@@ -209,20 +210,18 @@ end
     end
 
     function status = check_for_command(comm_str)
-        status = 0;
+        if isempty(regexp(modFileText, [comm_str '[\s*(]'], 'once'))
+            status = 0;
+            return
+        end
 
-        if(isempty(regexp(modFileText, [comm_str,'[\s*(]'])))
-            return;
-        else
-            status = 1;
-            if(~isempty(regexp(modFileText, ['//\s*',comm_str,'[\s*(]'])))
-                status = 0;
-            elseif(~isempty(regexp(modFileText, ['(?!(/\*)(.*)(\*/)(.*)',comm_str,')(/\*)(.*)',comm_str])))
-                status = 0;
-
-            elseif(~isempty(regexp(modFileText, ['(?!(@#ifndef GUI)(.*)(@#endif)(.*)',comm_str,')(@#ifndef GUI)(.*)',comm_str])))
-                status = 0;
-            end
+        status = 1;
+        if ~isempty(regexp(modFileText, ['//\s*' comm_str,'[\s*(]']))
+            status = 0;
+        elseif ~isempty(regexp(modFileText, ['(?!(/\*)(.*)(\*/)(.*)' comm_str ')(/\*)(.*)' comm_str]))
+            status = 0;
+        elseif ~isempty(regexp(modFileText, ['(?!(@#ifndef GUI)(.*)(@#endif)(.*)' comm_str ')(@#ifndef GUI)(.*)' comm_str]))
+            status = 0;
         end
     end
 

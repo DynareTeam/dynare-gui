@@ -78,7 +78,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close Tab','Units','normalized',
         elseif isempty(project_info.project_folder)
             gui_tools.show_warning('Project folder is not specified!');
         else
-            [valid, msg] = CheckFileName(project_info.project_name)
+            [valid, msg] = CheckFileName(project_info.project_name);
             if ~valid
                 gui_tools.show_warning(msg);
             end

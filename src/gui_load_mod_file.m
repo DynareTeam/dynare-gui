@@ -249,10 +249,8 @@ end
         project_folder= project_info.project_folder;
         if strcmp([pathName,fileName], [project_folder,filesep,fileName]) ~= 1
             [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
-            if status
-                uiwait(msgbox('.mod/.dyn file is copied to project folder', 'DynareGUI','modal'));
-            else
-                gui_tools.show_error(['Error while copying .mod/.dyn file to project folder: ', message]);
+            if ~status
+                gui_tools.show_error(['Error copying .mod/.dyn file to project folder: ', message]);
             end
         elseif ~new_project && strcmp(old_mod_file, fileName)
             status = -1; % selected file didn't change

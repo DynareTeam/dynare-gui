@@ -49,11 +49,11 @@ maxDisplayed = 11;
 handles = [];
 top = 32;
 
-if isfield(model_settings,comm_name) && ~isempty(getfield(model_settings,comm_name))
-    user_options = getfield(model_settings,comm_name);
+if isfield(model_settings,comm_name) && ~isempty(model_settings.(comm_name))
+    user_options = model_settings.(comm_name);
 else
     user_options = struct();
-    model_settings = setfield(model_settings, comm_name, user_options);
+    model_settings.(comm_name) = user_options;
 end
 
 if isempty(fieldnames(user_options))
@@ -135,8 +135,7 @@ handles.pussbuttonClose = uicontrol( ...
         new_tab = uitab(handles.tab_group, 'Title', group_name, 'UserData', num);
 
         tabs_panel = uipanel('Parent', new_tab,'BackgroundColor', 'white', 'BorderType', 'none');
-        keyboard
-        group = getfield(comm, group_name);
+        group = comm.(group_name);
         numOptions = size(group,1);
         tab_handles = [];
         width_name = 40; %34;
@@ -215,7 +214,7 @@ handles.pussbuttonClose = uicontrol( ...
 
             option_type = group{ii,3};
             if isfield(user_options, group{ii,1})
-                userDefaultValue = getfield(user_options, group{ii,1});
+                userDefaultValue = user_options.(group{ii,1});
                 if strcmp(option_type, 'INTEGER')
                     userDefaultValue = num2str(userDefaultValue);
                 elseif strcmp(option_type, 'DOUBLE')
@@ -284,7 +283,7 @@ handles.pussbuttonClose = uicontrol( ...
 
             try
                 if strcmp(comm_name,'conditional_forecast')
-                    current_value= getfield(model_settings.conditional_forecast_options, group{ii,1});
+                    current_value= model_settings.conditional_forecast_options.(group{ii,1});
                 else
                     current_value= gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
                 end
@@ -570,11 +569,11 @@ handles.pussbuttonClose = uicontrol( ...
             return
         end
 
-        defaults = getfield(model_settings.defaults,comm_name);
+        defaults = model_settings.defaults.(comm_name);
         numOptions = size(handles.values,2);
         for ii = 1:numOptions
             field_name = get(handles.options(ii),'String');
-            value= getfield(defaults,field_name);
+            value= defaults.(field_name);
             option_type = get(handles.values(ii),'TooltipString');
 
             if strcmp(option_type, 'check_option')

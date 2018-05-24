@@ -38,7 +38,7 @@ handles = [];
 new_project = false;
 mod_file_specified = false;
 % first check if .mod file already specified
-if (~isfield(project_info, 'mod_file') || isempty(project_info.mod_file))
+if ~isfield(project_info, 'mod_file') || isempty(project_info.mod_file)
     tab_title = '.mod file';
     status_msg = 'Please specify .mod/.dyn file ...';
 else

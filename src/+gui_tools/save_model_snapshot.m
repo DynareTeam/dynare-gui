@@ -28,17 +28,16 @@ function save_model_snapshot()
 % You should have received a copy of the GNU General Public License
 % along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
-global project_info model_settings;
 global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info;
 
-[fileName,pathName] = uiputfile({'*.snapshot','Model snapshot files (*.snapshot)'},'Enter the name of a file to save model snapshot');
-if(fileName ==0)
-    return;
+[fileName, pathName] = uiputfile({'*.snapshot','Model snapshot files (*.snapshot)'},'Enter the name of a file to save model snapshot');
+if fileName == 0
+    return
 end
-try
-    fullFileName = [ pathName, fileName];
 
-    % All relevant model information is saved
+try
+    fullFileName = [pathName fileName];
+
     save(fullFileName, 'oo_', 'M_', 'options_');
     if exist('estim_params_', 'var') == 1
         save(fullFileName, 'estim_params_', '-append');
@@ -52,13 +51,9 @@ try
     if exist('estimation_info', 'var') == 1
         save(fullFileName, 'estimation_info', '-append');
     end
-    % if exist('oo_recursive_', 'var') == 1
-    %   save(fullFileName, 'oo_recursive_', '-append');
-    % end
-
-    gui_tools.project_log_entry('Saving model snapshot',fullFileName);
-    uiwait(msgbox('Model snapshot saved successfully!', 'DynareGUI','modal'));
-catch
-    gui_tools.show_error('Error while saving model snapshot', ME, 'basic');
+    
+    gui_tools.project_log_entry('Saving model snapshot', fullFileName);
+catch ME
+    gui_tools.show_error('Error saving model snapshot', ME, 'basic');
 end
 end

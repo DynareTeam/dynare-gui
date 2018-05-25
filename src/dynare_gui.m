@@ -195,34 +195,29 @@ function project_exit_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-global project_info;
-
-answer = questdlg('Quit Dynare GUI?','DynareGUI','Yes','No','No');
-if strcmp(answer,'Yes')
-    % Before quitting check if current project have been modified and ask 'Save changes to current project?'
-    if isstruct(project_info) ...
-            && isfield(project_info, 'project_name') ...
-            && ~isempty(project_info.project_name) ...
-            && isfield(project_info, 'modified') ...
-            && project_info.modified
-        answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
-        if strcmp(answer,'Yes')
-            gui_tools.save_project();
-        elseif strcmp(answer,'Cancel')
-            return
-        end
-
-    end
-
-    %evalin('base','diary off;');
-    appdata = getappdata(0);
-    fns = fieldnames(appdata);
-    for ii = 1:numel(fns)
-        rmappdata(0,fns{ii});
-    end
-    evalin('base','clear all;');
-    close;
+global project_info
+% Before quitting check if current project has been modified and ask 'Save changes to current project?'
+if isstruct(project_info) ...
+        && isfield(project_info, 'project_name') ...
+        && ~isempty(project_info.project_name) ...
+        && isfield(project_info, 'modified') ...
+        && project_info.modified
+    answer = questdlg(sprintf('Do you want to save changes to project %s?', project_info.project_name),'DynareGUI','Yes','No','Cancel','Yes');
+    if strcmp(answer,'Yes')
+        gui_tools.save_project();
+    elseif strcmp(answer,'Cancel')
+        return
+    end    
 end
+
+%evalin('base','diary off;');
+appdata = getappdata(0);
+fns = fieldnames(appdata);
+for ii = 1:numel(fns)
+    rmappdata(0,fns{ii});
+end
+evalin('base','clear all;');
+close;
 end
 
 

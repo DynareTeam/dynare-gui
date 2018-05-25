@@ -221,15 +221,15 @@ end
         project_info.mod_file = [];
         status = specify_file(new_project);
         if status ~= 0
-            set(textBoxId,'String','Loading ...');
+            set(textBoxId, 'String', 'Loading ...');
             gui_tabs.rename_tab(hTab, project_info.mod_file);
             fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
             modFileText = '';
-            read_file();
+            read_file()
             if status ~= -1
                 model_settings = struct();
             end
-            load_file();
+            load_file()
             comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
 
             set(handles.dynare, 'String', comm_str);

@@ -34,7 +34,9 @@ global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation
 
 
 [fileName,pathName] = uigetfile('*.dproj','Select Dynare GUI project file:');
-
+if fileName == 0
+    return
+end
 try
 
     index = strfind(fileName,'.dproj');

@@ -117,7 +117,7 @@ dynare_gui_.dynare.setup{num,4} = ['Tests the parallel setup specified in the ' 
                     'configuration file without executing the .mod file.'];
 
 num = num+1;
-dynare_gui_.dynare.setup{num,1} = 'DMACRO_VARIABLE';
+dynare_gui_.dynare.setup{num,1} = 'MACRO_VARIABLE';
 dynare_gui_.dynare.setup{num,2} = '';
 dynare_gui_.dynare.setup{num,3} = 'INPUT';
 dynare_gui_.dynare.setup{num,4} = ['Defines a macro-variable from the command ' ...
@@ -126,7 +126,7 @@ dynare_gui_.dynare.setup{num,4} = ['Defines a macro-variable from the command ' 
                     'MACRO_EXPRESSION).'];
 
 num = num+1;
-dynare_gui_.dynare.setup{num,1} = 'IPATH';
+dynare_gui_.dynare.setup{num,1} = 'PATH';
 dynare_gui_.dynare.setup{num,2} = '';
 dynare_gui_.dynare.setup{num,3} = 'INPUT';
 dynare_gui_.dynare.setup{num,4} = ['Defines a path to search for files to be ' ...

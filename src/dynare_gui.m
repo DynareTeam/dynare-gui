@@ -446,15 +446,6 @@ end
 end
 
 % --------------------------------------------------------------------
-function help_terms_of_use_Callback(hObject, eventdata, handles)
-% hObject    handle to help_terms_of_use (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-tabId =addTab(hObject, 'Terms of use ', handles);
-gui_term_of_use(tabId);
-end
-
-% --------------------------------------------------------------------
 function help_about_Callback(hObject, eventdata, handles)
 % hObject    handle to help_about (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -1054,16 +1045,6 @@ h36 = uimenu(...
     'Callback',@(hObject,eventdata)dynare_gui('help_dynare_manual_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Dynare reference manual',...
     'Tag','help_dynare_manual',...
-    'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
-
-appdata = [];
-appdata.lastValidTag = 'help_terms_of_use';
-
-h37 = uimenu(...
-    'Parent',h34,...
-    'Callback',@(hObject,eventdata)dynare_gui('help_terms_of_use_Callback',hObject,eventdata,guidata(hObject)),...
-    'Label','Terms of use',...
-    'Tag','help_terms_of_use',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
 
 appdata = [];

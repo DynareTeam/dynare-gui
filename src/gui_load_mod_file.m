@@ -217,18 +217,10 @@ end
         end
     end
 
-    function change_file(hObject,event, hTab)
-        answer = questdlg({'Do you want to specify/change .mod/.dyn file for this project?'; '';...
-            'If yes, please run it with Dynare command afterwords.'},...
-            'Dynare_GUI','Yes','No','No');
-        if(strcmp(answer,'No'))
-            return;
-        end
-        handles.runModFile.Enable = 'Off';
+    function change_file(hObject, event, hTab)
         project_info.mod_file = [];
         status = specify_file(new_project);
         if status ~= 0
-            handles.runModFile.Enable = 'On';
             set(textBoxId,'String','Loading ...');
             gui_tabs.rename_tab(hTab, project_info.mod_file);
             fullFileName = [project_info.project_folder,filesep, project_info.mod_file];

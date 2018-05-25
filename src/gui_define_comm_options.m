@@ -230,6 +230,9 @@ handles.pussbuttonClose = uicontrol( ...
             else
                 if strcmp(option_type, 'check_option')
                     userDefaultValue = group{ii,2};
+                elseif strcmp(option_type, 'popupmenu')
+                    popupOptions = group{ii,2};
+                    userDefaultValue = 1;
                 elseif iscell(option_type)
                     userDefaultValue = 1;
                 else
@@ -248,7 +251,18 @@ handles.pussbuttonClose = uicontrol( ...
                     'HorizontalAlignment', 'left',...
                     'Visible', visible);
             else
-                if iscell(option_type)
+                if strcmp(option_type, 'popupmenu')
+                    tab_handles.values(ii)=uicontrol( ...
+                        'Parent', tabs_panel, ...
+                        'Style', 'popupmenu', ...
+                        'String', popupOptions, ...
+                        'Units', 'characters', 'BackgroundColor', special_color,...
+                        'Position', [h_space*2+width_name new_top-ii*2 width_value 1.5], ...
+                        'TooltipString', option_type,...
+                        'Value', 1, ...
+                        'HorizontalAlignment', 'left',...
+                        'Visible', visible);
+                elseif iscell(option_type)
                     if ~isnumeric(userDefaultValue)
                         ind  = find(ismember(option_type, userDefaultValue));
                         if ~isempty(ind)
@@ -290,9 +304,9 @@ handles.pussbuttonClose = uicontrol( ...
 
             try
                 if strcmp(comm_name,'conditional_forecast')
-                    current_value= model_settings.conditional_forecast_options.(group{ii,1});
+                    current_value = model_settings.conditional_forecast_options.(group{ii,1});
                 else
-                    current_value= gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
+                    current_value = gui_auxiliary.get_command_option(group{ii,1}, group{ii,3});
                 end
                 if isstruct(current_value)
                     flds = fieldnames(current_value);
@@ -317,8 +331,8 @@ handles.pussbuttonClose = uicontrol( ...
                     end
                 end
 
-                if(islogical(current_value))
-                    if(current_value)
+                if islogical(current_value)
+                    if current_value
                         actual_value = 1;
                     else
                         actual_value = 0;
@@ -326,7 +340,6 @@ handles.pussbuttonClose = uicontrol( ...
                     current_value = actual_value;
                 end
             catch
-                option_field = group{ii,1};
                 current_value = '???';
             end
             tab_handles.current_values(ii)=uicontrol( ...
@@ -340,6 +353,9 @@ handles.pussbuttonClose = uicontrol( ...
                 'Visible', visible);
 
             defaultString = group{ii,2};
+            if strcmp(option_type, 'popupmenu')
+                defaultString = popupOptions{userDefaultValue};
+            end
             if ~ischar(defaultString) && isnumeric(defaultString)
                 defaultString = num2str(defaultString);
             end
@@ -373,14 +389,12 @@ handles.pussbuttonClose = uicontrol( ...
                         str = text;
                         i = s;
                         text = '';
-
                     end
                     tool_tip_string = sprintf('%s\n%s',tool_tip_string, str);
                 end
             else
                 tool_tip_string = textDesc;
             end
-
 
             tab_handles.description(ii)=uicontrol( ...
                 'Parent',  tabs_panel, ...
@@ -399,43 +413,40 @@ handles.pussbuttonClose = uicontrol( ...
 
         end
 
-        function select_file(hObject,callbackdata, option_name, uicontrol)
+        function select_file(hObject, callbackdata, option_name, uicontrol)
             try
                 file_types = {'*.*'};
                 switch option_name
                     case 'datafile'
                         file_types = {'*.m';'*.mat';'*.xls';'*.xlsx';'*.csv'};
                     case 'mode_file'
-                        file_types = {'*.mat'}
-
+                        file_types = {'*.mat'};
                 end
 
                 [fileName,pathName] = uigetfile(file_types,sprintf('Select %s ...', option_name));
 
-                if(fileName ==0)
-                    return;
+                if fileName == 0
+                    return
                 end
                 project_folder= project_info.project_folder;
-                if(strcmp([pathName,fileName],[project_folder,filesep,fileName])~=1)
-
+                if strcmp([pathName,fileName], [project_folder,filesep,fileName]) ~= 1
                     [status, message] = copyfile([pathName,fileName],[project_folder,filesep,fileName]);
-                    if(status)
+                    if status
                         uiwait(msgbox('File copied to project folder', 'DynareGUI','modal'));
                     else
                         gui_tools.show_error(['Error while copying file to project folder: ', message]);
                     end
                 end
                 set(uicontrol, 'String', fileName);
-
             catch ME
                 gui_tools.show_error(['Error while selecting ',option_name], ME, 'basic');
             end
         end
 
-        function checkUserInput_Callback(hObject,callbackdata, option_name, option_type)
+        function checkUserInput_Callback(hObject, callbackdata, option_name, option_type)
             value = get(hObject, 'String');
             if isempty(value)
-                return;
+                return
             end
             switch option_type
                 case {'INTEGER', 'INTEGER or [INTEGER1:INTEGER2]','[INTEGER1:INTEGER2]', 'DOUBLE', '[DOUBLE DOUBLE]', '[INTEGER1 INTEGER2 ...]', ...
@@ -526,6 +537,13 @@ handles.pussbuttonClose = uicontrol( ...
                         new_user_options.(comm_option) = str2double(value);
                     elseif strcmp(option_type, 'DOUBLE')
                         new_user_options.(comm_option) = str2double(value);
+                    elseif strcmp(option_type, 'popupmenu') %elseif(iscell(value))
+                        selected_value = get(handles.values(ii),'Value');
+                        user_value = value{selected_value};
+                        current_value = get(handles.current_values(ii),'String');
+                        if ~isempty(user_value) && ~strcmp(user_value,current_value)
+                            new_user_options.(comm_option) = user_value;
+                        end
                     elseif strcmp(option_type, 'popup_value') %elseif(iscell(value))
                         selected_value = get(handles.values(ii),'Value');
                         user_value = value{selected_value};
@@ -547,11 +565,11 @@ handles.pussbuttonClose = uicontrol( ...
 
         for ii = 1:numOptions
             option_type = get(handles.values(ii),'TooltipString');
-            if(strcmp(option_type, 'check_option'))
+            if strcmp(option_type, 'check_option')
                 value = get(handles.values(ii),'Value');
             else
                 value = strtrim(get(handles.values(ii),'String'));
-                if(iscell(value))
+                if iscell(value)
                     user_value = value {get(handles.values(ii),'Value')};
                     value = user_value;
                 end
@@ -562,7 +580,7 @@ handles.pussbuttonClose = uicontrol( ...
         if ~isfield(model_settings, 'defaults')
             model_settings.defaults = struct();
         end
-        model_settings.defaults = setfield(model_settings.defaults,comm_name,defaults);
+        model_settings.defaults.(comm_name) = defaults;
         msgbox('Default values saved successfully', 'DynareGUI');
 
         gui_tools.project_log_entry(sprintf('Defining %s command', comm_name),'Default values saved successfully');
@@ -582,7 +600,7 @@ handles.pussbuttonClose = uicontrol( ...
             option_type = get(handles.values(ii),'TooltipString');
 
             if strcmp(option_type, 'check_option')
-                if(~isnumeric(value))
+                if ~isnumeric(value)
                     value = 0;
                 end
                 set(handles.values(ii),'Value', value);
@@ -610,6 +628,7 @@ handles.pussbuttonClose = uicontrol( ...
     function pussbuttonReset_Callback(hObject, callbackdata)
         numOptions = size(handles.values,2);
         for ii = 1:numOptions
+            keyboard
             option_type = get(handles.values(ii),'TooltipString');
             if strcmp(option_type, 'check_option')
                 set(handles.values(ii),'Value',0);

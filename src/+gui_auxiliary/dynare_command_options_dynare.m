@@ -189,8 +189,8 @@ dynare_gui_.dynare.setup{num,4} = ['For use with identification, dyanre_sensitiv
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'json';
-dynare_gui_.dynare.setup{num,2} = '';
-dynare_gui_.dynare.setup{num,3} = 'INPUT';
+dynare_gui_.dynare.setup{num,2} = {'', 'parse', 'check', 'transform', 'compute'};
+dynare_gui_.dynare.setup{num,3} = 'popupmenu';
 dynare_gui_.dynare.setup{num,4} = 'At what point to write JSON output';
 
 num = num+1;

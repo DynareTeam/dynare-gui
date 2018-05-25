@@ -216,8 +216,8 @@ fns = fieldnames(appdata);
 for ii = 1:numel(fns)
     rmappdata(0,fns{ii});
 end
-evalin('base','clear all;');
-close;
+evalin('base','clear');
+close force
 end
 
 
@@ -521,7 +521,8 @@ h1 = figure(...
     'Tag','figure1',...
     'UserData',[],...
     'SizeChangedFcn',@resizeui,...
-    'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
+    'CreateFcn', {@local_CreateFcn, blanks(0), appdata}, ...
+    'CloseRequestFcn', @(hObject,eventdata)dynare_gui('project_exit_Callback',hObject,eventdata,guidata(hObject)));
 
 
 appdata = [];

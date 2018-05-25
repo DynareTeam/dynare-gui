@@ -37,7 +37,7 @@ dynare_gui_.dynare = {};
 %% Group 1: setup
 num = 1;
 dynare_gui_.dynare.setup{num,1} = 'notmpterms';   % name
-dynare_gui_.dynare.setup{num,2} = '';             % default value
+dynare_gui_.dynare.setup{num,2} = 0;              % default value
 dynare_gui_.dynare.setup{num,3} = 'check_option'; % type
 dynare_gui_.dynare.setup{num,4} = ['Instructs the preprocessor to omit temporary ' ...
                     'terms in the static and dynamic files; this generally ' ...
@@ -55,19 +55,19 @@ dynare_gui_.dynare.setup{num,4} = ['Instructs dynare to save the intermediary ' 
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'nolinemacro';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'No line numbers in saved macro file';
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'noemptylinemacro';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'Remove empty lines from saved macro file';
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'cygwin';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Tells Dynare that your MATLAB is configured ' ...
                     'for compiling MEX files with Cygwin. This option is ' ...
@@ -76,7 +76,7 @@ dynare_gui_.dynare.setup{num,4} = ['Tells Dynare that your MATLAB is configured 
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'msvc';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Tells Dynare that your MATLAB is configured ' ...
                     'for compiling MEX files with Microsoft Visual C++. This ' ...
@@ -102,7 +102,7 @@ dynare_gui_.dynare.setup{num,4} = ['Specifies the location of the configuration 
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'parallel_slave_open_mode';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Instructs Dynare to leave the connection ' ...
                     'to the slave node open after computation is complete, ' ...
@@ -111,7 +111,7 @@ dynare_gui_.dynare.setup{num,4} = ['Instructs Dynare to leave the connection ' .
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'parallel_test';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Tests the parallel setup specified in the ' ...
                     'configuration file without executing the .mod file.'];
@@ -137,7 +137,7 @@ dynare_gui_.dynare.setup{num,4} = ['Defines a path to search for files to be ' .
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'nostrict';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Allows Dynare to issue a warning and ' ...
                     'continue processing when: 1. there are more endogenous ' ...
@@ -146,7 +146,7 @@ dynare_gui_.dynare.setup{num,4} = ['Allows Dynare to issue a warning and ' ...
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'fast';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Only useful with model option use_dll. ' ...
                     'Don''t recompile the MEX files when running again the ' ...
@@ -158,7 +158,7 @@ dynare_gui_.dynare.setup{num,4} = ['Only useful with model option use_dll. ' ...
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'minimal_workspace';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Instructs Dynare not to write parameter ' ...
                     'assignments to parameter names in the .m file produced ' ...
@@ -168,13 +168,13 @@ dynare_gui_.dynare.setup{num,4} = ['Instructs Dynare not to write parameter ' ..
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'stochastic';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 1;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'Instructs Dynare the model is stochastic';
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'compute_xrefs';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'Tells Dynare to compute the equation cross references, writing them to the output .m file.';
 
@@ -201,14 +201,14 @@ dynare_gui_.dynare.setup{num,4} = 'Print simplified JSON derivative output';
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'nopathchange';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = ['Don''t put Dynare''s paths above the ' ...
                     'current path'];
 
 num = num+1;
 dynare_gui_.dynare.setup{num,1} = 'nopreprocessoroutput';
-dynare_gui_.dynare.setup{num,2} = '';
+dynare_gui_.dynare.setup{num,2} = 0;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'No Dynare preprocessor output to screen';
 
@@ -216,7 +216,7 @@ dynare_gui_.dynare.setup{num,4} = 'No Dynare preprocessor output to screen';
 %% Group 2: output
 num = 1;
 dynare_gui_.dynare.output{num,1} = 'nolog';
-dynare_gui_.dynare.output{num,2} = '';
+dynare_gui_.dynare.output{num,2} = 0;
 dynare_gui_.dynare.output{num,3} = 'check_option';
 dynare_gui_.dynare.output{num,4} = ['Instructs Dynare to no create a logfile ' ...
                     'of this run in FILENAME.log. The default is to create ' ...
@@ -224,27 +224,27 @@ dynare_gui_.dynare.output{num,4} = ['Instructs Dynare to no create a logfile ' .
 
 num = num+1;
 dynare_gui_.dynare.output{num,1} = 'nowarn';
-dynare_gui_.dynare.output{num,2} = '';
+dynare_gui_.dynare.output{num,2} = 0;
 dynare_gui_.dynare.output{num,3} = 'check_option';
 dynare_gui_.dynare.output{num,4} = 'Suppresses all warnings.';
 
 num = num+1;
 dynare_gui_.dynare.output{num,1} = 'warn_uninit';
-dynare_gui_.dynare.output{num,2} = '';
+dynare_gui_.dynare.output{num,2} = 0;
 dynare_gui_.dynare.output{num,3} = 'check_option';
 dynare_gui_.dynare.output{num,4} = ['Display a warning for each variable or ' ...
                     'parameter which is not initialized.'];
 
 num = num+1;
 dynare_gui_.dynare.output{num,1} = 'nointeractive';
-dynare_gui_.dynare.output{num,2} = '';
+dynare_gui_.dynare.output{num,2} = 0;
 dynare_gui_.dynare.output{num,3} = 'check_option';
 dynare_gui_.dynare.output{num,4} = ['Instructs Dynare to not request user ' ...
                     'input.'];
 
 num = num+1;
 dynare_gui_.dynare.output{num,1} = 'nograph';
-dynare_gui_.dynare.output{num,2} = '';
+dynare_gui_.dynare.output{num,2} = 0;
 dynare_gui_.dynare.output{num,3} = 'check_option';
 dynare_gui_.dynare.output{num,4} = 'Don''t display graphs';
 

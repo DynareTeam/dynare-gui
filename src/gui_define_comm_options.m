@@ -229,9 +229,9 @@ handles.pussbuttonClose = uicontrol( ...
                 end
             else
                 if strcmp(option_type, 'check_option')
-                    userDefaultValue= 0;
-                elseif  iscell(option_type)
-                    userDefaultValue= 1;
+                    userDefaultValue = group{ii,2};
+                elseif iscell(option_type)
+                    userDefaultValue = 1;
                 else
                     userDefaultValue = '';
                 end
@@ -340,6 +340,9 @@ handles.pussbuttonClose = uicontrol( ...
                 'Visible', visible);
 
             defaultString = group{ii,2};
+            if ~ischar(defaultString) && isnumeric(defaultString)
+                defaultString = num2str(defaultString);
+            end
             if length(defaultString) > width_default
                 defaultString = strcat(defaultString(1:width_default-3),'...');
             end
@@ -348,7 +351,7 @@ handles.pussbuttonClose = uicontrol( ...
                 'Style', 'text', ...
                 'Units', 'characters', 'BackgroundColor', special_color,...
                 'Position', [h_space*4+width_name+width_value*2 new_top-ii*2 width_default 1.5], ...
-                'String', defaultString, 'TooltipString', group{ii,2},...
+                'String', defaultString, 'TooltipString', defaultString,...
                 'HorizontalAlignment', 'left',...
                 'Visible', visible);
 
@@ -506,37 +509,32 @@ handles.pussbuttonClose = uicontrol( ...
 
     function new_user_options = saveUserOptions()
         new_user_options = struct();
-        numOptions = size(handles.values,2);
-        for ii = 1:numOptions
+        for ii = 1:size(handles.values, 2)
             option_type = get(handles.values(ii),'TooltipString');
             if strcmp(option_type, 'check_option')
                 value = get(handles.values(ii),'Value');
                 current_value = get(handles.current_values(ii),'String');
                 if value || value ~= str2num(current_value)
                     comm_option = get(handles.options(ii),'String');
-                    new_user_options = setfield(new_user_options,comm_option,value);
+                    new_user_options.(comm_option) = value;
                 end
             else
                 value = strtrim(get(handles.values(ii),'String'));
                 if ~isempty(value)
                     comm_option = get(handles.options(ii),'String');
                     if ~isempty(strfind(option_type, 'INTEGER'))
-                        new_user_options = setfield(new_user_options,comm_option,str2double(value));
-
-                    elseif(strcmp(option_type, 'DOUBLE'))
-                        new_user_options = setfield(new_user_options,comm_option,str2double(value));
-
-                    elseif(strcmp(option_type, 'popup_value')) %elseif(iscell(value))
+                        new_user_options.(comm_option) = str2double(value);
+                    elseif strcmp(option_type, 'DOUBLE')
+                        new_user_options.(comm_option) = str2double(value);
+                    elseif strcmp(option_type, 'popup_value') %elseif(iscell(value))
                         selected_value = get(handles.values(ii),'Value');
                         user_value = value{selected_value};
                         current_value = get(handles.current_values(ii),'String');
-
-                        if(~isempty(user_value) && ~strcmp(user_value,current_value))
-                            new_user_options = setfield(new_user_options,comm_option,user_value);
+                        if ~isempty(user_value) && ~strcmp(user_value,current_value)
+                            new_user_options.(comm_option) = user_value;
                         end
-
-                    else%we save it as a string
-                        new_user_options = setfield(new_user_options,comm_option,value);
+                    else
+                        new_user_options.(comm_option) = value; %we save it as a string
                     end
                 end
             end

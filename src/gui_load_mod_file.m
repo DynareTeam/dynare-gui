@@ -36,15 +36,21 @@ special_color = char(getappdata(0,'special_color'));
 handles = [];
 
 new_project = false;
-mod_file_specified = false;
 % first check if .mod file already specified
 if ~isfield(project_info, 'mod_file') || isempty(project_info.mod_file)
     tab_title = '.mod file';
     status_msg = 'Please specify .mod/.dyn file ...';
+    comm_str = '';
+    project_info.dynare_command = struct();
+    project_info.dynare_command.stochastic = 1; % on by default
 else
-    mod_file_specified = true;
     tab_title = project_info.mod_file;
     status_msg = 'Loading...';
+    if ~isfield(model_settings,'dynare')
+        project_info.dynare_command = struct();
+        project_info.dynare_command.stochastic = 1; % on by default
+    end
+    comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
 end
 
 [tabId, junk] = gui_tabs.add_tab(hObject, tab_title);
@@ -61,17 +67,6 @@ textBoxId = uicontrol(tabId, 'style','edit', 'Max',30,'Min',0,...
     'HorizontalAlignment', 'left',  'BackgroundColor', special_color, 'enable', 'inactive');
 
 gui_size = gui_tools.get_gui_elements_size(tabId);
-
-if(mod_file_specified)
-    if(~isfield(model_settings,'dynare'))
-        project_info.dynare_command = struct();
-    end
-    comm_str = gui_tools.command_string('dynare', project_info.dynare_command);
-else
-    comm_str = '';
-    project_info.dynare_command = struct();
-end
-
 
 handles.uipanelComm = uipanel( ...
     'Parent', tabId, ...

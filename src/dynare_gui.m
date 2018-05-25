@@ -383,8 +383,12 @@ function help_product_help_Callback(hObject, eventdata, handles)
 
 dynare_gui_root = getappdata(0, 'dynare_gui_root');
 path = [dynare_gui_root, filesep,'resources', filesep,'html', filesep, 'index.html'];
-open(path);
-%addTab(hObject, 'Product help ', handles);
+if exist(path, 'file') == 2
+    open(path);
+else
+    disp('I looked for the Dynare GUI Help but couldn''t find it.')
+    disp(['Here''s where I looked: ' path])
+end
 end
 
 % --------------------------------------------------------------------
@@ -398,7 +402,7 @@ html_man_file = [dynareroot(1:ind), 'doc', filesep, 'dynare.html', filesep, 'ind
 if exist(html_man_file, 'file') == 2
     open(html_man_file);
 else
-    disp('I looked for the dynare manual but couldn''t find it.')
+    disp('I looked for the Dynare Manual but couldn''t find it.')
     disp(['Here''s where I looked: ' html_man_file])
 end
 end

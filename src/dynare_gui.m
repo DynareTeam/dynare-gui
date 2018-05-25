@@ -470,9 +470,7 @@ end
 
 
 function newTab = addTab(hObject, title, handles)
-[newTab,created] = gui_tabs.add_tab(hObject, title);
-
-
+newTab = gui_tabs.add_tab(hObject, title);
 end
 
 

@@ -34,9 +34,8 @@ bg_color = char(getappdata(0,'bg_color'));
 special_color = char(getappdata(0,'special_color'));
 
 handles = [];
-
 new_project = false;
-% first check if .mod file already specified
+
 if ~isfield(project_info, 'mod_file') || isempty(project_info.mod_file)
     tab_title = '.mod file';
     status_msg = 'Please specify .mod/.dyn file ...';
@@ -218,7 +217,6 @@ end
         end
     end
 
-
     function change_file(hObject,event, hTab)
         answer = questdlg({'Do you want to specify/change .mod/.dyn file for this project?'; '';...
             'If yes, please run it with Dynare command afterwords.'},...
@@ -228,17 +226,15 @@ end
         end
         handles.runModFile.Enable = 'Off';
         project_info.mod_file = [];
-
         status = specify_file(new_project);
-
-        if (status~=0)
+        if status ~= 0
             handles.runModFile.Enable = 'On';
             set(textBoxId,'String','Loading ...');
             gui_tabs.rename_tab(hTab, project_info.mod_file);
             fullFileName = [project_info.project_folder,filesep, project_info.mod_file];
             modFileText = '';
             read_file();
-            if(status ~= -1)
+            if status ~= -1
                 model_settings = struct();
             end
             load_file();
@@ -255,23 +251,20 @@ end
             gui_tools.menu_options('output','Off');
             % close other tabs
             gui_tabs.close_all_except_this(tabId);
-
         end
     end
 
     function close_tab(hObject, event, hTab)
         gui_tabs.delete_tab(hTab);
-
     end
 
     function run_file(hObject, event, hTab)
-        if(project_info.mod_file_runned)
-
+        if project_info.mod_file_runned
             answer = questdlg({'Do you want to run .mod/.dyn file with Dynare?'; '';...
                 'It will change all Dynare structures (oo_, M_, options_, etc) and discard results of your project?'},...
                 'Dynare_GUI','Yes','No','No');
-            if(strcmp(answer,'No'))
-                return;
+            if strcmp(answer,'No')
+                return
             end
         end
 

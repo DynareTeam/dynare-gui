@@ -167,7 +167,7 @@ dynare_gui_.dynare.setup{num,4} = ['Instructs Dynare not to write parameter ' ..
                     'workspace size limitations imposed by MATLAB.'];
 
 num = num+1;
-dynare_gui_.dynare.setup{num,1} = 'stochastic';
+dynare_gui_.dynare.setup{num,1} = 'stochastic'; % IF this changes, change in gui_load_mod_file.m
 dynare_gui_.dynare.setup{num,2} = 1;
 dynare_gui_.dynare.setup{num,3} = 'check_option';
 dynare_gui_.dynare.setup{num,4} = 'Instructs Dynare the model is stochastic';

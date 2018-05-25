@@ -28,33 +28,28 @@ function gui_open_project(hObject)
 % You should have received a copy of the GNU General Public License
 % along with Dynare.  If not, see <http://www.gnu.org/licenses/>.
 
-global project_info;
-global model_settings;
-global M_ options_ oo_ estim_params_ bayestopt_ dataset_ dataset_info estimation_info ys0_ ex0_;
+global project_info model_settings
 
-
-[fileName,pathName] = uigetfile('*.dproj','Select Dynare GUI project file:');
+[fileName, pathName] = uigetfile('*.dproj','Select Dynare GUI project file:');
 if fileName == 0
     return
 end
 try
-
     index = strfind(fileName,'.dproj');
-    if(index)
+    if index
         project_name = fileName(1:index-1);
-        [tabId,created] = gui_tabs.add_tab(hObject, ['Project: ',project_name]);
+        tabId = gui_tabs.add_tab(hObject, ['Project: ' project_name]);
 
-        data = load([pathName,fileName],'-mat');
+        data = load([pathName fileName], '-mat');
         flds = fieldnames(data);
-        for i=1: size(flds,1)
-            var_i = getfield(data, flds{i});
-            %eval( sprintf(' %s = evalin(''base'', ''var'');', flds{i}));
+        for i = 1:size(flds,1)
+            var_i = data.(flds{i});
             assignin('base', flds{i}, var_i);
             eval( sprintf(' %s = data.%s;', flds{i}, flds{i}));
         end
 
-        if(~strcmp([project_info.project_folder,filesep], pathName ))
-            warnStr = sprintf('Project has moved to different folder/path since last modification. New project folder has been set accordingly.!\n\nIf needed, please copy mode file and data file to the new location (new project folder).');
+        if ~strcmp([project_info.project_folder filesep], pathName)
+            warnStr = sprintf('Project has moved to different folder/path since last modification. New project folder has been set accordingly.!\n\nIf needed, please copy .mod file and data file to the new location (new project folder).');
             gui_tools.show_warning(warnStr);
             setappdata(0,'new_project_location',true);
             project_info.project_folder = pathName(1:length(pathName)-1);
@@ -75,21 +70,16 @@ try
         %enable menu options
         gui_tools.menu_options('project','On');
 
-        if (~isempty(project_info) && isfield(project_info, 'model_name'))
+        if ~isempty(project_info) && isfield(project_info, 'model_name')
             gui_tools.menu_options('model','On');
-
-            if (~isempty(model_settings) && ~isempty(fieldnames(model_settings)))
-
-
-                if(project_info.model_type==1)
+            if ~isempty(model_settings) && ~isempty(fieldnames(model_settings))
+                if project_info.model_type==1
                     gui_tools.menu_options('estimation','On');
                     gui_tools.menu_options('stohastic','On');
                     gui_tools.menu_options('output','On');
-
                 else
                     gui_tools.menu_options('deterministic','On');
                 end
-
             end
         end
         project_info.modified = 0;
@@ -98,6 +88,4 @@ try
 catch ME
     gui_tools.show_error('Error while opening project file', ME, 'basic');
 end
-
-
 end

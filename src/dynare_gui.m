@@ -114,13 +114,6 @@ varargout{1} = handles.output;
 end
 
 % --------------------------------------------------------------------
-function project_Callback(hObject, eventdata, handles)
-% hObject    handle to project (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
-% --------------------------------------------------------------------
 function project_new_Callback(hObject, eventdata, handles)
 % hObject    handle to project_new (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -223,13 +216,6 @@ end
 
 % Model!
 % --------------------------------------------------------------------
-function model_Callback(hObject, eventdata, handles)
-% hObject    handle to model (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
-% --------------------------------------------------------------------
 function model_load_Callback(hObject, eventdata, handles)
 % hObject    handle to model_load (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -290,13 +276,6 @@ end
 
 % Estimation!
 % --------------------------------------------------------------------
-function estimation_Callback(hObject, eventdata, handles)
-% hObject    handle to estimation (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
-% --------------------------------------------------------------------
 function estimation_observed_variables_Callback(hObject, eventdata, handles)
 % hObject    handle to estimation_observed_variables (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -335,13 +314,6 @@ end
 
 % Simulation!
 % --------------------------------------------------------------------
-function simulation_Callback(hObject, eventdata, handles)
-% hObject    handle to simulation (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
-% --------------------------------------------------------------------
 function simulation_stochastic_Callback(hObject, eventdata, handles)
 % hObject    handle to simulation_stochastic (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -361,13 +333,6 @@ end
 
 
 % Output!
-% --------------------------------------------------------------------
-function output_Callback(hObject, eventdata, handles)
-% hObject    handle to output (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
 function output_shocks_dec_Callback(hObject, eventdata, handles)
 % hObject    handle to output (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -408,13 +373,6 @@ function output_forecast_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 tabId = addTab(hObject, 'Forecast ', handles);
 gui_forecast(tabId);
-end
-
-% --------------------------------------------------------------------
-function help_Callback(hObject, eventdata, handles)
-% hObject    handle to help (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 end
 
 % --------------------------------------------------------------------
@@ -540,7 +498,6 @@ appdata.lastValidTag = 'project';
 h3 = uimenu(...
     'Parent',h1,...
     'Accelerator','M',...
-    'Callback',@(hObject,eventdata)dynare_gui('project_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Project',...
     'Tag','project',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
@@ -620,7 +577,6 @@ appdata.lastValidTag = 'model';
 
 h10 = uimenu(...
     'Parent',h1,...
-    'Callback',@(hObject,eventdata)dynare_gui('model_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Model',...
     'Tag','model',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
@@ -708,7 +664,6 @@ appdata.lastValidTag = 'estimation';
 
 h18 = uimenu(...
     'Parent',h1,...
-    'Callback',@(hObject,eventdata)dynare_gui('estimation_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Estimation',...
     'Tag','estimation',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
@@ -763,7 +718,6 @@ appdata.lastValidTag = 'simulation';
 
 h23 = uimenu(...
     'Parent',h1,...
-    'Callback',@(hObject,eventdata)dynare_gui('simulation_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Simulation',...
     'Tag','simulation',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
@@ -957,7 +911,6 @@ appdata.lastValidTag = 'output';
 
 h31 = uimenu(...
     'Parent',h1,...
-    'Callback',@(hObject,eventdata)dynare_gui('output_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Output',...
     'Tag','output',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );
@@ -1023,7 +976,6 @@ appdata.lastValidTag = 'help';
 h34 = uimenu(...
     'Parent',h1,...
     'Separator','on',...
-    'Callback',@(hObject,eventdata)dynare_gui('help_Callback',hObject,eventdata,guidata(hObject)),...
     'Label','Help',...
     'Tag','help',...
     'CreateFcn', {@local_CreateFcn, blanks(0), appdata} );

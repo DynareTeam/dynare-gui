@@ -269,43 +269,40 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function cellArray = create_estim_params_cell_array(param_names, exo_names, data)
-        params  = data.param_vals;
-        var_exo = data.var_exo;
-        n = size(params,1);
-        m = size(var_exo,1);
+        n = size(data.param_vals,1);
+        m = size(data.var_exo,1);
+        cellArray = cell(n+m, 13);
         for i = 1:n
             cellArray{i,1} = 'param';
-            cellArray{i,2} = params(i,1); %id
-            name = deblank(param_names(params(i,1),:));
-            cellArray{i,3} = name;
-            [LB, UB] = gui_tools.prior_range_defaults(params(i,5));
-            cellArray{i,4} = params(i,2);% initial value !!!
-            cellArray{i,5} = params(i,3);% lower bound
-            cellArray{i,6} = params(i,4);% upper bound
-            cellArray{i,7} = gui_tools.prior_shape(params(i,5));% prior shape
-            cellArray{i,8} = params(i,6);% prior mean
-            cellArray{i,9} = params(i,7);% prior std
-            cellArray{i,10} = params(i,8);% Prior 3rd parameter
-            cellArray{i,11} = params(i,9);% Prior 4rd parameter
-            cellArray{i,12} = params(i,10);% scale parameter
+            cellArray{i,2} = data.param_vals(i,1); %id
+            cellArray{i,3} = param_names{data.param_vals(i,1)};
+            %[LB, UB] = gui_tools.prior_range_defaults(data.param_vals(i,5));
+            cellArray{i,4} = data.param_vals(i,2);% initial value !!!
+            cellArray{i,5} = data.param_vals(i,3);% lower bound
+            cellArray{i,6} = data.param_vals(i,4);% upper bound
+            cellArray{i,7} = gui_tools.prior_shape(data.param_vals(i,5));% prior shape
+            cellArray{i,8} = data.param_vals(i,6);% prior mean
+            cellArray{i,9} = data.param_vals(i,7);% prior std
+            cellArray{i,10} = data.param_vals(i,8);% Prior 3rd parameter
+            cellArray{i,11} = data.param_vals(i,9);% Prior 4rd parameter
+            cellArray{i,12} = data.param_vals(i,10);% scale parameter
             cellArray{i,13} = false;% remove flag
         end
 
         for i = 1:m
             cellArray{n+i,1} = 'var_exo';
-            cellArray{n+i,2} = var_exo(i,1); %id
-            name = deblank(exo_names(var_exo(i,1),:));
-            cellArray{n+i,3} = name;
-            [LB, UB] = gui_tools.prior_range_defaults(var_exo(i,5));
-            cellArray{n+i,4} = var_exo(i,2);% initial value !!!
-            cellArray{n+i,5} = var_exo(i,3);% lower bound
-            cellArray{n+i,6} = var_exo(i,4);% upper bound
-            cellArray{n+i,7} = gui_tools.prior_shape(var_exo(i,5));% prior shape
-            cellArray{n+i,8} = var_exo(i,6);% prior mean
-            cellArray{n+i,9} = var_exo(i,7);% prior std
-            cellArray{n+i,10} = var_exo(i,8);% Prior 3rd parameter
-            cellArray{n+i,11} = var_exo(i,9);% Prior 4rd parameter
-            cellArray{n+i,12} = var_exo(i,10);% scale parameter
+            cellArray{n+i,2} = data.var_exo(i,1); %id
+            cellArray{n+i,3} = exo_names{data.var_exo(i,1)};
+            %[LB, UB] = gui_tools.prior_range_defaults(data.var_exo(i,5));
+            cellArray{n+i,4} = data.var_exo(i,2);% initial value !!!
+            cellArray{n+i,5} = data.var_exo(i,3);% lower bound
+            cellArray{n+i,6} = data.var_exo(i,4);% upper bound
+            cellArray{n+i,7} = gui_tools.prior_shape(data.var_exo(i,5));% prior shape
+            cellArray{n+i,8} = data.var_exo(i,6);% prior mean
+            cellArray{n+i,9} = data.var_exo(i,7);% prior std
+            cellArray{n+i,10} = data.var_exo(i,8);% Prior 3rd parameter
+            cellArray{n+i,11} = data.var_exo(i,9);% Prior 4rd parameter
+            cellArray{n+i,12} = data.var_exo(i,10);% scale parameter
             cellArray{n+i,13} = false;% remove flag
         end
     end

@@ -34,7 +34,7 @@ if ~isfield(model_settings, 'estim_params')
     try
         model_settings.estim_params = create_estim_params_cell_array(evalin('base','M_.param_names'),evalin('base','M_.exo_names'), evalin('base','estim_params_'));
     catch ME
-        gui_tools.show_error('Error while creating estimated parameters', ME, 'basic');
+        gui_tools.show_error('Error creating estimated parameters', ME, 'basic');
         %warnStr = [sprintf('Estimated parameters were not specified in .mod file! \n\nYou can change .mod file or specify them here by selecting them out of complete list of parameters and exogenous variables.\n')];
         %gui_tools.show_warning(warnStr,'Estimated parameters were not specified in .mod file!' );
         model_settings.estim_params = [];
@@ -82,7 +82,7 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 %M_.params - vrednosti
                 num_p = 0;
                 for i=1:size(estim_params,1)
-                    if(strcmp(estim_params{i,1},'param'))
+                    if strcmp(estim_params{i,1},'param')
                         num_p = num_p +1;
                     end
                     data_(i,1) =  estim_params{i,2};
@@ -255,9 +255,9 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
                 estim_params{r,11} = UB;
                 %
                 %                callbackdata.Source.Data = [estim_params(:,1),estim_params(:,3:13)];
-            elseif c==7 %prior mean
+            elseif c == 7 %prior mean
                 [LB, UB] = gui_tools.prior_range_defaults(estim_params{r,c});
-                if(val<LB || val > UB)
+                if val<LB || val > UB
                     warn_str = sprintf('Not valid prior mean value! Value must be in following interval:[%d,%d]', LB, UB);
                     gui_tools.show_warning(warn_str);
                     estim_params{r,c+1} = 0;

@@ -442,16 +442,13 @@ uicontrol(tabId, 'Style','pushbutton','String','Close this tab','Units','normali
     end
 
     function cellArray = create_varobs_cell_array(data,data_tex, data_long, data_id)
-    n = length(data);
-
-    for i = 1:n
-        %name = deblank(data(i,:));
-        name = deblank(data{i});
-        cellArray{i,1} = name;
-        cellArray{i,2} = deblank(data_tex(data_id(i),:));
-        cellArray{i,3} = deblank(data_long(data_id(i),:));
-        cellArray{i,4} = false;
-
-    end
+        n = length(data);
+        cellArray = cell(n,4);
+        for i = 1:n
+            cellArray{i,1} = data{i};
+            cellArray{i,2} = data_tex{data_id(i)};
+            cellArray{i,3} = data_long{data_id(i)};
+            cellArray{i,4} = false;
+        end
     end
 end
